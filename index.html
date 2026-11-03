@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<!-- 타자 모험 v2.5 우리반용 (2026-11-03) · 한글 두벌식 10레벨 + 영어 자판 8레벨 · 제작 kingkongssam -->
+<!-- 타자 모험 v2.6 우리반용 (2026-11-03) · 한글 두벌식 10레벨 + 영어 자판 8레벨 · 제작 kingkongssam -->
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#ff7a2f">
-<title>타자 모험 v2.5 — 기본 자리부터 차근차근 레벨 업</title>
+<title>타자 모험 v2.6 — 기본 자리부터 차근차근 레벨 업</title>
 <style>
 :root{
   --bg:#eef4fb; --card:#ffffff; --ink:#1f2a3d; --muted:#556178; --btn:#c2410c; --btn-dark:#8f2f08;
@@ -509,7 +509,7 @@ body.show-hands .typing-finger-caption{display:block}
       <div class="classbar"><span class="code" id="cls-code"></span><span class="muted" id="cls-count" style="font-weight:800;font-size:14px"></span><button class="btn ghost" id="cls-change" style="margin-left:auto">반 코드 바꾸기</button></div>
       <div id="cls-msg" class="note" style="display:none"></div>
       <div class="trail" id="ctrail"><svg class="trail-svg" id="ctrail-svg" aria-hidden="true"></svg><div class="trail-grid" id="ctrail-grid"></div></div>
-      <div class="sect">👀 친구들 <span class="tabs" id="cls-sort" style="margin-left:auto"><button class="tab on" data-sort="today">오늘 연습 순</button><button class="tab" data-sort="stars">별 순위</button><button class="tab" data-sort="rec">🎮 게임 기록</button></span></div>
+      <div class="sect">🎮 게임 기록 <span class="sub">게임마다 반에서 가장 높은 점수</span></div>
       <div class="card lines" id="cls-rank"></div>
     </section>
 
@@ -954,7 +954,7 @@ function validateContent() {
 <script>
 /* ================= 저장 ================= */
 const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
-const APP_VERSION = '2.5', APP_DATE = '2026-11-03';
+const APP_VERSION = '2.6', APP_DATE = '2026-11-03';
 /* ===== 우리 반 공유(선택) : Firebase 설정 =====
    Firebase 콘솔 → 프로젝트 설정 → 내 앱(웹) → SDK 설정의 firebaseConfig 값을 아래에 그대로 붙여 넣으세요.
    Realtime Database를 만들고 databaseURL까지 넣어야 켜집니다. 비워 두면 혼자 쓰는 앱으로 돌아갑니다. */
@@ -1790,7 +1790,7 @@ $('#rec-copy').onclick = async () => { try { await navigator.clipboard.writeText
 const CLS_IDS = {trail: '#ctrail', grid: '#ctrail-grid', svg: '#ctrail-svg'};
 let clsCourse = 'ko', clsData = null;
 function openClass() {
-  stopAll(); show('scr-class'); updateChip(); clsCourse = curCourse;
+  stopAll(); show('scr-class'); updateChip(); clsCourse = curCourse; Object.keys(COURSES).forEach(c => { if (!clsGameLv[c + 'Set']) { clsGameLv[c] = Math.min(COURSES[c].levels.length, progOf(user(), c).unlocked || 1); } });
   $('#cls-code').textContent = '반 코드 ' + Cloud.code(); $('#cls-count').textContent = ''; $('#cls-rank').innerHTML = ''; $('#ctrail-grid').innerHTML = ''; $('#ctrail-svg').innerHTML = '';
   const msg = $('#cls-msg'); msg.style.display = ''; msg.textContent = '친구들 기록을 불러오는 중...';
   Cloud.init().then(ok => {
@@ -1805,7 +1805,7 @@ function cleanRec(r) {
   return {name: r.name.slice(0, 12), avatar: typeof r.avatar === 'string' ? r.avatar.slice(0, 4) : '🙂', ko: c(r.ko), en: c(r.en), total: NUM(r.total), keys: NUM(r.keys),
     today: {date: r.today && typeof r.today.date === 'string' ? r.today.date.slice(0, 10) : '', lines: NUM(r.today && r.today.lines, 0, 999)}, updatedAt: NUM(r.updatedAt, 0, 4e12)};
 }
-let clsSort = 'today'; const clsGameLv = {ko: 1, en: 1};
+let clsSort = 'rec'; const clsGameLv = {ko: 1, en: 1};
 function renderClass() {
   const data = clsData || {}; let list = Object.values(data).map(cleanRec).filter(Boolean); const me = user();
   $$('#cls-tabs .tab').forEach(t => t.classList.toggle('on', t.dataset.course === clsCourse));
@@ -1842,7 +1842,7 @@ function renderClass() {
   if (clsSort === 'rec') {
     const bar = document.createElement('div'); bar.className = 'gpick';
     bar.innerHTML = `<label>게임 고르기 <select id="cls-game">${C.levels.map(L => `<option value="${L.n}"${L.n === GL.n ? ' selected' : ''}>LV${L.n} ${L.game.icon} ${esc(L.game.name)}</option>`).join('')}</select></label>`;
-    rank.prepend(bar); bar.querySelector('select').onchange = e => { clsGameLv[clsCourse] = NUM(e.target.value, 1, 10); renderClass(); };
+    rank.prepend(bar); bar.querySelector('select').onchange = e => { clsGameLv[clsCourse] = NUM(e.target.value, 1, 10); clsGameLv[clsCourse + 'Set'] = true; renderClass(); };
     const n = document.createElement('div'); n.className = 'muted'; n.style.cssText = 'font-size:12px;padding:8px 12px';
     n.textContent = list.length ? '세 단계 중 가장 높은 점수 순이에요. 더 좋은 기록이 나올 때만 바뀌어요.' : '아직 이 게임 기록이 없어요. 먼저 해 보고 1등이 되어 볼까요?'; rank.appendChild(n);
   }
