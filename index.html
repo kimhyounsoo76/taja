@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<!-- 타자 모험 v2.3 우리반용 (2026-11-03) · 한글 두벌식 10레벨 + 영어 자판 8레벨 · 제작 kingkongssam -->
+<!-- 타자 모험 v2.4 우리반용 (2026-11-03) · 한글 두벌식 10레벨 + 영어 자판 8레벨 · 제작 kingkongssam -->
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#ff7a2f">
-<title>타자 모험 v2.3 — 기본 자리부터 차근차근 레벨 업</title>
+<title>타자 모험 v2.4 — 기본 자리부터 차근차근 레벨 업</title>
 <style>
 :root{
   --bg:#eef4fb; --card:#ffffff; --ink:#1f2a3d; --muted:#556178; --btn:#c2410c; --btn-dark:#8f2f08;
@@ -113,6 +113,8 @@ h1,h2,h3{margin:0}
 .rankrow .nm{flex:1;min-width:0;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .rankrow .nm small{display:block;font-size:12px;color:var(--muted);font-weight:700}
 .rankrow .pt{font-weight:900;white-space:nowrap}
+.rankrow.recrow .nm{white-space:normal}
+.rankrow.recrow .nm small{line-height:1.35;margin-top:2px}
 .rankrow .today{font-size:11px;background:#dcfce7;color:#15803d;border-radius:99px;padding:2px 7px;font-weight:900}
 .classbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:6px 0 10px}
 .classbar .code{background:#fff;border-radius:99px;padding:6px 12px;font-weight:900;box-shadow:var(--shadow)}
@@ -505,7 +507,7 @@ body.show-hands .typing-finger-caption{display:block}
       <div class="classbar"><span class="code" id="cls-code"></span><span class="muted" id="cls-count" style="font-weight:800;font-size:14px"></span><button class="btn ghost" id="cls-change" style="margin-left:auto">반 코드 바꾸기</button></div>
       <div id="cls-msg" class="note" style="display:none"></div>
       <div class="trail" id="ctrail"><svg class="trail-svg" id="ctrail-svg" aria-hidden="true"></svg><div class="trail-grid" id="ctrail-grid"></div></div>
-      <div class="sect">👀 친구들 <span class="tabs" id="cls-sort" style="margin-left:auto"><button class="tab on" data-sort="today">오늘 연습 순</button><button class="tab" data-sort="stars">별 순위</button></span></div>
+      <div class="sect">👀 친구들 <span class="tabs" id="cls-sort" style="margin-left:auto"><button class="tab on" data-sort="today">오늘 연습 순</button><button class="tab" data-sort="stars">별 순위</button><button class="tab" data-sort="rec">🏆 최고 기록</button></span></div>
       <div class="card lines" id="cls-rank"></div>
     </section>
 
@@ -950,7 +952,7 @@ function validateContent() {
 <script>
 /* ================= 저장 ================= */
 const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
-const APP_VERSION = '2.3', APP_DATE = '2026-11-03';
+const APP_VERSION = '2.4', APP_DATE = '2026-11-03';
 /* ===== 우리 반 공유(선택) : Firebase 설정 =====
    Firebase 콘솔 → 프로젝트 설정 → 내 앱(웹) → SDK 설정의 firebaseConfig 값을 아래에 그대로 붙여 넣으세요.
    Realtime Database를 만들고 databaseURL까지 넣어야 켜집니다. 비워 두면 혼자 쓰는 앱으로 돌아갑니다. */
@@ -997,10 +999,10 @@ function normProg(src, levelsLen) {
   p.unlocked = NUM(src.unlocked, 1, levelsLen) || 1; p.master = !!src.master;
   const copyNum = (from, to, lo, hi) => { if (from && typeof from === 'object') Object.keys(from).forEach(k => { if (/^[\w\-ㄱ-ㅣA-Za-z;,.'!?]{1,8}$/.test(k)) to[k] = NUM(from[k], lo, hi); }); };
   if (src.gameOpen && typeof src.gameOpen === 'object') { p.gameOpen = {}; Object.keys(src.gameOpen).forEach(k => { if (/^\d{1,2}$/.test(k) && src.gameOpen[k]) p.gameOpen[k] = true; }); }
-  copyNum(src.lines, p.lines, 0, 3); copyNum(src.games, p.games, 0, 3); copyNum(src.gst, p.gst, 0, 3); copyNum(src.best, p.best, 0, 2000);
+  copyNum(src.lines, p.lines, 0, 3); copyNum(src.games, p.games, 0, 3); copyNum(src.gst, p.gst, 0, 3); p.gbest = {}; copyNum(src.gbest, p.gbest, 0, 1e6); copyNum(src.best, p.best, 0, 2000);
   if (src.passed && typeof src.passed === 'object') Object.keys(src.passed).forEach(k => { if (src.passed[k] && NUM(k, 1, levelsLen) == k) p.passed[k] = true; });
   p.missed = {}; copyNum(src.missed, p.missed, 0, 1e6); p.seen = {}; copyNum(src.seen, p.seen, 0, 1e7);
-  if (src.testBest) p.testBest = NUM(src.testBest, 0, 2000); if (src.testAcc) p.testAcc = NUM(src.testAcc, 0, 100);
+  if (typeof src.testAt === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(src.testAt)) p.testAt = src.testAt; if (src.testBest) p.testBest = NUM(src.testBest, 0, 2000); if (src.testAcc) p.testAcc = NUM(src.testAcc, 0, 100);
   return p;
 }
 function normalizeUser(src, name) {
@@ -1104,7 +1106,8 @@ const Cloud = {
     return this.loading;
   },
   summary(u) {
-    const sum = c => { const p = progOf(u, c); const L = COURSES[c].levels; let st = 0, best = 0; L.forEach(l => { st += levelStarInfo(p, l).total; best = Math.max(best, p.best[l.n] || 0); }); return {lv: p.unlocked, stars: st, best, master: !!p.master, passed: Object.keys(p.passed).length}; };
+    const sum = c => { const p = progOf(u, c); const L = COURSES[c].levels; let st = 0, best = 0; L.forEach(l => { st += levelStarInfo(p, l).total; best = Math.max(best, p.best[l.n] || 0); }); const g = Object.entries(p.gbest || {}).reduce((m, [k, v]) => { const L2 = COURSES[c].levels[NUM(k.split('-')[0], 1, 10) - 1]; return L2 && L2.game.type !== 'race' ? Math.max(m, v) : m; }, 0);
+      return {lv: p.unlocked, stars: st, best, master: !!p.master, passed: Object.keys(p.passed).length, t: p.testBest || 0, ta: p.testAcc || 0, td: p.testAt || '', g}; };
     const td = todayRec(u);
     return {name: u.name, avatar: avatarOf(u), ko: sum('ko'), en: sum('en'), total: totalStars(u), keys: u.totalKeys || 0, today: {date: dayKey(), lines: td.lines, min: Math.round(td.sec / 60)}, test: {ko: progOf(u, 'ko').testBest || 0, en: progOf(u, 'en').testBest || 0}, ver: APP_VERSION};
   },
@@ -1672,7 +1675,7 @@ function mergeProg(a, b) {
   mx(a.lines, b.lines); mx(a.games, b.games); a.gst = a.gst || {}; mx(a.gst, b.gst); mx(a.best, b.best); a.missed = a.missed || {}; mx(a.missed, b.missed); a.seen = a.seen || {}; mx(a.seen, b.seen);
   Object.keys(b.passed || {}).forEach(k => { a.passed[k] = true; });
   a.unlocked = Math.max(a.unlocked || 1, b.unlocked || 1); a.master = a.master || b.master;
-  if (b.testBest) a.testBest = Math.max(a.testBest || 0, b.testBest);
+  if (b.testBest && b.testBest > (a.testBest || 0)) { a.testAt = b.testAt; a.testAcc = b.testAcc; } if (b.testBest) a.testBest = Math.max(a.testBest || 0, b.testBest); a.gbest = a.gbest || {}; mx(a.gbest, b.gbest);
 }
 function mergeUser(a, b) {
   mergeProg(a, b); a.en = a.en || newProg(); mergeProg(a.en, b.en || newProg());
@@ -1750,9 +1753,9 @@ function openRecord() {
   let h = `<div class="rec-grid"><div class="card"><b>${fmtMin(totalSec(u))}</b><span>총 연습 시간</span></div><div class="card"><b>${u.totalKeys || 0}</b><span>친 글자</span></div><div class="card"><b>${totalStars(u)}</b><span>모은 별</span></div><div class="card"><b>${td.lines}/${DAILY_GOAL}</b><span>오늘 연습 줄</span></div></div>`;
   Object.entries(COURSES).forEach(([c, C]) => {
     const p = progOf(u, c); const wk = weakKeys(p, C.levels[C.levels.length - 1], 5);
-    h += `<div class="sect">${C.flag} ${C.name} 코스 <span class="sub">1분 기록 ${p.testBest ? p.testBest + '타/분' : '없음'}${p.testAcc ? ' · 정확도 ' + p.testAcc + '%' : ''}</span></div>`;
-    h += `<table class="rec"><tr><th>레벨</th><th>이름</th><th>최고 타수</th><th>별</th><th>상태</th></tr>`;
-    C.levels.forEach(L => { const i = levelStarInfo(p, L); const st = p.passed[L.n] ? '통과 ✓' : L.n <= p.unlocked ? '진행 중' : '잠김'; h += `<tr><td>${L.n}</td><td class="l">${esc(L.title)}</td><td>${p.best[L.n] || '-'}</td><td>★ ${i.total}</td><td>${st}</td></tr>`; });
+    h += `<div class="sect">${C.flag} ${C.name} 코스 <span class="sub">1분 기록 ${p.testBest ? p.testBest + '타/분' : '없음'}${p.testAcc ? ' · 정확도 ' + p.testAcc + '%' : ''}${p.testAt ? ' · ' + p.testAt.slice(5).replace('-', '/') : ''}</span></div>`;
+    h += `<table class="rec"><tr><th>레벨</th><th>이름</th><th>최고 타수</th><th>게임 최고</th><th>별</th><th>상태</th></tr>`;
+    C.levels.forEach(L => { const i = levelStarInfo(p, L); const st = p.passed[L.n] ? '통과 ✓' : L.n <= p.unlocked ? '진행 중' : '잠김'; h += `<tr><td>${L.n}</td><td class="l">${esc(L.title)}</td><td>${p.best[L.n] || '-'}</td><td>${(() => { const gb = [1, 2, 3].map(k => (p.gbest || {})[L.n + '-' + k] || 0); const m = Math.max(...gb); return m ? `${m}${L.game.type === 'race' ? '타' : '점'}<small class="muted"> (${gb.indexOf(m) + 1}단계)</small>` : '-'; })()}</td><td>★ ${i.total}</td><td>${st}</td></tr>`; });
     h += '</table>';
     if (wk.length) h += `<div class="card" style="margin-bottom:14px"><div style="font-weight:900;margin-bottom:6px">🩹 ${C.name} 자주 틀린 글쇠</div><div class="weakkeys">${wk.map(([k, cnt]) => `<span class="k" style="background:#fee2e2">${esc(k)}<small>${cnt}번</small></span>`).join('')}</div></div>`;
   });
@@ -1797,7 +1800,7 @@ function openClass() {
 }
 function cleanRec(r) {
   if (!r || typeof r !== 'object' || typeof r.name !== 'string') return null;
-  const c = x => ({lv: NUM(x && x.lv, 1, 10), stars: NUM(x && x.stars), best: NUM(x && x.best, 0, 2000), master: !!(x && x.master)});
+  const c = x => ({lv: NUM(x && x.lv, 1, 10), stars: NUM(x && x.stars), best: NUM(x && x.best, 0, 2000), master: !!(x && x.master), t: NUM(x && x.t, 0, 2000), ta: NUM(x && x.ta, 0, 100), td: x && typeof x.td === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(x.td) ? x.td : '', g: NUM(x && x.g, 0, 1e6)});
   return {name: r.name.slice(0, 12), avatar: typeof r.avatar === 'string' ? r.avatar.slice(0, 4) : '🙂', ko: c(r.ko), en: c(r.en), total: NUM(r.total), keys: NUM(r.keys),
     today: {date: r.today && typeof r.today.date === 'string' ? r.today.date.slice(0, 10) : '', lines: NUM(r.today && r.today.lines, 0, 999)}, updatedAt: NUM(r.updatedAt, 0, 4e12)};
 }
@@ -1822,16 +1825,18 @@ function renderClass() {
   const today = new Date(); today.setHours(0, 0, 0, 0);
   const tdl = r => r.today.date === dayKey() ? r.today.lines : 0;
   $$('#cls-sort .tab').forEach(t => t.classList.toggle('on', t.dataset.sort === clsSort));
-  const sorted = clsSort === 'stars' ? list.sort((a, b) => b.total - a.total || b.keys - a.keys) : list.sort((a, b) => tdl(b) - tdl(a) || a.name.localeCompare(b.name, 'ko'));
+  const R = r => r[clsCourse] || {}; const sorted = clsSort === 'rec' ? list.sort((a, b) => R(b).t - R(a).t || R(b).best - R(a).best || a.name.localeCompare(b.name, 'ko')) : clsSort === 'stars' ? list.sort((a, b) => b.total - a.total || b.keys - a.keys) : list.sort((a, b) => tdl(b) - tdl(a) || a.name.localeCompare(b.name, 'ko'));
   sorted.forEach((r, i) => {
     const d = document.createElement('div'); d.className = 'rankrow' + (me && r.name === me.name ? ' me' : '');
-    const medal = clsSort !== 'stars' ? '·' : i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : (i + 1);
+    const ranked = clsSort === 'stars' || (clsSort === 'rec' && R(r).t > 0); const medal = !ranked ? '·' : i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : (i + 1);
     const best = Math.max(r.ko && r.ko.best || 0, r.en && r.en.best || 0);
     const isToday = r.updatedAt && r.updatedAt >= today.getTime();
     const tl = r.today && r.today.date === dayKey() ? r.today.lines : 0;
     d.innerHTML = `<span class="rk">${medal}</span><span class="av">${esc(r.avatar || '🙂')}</span><span class="nm">${esc(r.name)}${isToday ? ` <span class="today">오늘 ${tl}줄</span>` : ''}<small>한글 LV${r.ko ? r.ko.lv : 1}${r.ko && r.ko.master ? '👑' : ''} · 영어 LV${r.en ? r.en.lv : 1}${r.en && r.en.master ? '👑' : ''}${best ? ' · 최고 ' + best + '타/분' : ''}</small></span><span class="pt">⭐ ${r.total || 0}</span>`;
+    if (clsSort === 'rec') { const x = R(r); d.classList.add('recrow'); d.innerHTML = `<span class="rk">${medal}</span><span class="av">${esc(r.avatar || '🙂')}</span><span class="nm">${esc(r.name)}<small>${x.t ? `정확도 ${x.ta}%${x.td ? ' · ' + x.td.slice(5).replace('-', '/') + ' 기록' : ''}` : '1분 속도 재기 기록 없음'} · 연습 최고 ${x.best ? x.best + '타' : '-'} · 🎮 최고 ${x.g ? x.g + '점' : '-'}</small></span><span class="pt">⏱ ${x.t ? x.t + '타' : '-'}</span>`; }
     rank.appendChild(d);
   });
+  if (clsSort === 'rec' && list.length) { const n = document.createElement('div'); n.className = 'muted'; n.style.cssText = 'font-size:12px;padding:8px 12px'; n.textContent = `${COURSES[clsCourse].name} 1분 속도 재기 최고 기록 순이에요. 기록은 지워지지 않고 더 좋은 기록이 나오면 바뀌어요.`; rank.appendChild(n); }
 }
 $$('#cls-tabs .tab').forEach(t => t.onclick = () => { clsCourse = t.dataset.course; renderClass(); });
 $$('#cls-sort .tab').forEach(t => t.onclick = () => { clsSort = t.dataset.sort; renderClass(); });
@@ -1907,7 +1912,7 @@ function openHub(n) {
   } else wc.innerHTML = `<div class="icon">👍</div><div class="body"><div class="name">아직 약점이 없어요</div><div class="desc">연습하다 틀린 글쇠가 여기에 모여요.</div></div>`;
   // 게임
   const g = L.game; const gate = gameGate(L, p); const gUnlocked = gate.ok; const gc = $('#hub-game');
-  gc.innerHTML = `<div class="icon">${g.icon}</div><div class="body"><div class="name">${esc(g.name)} ${p.games[n] ? starsHTML(p.games[n]) : ''}</div><div class="desc">${esc(g.rule)}</div>${gUnlocked ? '' : `<div class="locknote" style="margin-top:6px">🔒 ${gate.missing.length ? `새 글쇠 <b>${gate.missing.map(esc).join(' ')}</b> 줄(${gate.lines.join(', ')}번)을 마치고, ` : ''}연습 별 ${GAME_UNLOCK}개를 모으면 열려요 (지금 ${gate.stars}개)</div>`}</div>`;
+  gc.innerHTML = `<div class="icon">${g.icon}</div><div class="body"><div class="name">${esc(g.name)} ${p.games[n] ? starsHTML(p.games[n]) : ''}${(() => { const m = Math.max(0, ...[1, 2, 3].map(k => (p.gbest || {})[n + '-' + k] || 0)); return m ? ` <span class="muted" style="font-size:13px">🏆 최고 ${m}${g.type === 'race' ? '타/분' : '점'}</span>` : ''; })()}</div><div class="desc">${esc(g.rule)}</div>${gUnlocked ? '' : `<div class="locknote" style="margin-top:6px">🔒 ${gate.missing.length ? `새 글쇠 <b>${gate.missing.map(esc).join(' ')}</b> 줄(${gate.lines.join(', ')}번)을 마치고, ` : ''}연습 별 ${GAME_UNLOCK}개를 모으면 열려요 (지금 ${gate.stars}개)</div>`}</div>`;
   { const body = gc.querySelector('.body'); const row = document.createElement('div'); row.className = 'gstages';
     [1, 2, 3].forEach(k => { const open = gUnlocked && stageOpen(p, n, k); const ss = stageStars(p, n, k); const b = document.createElement('button'); b.className = 'btn sm'; b.disabled = !open;
       b.innerHTML = `${open ? '' : '🔒 '}${k}단계 ${GAME_STAGES[k].name}<small>${'★'.repeat(ss)}${'☆'.repeat(3 - ss)}</small>`;
@@ -2041,7 +2046,7 @@ const Practice = {
     const missedHTML = missedTop.length ? `<div class="muted" style="font-size:13px;font-weight:700;margin-bottom:6px">자주 틀린 글쇠: ${missedTop.map(([k, c]) => `<b>${esc(k)}</b> ${c}번`).join(' · ')}</div>` : '';
     const restHTML = (td.sec >= 900 && (!td.restAt || td.sec - td.restAt >= 900)) ? (td.restAt = td.sec, '<div class="note" style="margin-bottom:8px">👀 벌써 ' + fmtMin(td.sec) + ' 연습했어요. 결과를 본 뒤 20초만 먼 곳을 보고 손목을 털어요!</div>') : '';
     if (this.mode === 'test') {
-      const best = p.testBest || 0; p.testBest = Math.max(best, speed); p.testLast = speed; p.testAcc = acc; save(); updateChip(); Snd.done();
+      const best = p.testBest || 0; if (speed > best) { p.testAt = dayKey(); p.testAcc = acc; } p.testBest = Math.max(best, speed); p.testLast = speed; save(); updateChip(); Snd.done();
       Modal.show({title: '⏱ 1분 기록', html: `<div class="statgrid"><div><b>${speed}</b><span>타/분</span></div><div><b>${acc}%</b><span>정확도</span></div><div><b>${this.correct}</b><span>맞게 친 수</span></div></div>${speed >= best && speed > 0 ? '<span class="newrec">🏆 내 최고 기록!</span>' : `<span class="muted" style="font-size:13px;font-weight:700">내 최고 ${best}타/분</span>`}<div style="margin-top:6px">${missedHTML}</div>${restHTML}`, primary: {label: '다시 재기', fn: () => startPractice(n, 'test')}, secondary: activityBackAction()});
       return;
     }
@@ -2167,11 +2172,12 @@ function startGame(n, stageNo) {
   if (GStage > 1) rule += g.type === 'race' ? ` ${GStage}단계: 상대가 더 빨라요!` : ` ${GStage}단계(${SK().name}): 더 빠르고 더 많이 나와요!`;
   Modal.show({title: `${g.icon} ${esc(g.name)} · ${GStage}단계 ${SK().name}`, html: `<p>${esc(rule)}</p><p class="muted" style="font-size:13px">Enter를 누르거나 시작 버튼을 눌러요</p>`, primary: {label: '시작!', fn: () => { if (document.activeElement && document.activeElement.blur) document.activeElement.blur(); GStat.begin(); game.start(L); }}, secondary: activityBackAction()});
 }
-function finishGame(L, stars, html) {
+function finishGame(L, stars, html, score) {
   GStat.commit();
   const p = prog(); const before = levelStarInfo(p, L);
   const st = GStage; const wasOpen = st < 3 && stageOpen(p, L.n, st + 1);
   p.gst = p.gst || {}; if (!((L.n + '-1') in p.gst)) p.gst[L.n + '-1'] = p.games[L.n] || 0; p.gst[L.n + '-' + st] = Math.max(p.gst[L.n + '-' + st] || 0, stars);
+  const gk = L.n + '-' + st; p.gbest = p.gbest || {}; const gPrev = p.gbest[gk] || 0; const gNew = score > gPrev; if (score) p.gbest[gk] = Math.max(gPrev, Math.round(score));
   p.games[L.n] = Math.max(p.games[L.n] || 0, stars); save(); const after = levelStarInfo(p, L); updateChip();
   const openedNext = st < 3 && !wasOpen && stageOpen(p, L.n, st + 1);
   if (openedNext) setTimeout(() => confetti(50, 1400), 200);
@@ -2179,7 +2185,7 @@ function finishGame(L, stars, html) {
   KB.setNext(null);
   Modal.show({
     title: stars >= 3 ? '🎉 대단해요!' : stars >= 2 ? '😊 잘했어요!' : stars >= 1 ? '👍 좋아요!' : '💪 다시 해 볼까요?',
-    html: bigStarsHTML(stars) + `<p>${html}</p>` + (openedNext ? `<div class="newrec" style="background:#ede9fe;color:#6d28d9">🔓 ${st + 1}단계(${GAME_STAGES[st + 1].name})가 열렸어요!</div>` : st < 3 && !stageOpen(p, L.n, st + 1) ? `<p class="muted" style="font-size:13px;margin:6px 0 0">별 2개 이상이면 ${st + 1}단계가 열려요</p>` : ''),
+    html: bigStarsHTML(stars) + `<p>${html}</p>` + (gNew && gPrev ? '<span class="newrec">🏆 내 최고 기록!</span> ' : '') + (score ? `<p class="muted" style="font-size:13px;margin:4px 0 0">${st}단계 내 최고 ${p.gbest[gk]}${L.game.type === 'race' ? '타/분' : '점'}</p>` : '') + (openedNext ? `<div class="newrec" style="background:#ede9fe;color:#6d28d9">🔓 ${st + 1}단계(${GAME_STAGES[st + 1].name})가 열렸어요!</div>` : st < 3 && !stageOpen(p, L.n, st + 1) ? `<p class="muted" style="font-size:13px;margin:6px 0 0">별 2개 이상이면 ${st + 1}단계가 열려요</p>` : ''),
     primary: openedNext ? {label: `${st + 1}단계 ▶`, fn: () => startGame(L.n, st + 1)} : {label: '다시 하기', fn: () => startGame(L.n, st)},
     secondary: openedNext ? {label: '다시 하기', fn: () => startGame(L.n, st)} : activityBackAction()
   });
@@ -2242,7 +2248,7 @@ const MoleGame = {
     const keyAcc = this.hits / Math.max(1, this.hits + this.errors);
     const stars = Math.min(ratio >= 0.85 ? 3 : ratio >= 0.65 ? 2 : ratio >= 0.4 ? 1 : 0, keyAcc >= 0.8 ? 3 : keyAcc >= 0.6 ? 2 : keyAcc >= 0.4 ? 1 : 0);
     this.holes.forEach(h => this.hide(h));
-    finishGame(this.L, stars, `잡은 두더지 ${this.hits}마리 / ${resolved}마리 · 틀린 키 ${this.errors}번<br>점수 <b>${this.score}</b>점`);
+    finishGame(this.L, stars, `잡은 두더지 ${this.hits}마리 / ${resolved}마리 · 틀린 키 ${this.errors}번<br>점수 <b>${this.score}</b>점`, this.score);
   },
   stop() { this.running = false; cancelAnimationFrame(this.raf); }
 };
@@ -2324,7 +2330,7 @@ const FallGame = {
     let stars = ratio >= 0.85 ? 3 : ratio >= 0.65 ? 2 : ratio >= 0.45 ? 1 : 0; if (this.lives <= 0) stars = Math.min(stars, 1);
     const keyAcc = this.okKeys / Math.max(1, this.okKeys + this.errors); stars = Math.min(stars, keyAcc >= 0.8 ? 3 : keyAcc >= 0.6 ? 2 : keyAcc >= 0.4 ? 1 : 0);
     this.items.forEach(i => i.el.remove()); this.items = []; $('#g-buffer').textContent = '';
-    finishGame(this.L, stars, `${esc(this.L.game.unitName)} ${this.popped}개 성공 · 놓침 ${this.escaped}개 · 틀린 키 ${this.errors}번<br>점수 <b>${this.score}</b>점`);
+    finishGame(this.L, stars, `${esc(this.L.game.unitName)} ${this.popped}개 성공 · 놓침 ${this.escaped}개 · 틀린 키 ${this.errors}번<br>점수 <b>${this.score}</b>점`, this.score);
   },
   stop() { this.running = false; cancelAnimationFrame(this.raf); }
 };
@@ -2365,7 +2371,7 @@ const RaceGame = {
     const acc = Math.round(this.correct / (this.correct + this.errors) * 100); const win = !this.cpuDone;
     const k = SK().cpu; let stars = speed >= this.L.game.t3 * k ? 3 : speed >= this.L.game.t2 * k ? 2 : 1; if (acc < 85) stars = Math.max(1, stars - 1);
     const p = prog(); p.best[this.L.n] = Math.max(p.best[this.L.n] || 0, speed);
-    finishGame(this.L, stars, `${win ? '🏆 이겼어요!' : '아쉽게 졌지만 완주했어요!'}<br>속도 <b>${speed}</b>타/분 · 정확도 ${acc}%<br><small class="muted">다음 경주 상대는 내 기록에 맞춰 조금씩 빨라져요</small>`);
+    finishGame(this.L, stars, `${win ? '🏆 이겼어요!' : '아쉽게 졌지만 완주했어요!'}<br>속도 <b>${speed}</b>타/분 · 정확도 ${acc}%<br><small class="muted">다음 경주 상대는 내 기록에 맞춰 조금씩 빨라져요</small>`, speed);
   },
   stop() { this.running = false; cancelAnimationFrame(this.raf); }
 };
