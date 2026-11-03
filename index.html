@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<!-- 타자 모험 v2.6 우리반용 (2026-11-03) · 한글 두벌식 10레벨 + 영어 자판 8레벨 · 제작 kingkongssam -->
+<!-- 타자 모험 v2.7 우리반용 (2026-11-03) · 한글 두벌식 10레벨 + 영어 자판 8레벨 · 제작 kingkongssam -->
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#ff7a2f">
-<title>타자 모험 v2.6 — 기본 자리부터 차근차근 레벨 업</title>
+<title>타자 모험 v2.7 — 기본 자리부터 차근차근 레벨 업</title>
 <style>
 :root{
   --bg:#eef4fb; --card:#ffffff; --ink:#1f2a3d; --muted:#556178; --btn:#c2410c; --btn-dark:#8f2f08;
@@ -650,6 +650,30 @@ function starsForAcc(acc) { return acc >= 97 ? 3 : acc >= 90 ? 2 : acc >= 80 ? 1
 const LINE_PASS = 90;
 function lineStars(acc, speed, target) { return acc < LINE_PASS ? 0 : acc >= 97 && speed >= target ? 3 : acc >= 95 ? 2 : 1; }
 // 한 줄을 몇 번 이어 칠지: 짧은 줄은 3번, 긴 줄도 최소 2번
+/* 이어 치기 글: 첫 번째는 원래 줄, 두세 번째는 같은 글쇠로 모양을 바꿔서(똑같은 줄 반복 방지) */
+function lineText(L, idx) {
+  const base = L.lines[idx]; const reps = lineReps(base); const out = [base];
+  const words = base.split(' ').filter(Boolean); const chars = [...base.replace(/ /g, '')]; const uniq = [...new Set(chars)];
+  const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+  const isDrill = idx < (L.drills || 0);
+  for (let r = 1; r < reps; r++) {
+    let t = base;
+    if (isDrill && uniq.length === 1) {
+      const k = uniq[0]; const prev = [...new Set(L.lines.slice(0, idx).join('').replace(/ /g, ''))].filter(c => c !== k);
+      if (prev.length) {
+        // 새 글쇠 + 앞에서 익힌 글쇠 섞기 (새 글쇠가 절반 넘게)
+        t = words.map(w => { const n = [...w].length; let a; do { a = Array.from({length: n}, (_, i) => i % 2 === 0 || Math.random() < 0.5 ? k : prev[Math.floor(Math.random() * prev.length)]); a = shuffle(a); } while (a.filter(c => c === k).length * 2 <= n || a.every(c => c === k)); return a.join(''); }).join(' ');
+      } else {
+        // 첫 글쇠뿐이면 띄어쓰기 길이를 바꿔서
+        for (let tries = 0; tries < 8 && (t === base || out.includes(t)); tries++) { let left = chars.length; const parts = []; while (left > 0) { const n = Math.min(left, 2 + Math.floor(Math.random() * 4)); parts.push(k.repeat(n)); left -= n; } t = parts.join(' '); }
+      }
+    } else if (words.length > 1 && !/[.,!?;:'"]/.test(base.replace(/;/g, isDrill ? '' : ';'))) { // 낱말 줄은 순서를 바꿔서 (문장은 그대로)
+      for (let tries = 0; tries < 8 && (t === base || out.includes(t)); tries++) t = shuffle(words).join(' ');
+    }
+    out.push(t);
+  }
+  return out.join('\n');
+}
 function lineReps(t) { const w = totalWeight(textUnits(t)); return Math.max(2, Math.min(3, Math.ceil(45 / Math.max(w, 1)))); }
 function pick(arr, n) { const a = [...arr]; for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a.slice(0, n); }
 
@@ -954,7 +978,7 @@ function validateContent() {
 <script>
 /* ================= 저장 ================= */
 const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
-const APP_VERSION = '2.6', APP_DATE = '2026-11-03';
+const APP_VERSION = '2.7', APP_DATE = '2026-11-03';
 /* ===== 우리 반 공유(선택) : Firebase 설정 =====
    Firebase 콘솔 → 프로젝트 설정 → 내 앱(웹) → SDK 설정의 firebaseConfig 값을 아래에 그대로 붙여 넣으세요.
    Realtime Database를 만들고 databaseURL까지 넣어야 켜집니다. 비워 두면 혼자 쓰는 앱으로 돌아갑니다. */
@@ -1956,7 +1980,7 @@ const Practice = {
     this.mode = idx === 'challenge' ? 'challenge' : idx === 'weak' ? 'weak' : idx === 'test' ? 'test' : 'line';
     this.free = this.mode === 'test' ? true : !!this.L.free; this.limit = this.mode === 'test' ? 60 : 0; this.missed = {}; this.weak = [];
     if (this.mode === 'weak') { this.weak = weakKeys(prog(), this.L).map(x => x[0]); if (!this.weak.length) { openHub(n); return; } }
-    this.text = this.mode === 'test' ? genTestText(this.L.course) : (this.mode === 'challenge' ? this.L.challenge : this.mode === 'weak' ? genWeakText(this.L, this.weak) : Array(lineReps(this.L.lines[idx])).fill(this.L.lines[idx]).join('\n')) + '\n';
+    this.text = this.mode === 'test' ? genTestText(this.L.course) : (this.mode === 'challenge' ? this.L.challenge : this.mode === 'weak' ? genWeakText(this.L, this.weak) : lineText(this.L, idx)) + '\n';
     this.units = textUnits(this.text); this.typed = []; this.errors = 0; this.correct = 0; this.combo = 0; this.maxCombo = 0; this.startAt = null; this.bestBefore = prog().best[n] || 0;
     show('scr-practice'); $('#pr-rider').textContent = avatarOf(user());
     $('#pr-title').textContent = `${levelLabel(this.L)} · ${this.L.title}`;
