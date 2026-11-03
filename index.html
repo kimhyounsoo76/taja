@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<!-- 타자 모험 v2.2 우리반용 (2026-11-03) · 한글 두벌식 10레벨 + 영어 자판 8레벨 · 제작 kingkongssam -->
+<!-- 타자 모험 v2.3 우리반용 (2026-11-03) · 한글 두벌식 10레벨 + 영어 자판 8레벨 · 제작 kingkongssam -->
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#ff7a2f">
-<title>타자 모험 v2.2 — 기본 자리부터 차근차근 레벨 업</title>
+<title>타자 모험 v2.3 — 기본 자리부터 차근차근 레벨 업</title>
 <style>
 :root{
   --bg:#eef4fb; --card:#ffffff; --ink:#1f2a3d; --muted:#556178; --btn:#c2410c; --btn-dark:#8f2f08;
@@ -195,6 +195,10 @@ table.rec td.l{text-align:left;font-weight:800}
 .gamecard .body,.chcard .body{flex:1;min-width:0}
 .gamecard .name,.chcard .name{font-weight:900;font-size:17px}
 .gamecard .desc,.chcard .desc{font-size:14px;color:var(--muted);margin-top:2px}
+.gstages{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.gstages .btn{flex:1 1 92px;display:flex;flex-direction:column;align-items:center;gap:2px;line-height:1.15;padding:8px 6px}
+.gstages .btn small{font-size:12px;font-weight:800;opacity:.9;letter-spacing:1px}
+.gstages .btn[disabled]{opacity:.45}
 .chcard .icon{font-size:40px;line-height:1}
 .locknote{font-size:13px;color:var(--muted);font-weight:700}
 
@@ -946,7 +950,7 @@ function validateContent() {
 <script>
 /* ================= 저장 ================= */
 const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
-const APP_VERSION = '2.2', APP_DATE = '2026-11-03';
+const APP_VERSION = '2.3', APP_DATE = '2026-11-03';
 /* ===== 우리 반 공유(선택) : Firebase 설정 =====
    Firebase 콘솔 → 프로젝트 설정 → 내 앱(웹) → SDK 설정의 firebaseConfig 값을 아래에 그대로 붙여 넣으세요.
    Realtime Database를 만들고 databaseURL까지 넣어야 켜집니다. 비워 두면 혼자 쓰는 앱으로 돌아갑니다. */
@@ -993,7 +997,7 @@ function normProg(src, levelsLen) {
   p.unlocked = NUM(src.unlocked, 1, levelsLen) || 1; p.master = !!src.master;
   const copyNum = (from, to, lo, hi) => { if (from && typeof from === 'object') Object.keys(from).forEach(k => { if (/^[\w\-ㄱ-ㅣA-Za-z;,.'!?]{1,8}$/.test(k)) to[k] = NUM(from[k], lo, hi); }); };
   if (src.gameOpen && typeof src.gameOpen === 'object') { p.gameOpen = {}; Object.keys(src.gameOpen).forEach(k => { if (/^\d{1,2}$/.test(k) && src.gameOpen[k]) p.gameOpen[k] = true; }); }
-  copyNum(src.lines, p.lines, 0, 3); copyNum(src.games, p.games, 0, 3); copyNum(src.best, p.best, 0, 2000);
+  copyNum(src.lines, p.lines, 0, 3); copyNum(src.games, p.games, 0, 3); copyNum(src.gst, p.gst, 0, 3); copyNum(src.best, p.best, 0, 2000);
   if (src.passed && typeof src.passed === 'object') Object.keys(src.passed).forEach(k => { if (src.passed[k] && NUM(k, 1, levelsLen) == k) p.passed[k] = true; });
   p.missed = {}; copyNum(src.missed, p.missed, 0, 1e6); p.seen = {}; copyNum(src.seen, p.seen, 0, 1e7);
   if (src.testBest) p.testBest = NUM(src.testBest, 0, 2000); if (src.testAcc) p.testAcc = NUM(src.testAcc, 0, 100);
@@ -1009,7 +1013,7 @@ function normalizeUser(src, name) {
 let saveWarned = false;
 function save() { try { localStorage.setItem(LS_KEY, JSON.stringify(DB)); } catch (e) { if (!saveWarned) { saveWarned = true; setTimeout(() => toast('⚠️ 이 브라우저에 기록이 저장되지 않아요. 내 기록 → 기록 파일 저장을 써 주세요'), 300); } } if (typeof Cloud !== 'undefined') Cloud.schedule(); }
 function user() { return hasUser(DB, DB.current) ? DB.users[DB.current] : undefined; }
-function newProg() { return {unlocked: 1, passed: {}, lines: {}, games: {}, best: {}, master: false}; }
+function newProg() { return {unlocked: 1, passed: {}, lines: {}, games: {}, gst: {}, best: {}, master: false}; }
 const AVATARS = ['🐱','🐶','🐰','🦊','🐻','🐼','🐸','🦁','🐯','🐨','🐵','🐥'];
 let pickedAvatar = AVATARS[Math.floor(Math.random() * AVATARS.length)];
 function avatarOf(u) { if (u.avatar) return u.avatar; let h = 0; for (const c of u.name) h = (h * 31 + c.charCodeAt(0)) % 9973; return AVATARS[h % AVATARS.length]; }
@@ -1665,7 +1669,7 @@ async function restoreFromCloud(name) {
 }
 function mergeProg(a, b) {
   const mx = (x, y) => { Object.keys(y || {}).forEach(k => { x[k] = Math.max(x[k] || 0, y[k] || 0); }); };
-  mx(a.lines, b.lines); mx(a.games, b.games); mx(a.best, b.best); a.missed = a.missed || {}; mx(a.missed, b.missed); a.seen = a.seen || {}; mx(a.seen, b.seen);
+  mx(a.lines, b.lines); mx(a.games, b.games); a.gst = a.gst || {}; mx(a.gst, b.gst); mx(a.best, b.best); a.missed = a.missed || {}; mx(a.missed, b.missed); a.seen = a.seen || {}; mx(a.seen, b.seen);
   Object.keys(b.passed || {}).forEach(k => { a.passed[k] = true; });
   a.unlocked = Math.max(a.unlocked || 1, b.unlocked || 1); a.master = a.master || b.master;
   if (b.testBest) a.testBest = Math.max(a.testBest || 0, b.testBest);
@@ -1903,8 +1907,12 @@ function openHub(n) {
   } else wc.innerHTML = `<div class="icon">👍</div><div class="body"><div class="name">아직 약점이 없어요</div><div class="desc">연습하다 틀린 글쇠가 여기에 모여요.</div></div>`;
   // 게임
   const g = L.game; const gate = gameGate(L, p); const gUnlocked = gate.ok; const gc = $('#hub-game');
-  gc.innerHTML = `<div class="icon">${g.icon}</div><div class="body"><div class="name">${esc(g.name)} ${p.games[n] ? starsHTML(p.games[n]) : ''}</div><div class="desc">${esc(g.rule)}</div>${gUnlocked ? '' : `<div class="locknote" style="margin-top:6px">🔒 ${gate.missing.length ? `새 글쇠 <b>${gate.missing.map(esc).join(' ')}</b> 줄(${gate.lines.join(', ')}번)을 마치고, ` : ''}연습 별 ${GAME_UNLOCK}개를 모으면 열려요 (지금 ${gate.stars}개)</div>`}</div><button class="btn" ${gUnlocked ? '' : 'disabled'}>놀기</button>`;
-  gc.querySelector('.btn').onclick = () => startGame(n);
+  gc.innerHTML = `<div class="icon">${g.icon}</div><div class="body"><div class="name">${esc(g.name)} ${p.games[n] ? starsHTML(p.games[n]) : ''}</div><div class="desc">${esc(g.rule)}</div>${gUnlocked ? '' : `<div class="locknote" style="margin-top:6px">🔒 ${gate.missing.length ? `새 글쇠 <b>${gate.missing.map(esc).join(' ')}</b> 줄(${gate.lines.join(', ')}번)을 마치고, ` : ''}연습 별 ${GAME_UNLOCK}개를 모으면 열려요 (지금 ${gate.stars}개)</div>`}</div>`;
+  { const body = gc.querySelector('.body'); const row = document.createElement('div'); row.className = 'gstages';
+    [1, 2, 3].forEach(k => { const open = gUnlocked && stageOpen(p, n, k); const ss = stageStars(p, n, k); const b = document.createElement('button'); b.className = 'btn sm'; b.disabled = !open;
+      b.innerHTML = `${open ? '' : '🔒 '}${k}단계 ${GAME_STAGES[k].name}<small>${'★'.repeat(ss)}${'☆'.repeat(3 - ss)}</small>`;
+      b.title = open ? '' : `${k - 1}단계에서 별 2개 이상이면 열려요`; b.onclick = () => startGame(n, k); row.appendChild(b); });
+    body.appendChild(row); if (gUnlocked) { const t = document.createElement('div'); t.className = 'muted'; t.style.cssText = 'font-size:12px;margin-top:6px'; t.textContent = '별 2개 이상이면 다음 단계가 열려요'; body.appendChild(t); } }
   // 도전
   const drillLeft = L.lines.slice(0, L.drills || 0).filter((t, i) => !(p.lines[n + '-' + i] >= 1)).length;
   const chUnlocked = info.total >= NEED_STARS && drillLeft === 0; const passed = !!p.passed[n]; const cc = $('#hub-ch');
@@ -2129,12 +2137,22 @@ const GStat = {t: 0, keys: 0, missed: {}, seen: {},
 /* 경주 상대 속도: 내 기록의 90% (처음엔 레벨 기준의 60%), 레벨 기준을 넘지 않음 */
 function raceCpu(L) {
   const p = prog(); const mine = Math.max(p.best[L.n] || 0, p.best[L.n - 1] || 0, p.testBest || 0);
-  return Math.round(Math.max(40, Math.min(L.game.cpu, mine ? mine * 0.9 : L.game.cpu * 0.6)));
+  const k = SK().cpu; return Math.round(Math.max(40, Math.min(L.game.cpu * k, (mine ? mine * 0.9 : L.game.cpu * 0.6) * k)));
 }
-function startGame(n) {
+/* 게임 단계: 1 쉬움 · 2 보통 · 3 어려움. 앞 단계에서 별 2개 이상이면 다음 단계가 열림 */
+const GAME_STAGES = [null,
+  {name: '쉬움', spd: 1, gap: 1, stay: 1, act: 0, cpu: 1},
+  {name: '보통', spd: 1.25, gap: 0.82, stay: 0.8, act: 1, cpu: 1.15},
+  {name: '어려움', spd: 1.5, gap: 0.68, stay: 0.65, act: 1, cpu: 1.3}];
+let GStage = 1;
+function SK() { return GAME_STAGES[GStage] || GAME_STAGES[1]; }
+function stageStars(p, n, st) { const g = p.gst || {}; const k = n + '-' + st; return st === 1 && !(k in g) ? (p.games[n] || 0) : (g[k] || 0); }
+function stageOpen(p, n, st) { return st === 1 || stageStars(p, n, st - 1) >= 2; }
+function startGame(n, stageNo) {
   stopAll(); curLevel = n; const L = LV(n); const g = L.game; setLang(L.course);
+  { const p = prog(); GStage = stageNo || [3, 2, 1].find(k => stageOpen(p, n, k)); if (!stageOpen(p, n, GStage)) GStage = 1; }
   show('scr-game');
-  $('#g-title').textContent = `${g.icon} ${g.name}`; $('#g-sub').textContent = `${levelLabel(L)} · ${L.title}`;
+  $('#g-title').textContent = `${g.icon} ${g.name} · ${GStage}단계`; $('#g-sub').textContent = `${levelLabel(L)} · ${L.title}`;
   const stage = $('#g-stage'); stage.className = 'stage ' + g.type + ' ' + (g.dir || '') + ' ' + (g.theme || ''); stage.innerHTML = '';
   $('#g-buffer').textContent = '';
   $('#g-lives-chip').style.display = g.type === 'fall' ? '' : 'none';
@@ -2145,19 +2163,25 @@ function startGame(n) {
   CurrentGame = game;
   let rule = g.rule;
   if (g.type === 'race') { L.cpuNow = raceCpu(L); rule = rule.replace(/\(\d+타\/분\)/, `(${L.cpuNow}타/분, 내 기록에 맞춘 속도)`); }
-  if (L.n <= 2 && g.type !== 'race') rule += ' 처음 레벨이라 천천히 시작해요. 키보드 말고 화면을 보며 쳐요!';
-  Modal.show({title: `${g.icon} ${esc(g.name)}`, html: `<p>${esc(rule)}</p><p class="muted" style="font-size:13px">Enter를 누르거나 시작 버튼을 눌러요</p>`, primary: {label: '시작!', fn: () => { if (document.activeElement && document.activeElement.blur) document.activeElement.blur(); GStat.begin(); game.start(L); }}, secondary: activityBackAction()});
+  if (L.n <= 2 && g.type !== 'race' && GStage === 1) rule += ' 처음 레벨이라 천천히 시작해요. 키보드 말고 화면을 보며 쳐요!';
+  if (GStage > 1) rule += g.type === 'race' ? ` ${GStage}단계: 상대가 더 빨라요!` : ` ${GStage}단계(${SK().name}): 더 빠르고 더 많이 나와요!`;
+  Modal.show({title: `${g.icon} ${esc(g.name)} · ${GStage}단계 ${SK().name}`, html: `<p>${esc(rule)}</p><p class="muted" style="font-size:13px">Enter를 누르거나 시작 버튼을 눌러요</p>`, primary: {label: '시작!', fn: () => { if (document.activeElement && document.activeElement.blur) document.activeElement.blur(); GStat.begin(); game.start(L); }}, secondary: activityBackAction()});
 }
 function finishGame(L, stars, html) {
   GStat.commit();
   const p = prog(); const before = levelStarInfo(p, L);
+  const st = GStage; const wasOpen = st < 3 && stageOpen(p, L.n, st + 1);
+  p.gst = p.gst || {}; if (!((L.n + '-1') in p.gst)) p.gst[L.n + '-1'] = p.games[L.n] || 0; p.gst[L.n + '-' + st] = Math.max(p.gst[L.n + '-' + st] || 0, stars);
   p.games[L.n] = Math.max(p.games[L.n] || 0, stars); save(); const after = levelStarInfo(p, L); updateChip();
+  const openedNext = st < 3 && !wasOpen && stageOpen(p, L.n, st + 1);
+  if (openedNext) setTimeout(() => confetti(50, 1400), 200);
   if (stars >= 2) Snd.done(); else Snd.pop();
   KB.setNext(null);
   Modal.show({
     title: stars >= 3 ? '🎉 대단해요!' : stars >= 2 ? '😊 잘했어요!' : stars >= 1 ? '👍 좋아요!' : '💪 다시 해 볼까요?',
-    html: bigStarsHTML(stars) + `<p>${html}</p>`,
-    primary: {label: '다시 하기', fn: () => startGame(L.n)}, secondary: activityBackAction()
+    html: bigStarsHTML(stars) + `<p>${html}</p>` + (openedNext ? `<div class="newrec" style="background:#ede9fe;color:#6d28d9">🔓 ${st + 1}단계(${GAME_STAGES[st + 1].name})가 열렸어요!</div>` : st < 3 && !stageOpen(p, L.n, st + 1) ? `<p class="muted" style="font-size:13px;margin:6px 0 0">별 2개 이상이면 ${st + 1}단계가 열려요</p>` : ''),
+    primary: openedNext ? {label: `${st + 1}단계 ▶`, fn: () => startGame(L.n, st + 1)} : {label: '다시 하기', fn: () => startGame(L.n, st)},
+    secondary: openedNext ? {label: '다시 하기', fn: () => startGame(L.n, st)} : activityBackAction()
   });
   checkUnlocks(L.n, before, after);
 }
@@ -2180,7 +2204,7 @@ const MoleGame = {
   tick(now) {
     if (!this.running) return;
     const el = (now - this.t0) / 1000; const prog = Math.min(1, el / this.dur);
-    const easy = this.L.n <= 2; const maxActive = prog < 0.35 ? 1 : prog < 0.7 || easy ? 2 : 3; const stay = (easy ? 2700 : 2100) - 900 * prog; const gap = (easy ? 1600 : 1200) - 600 * prog;
+    const easy = this.L.n <= 2 && GStage === 1; const k = SK(); const maxActive = (prog < 0.35 ? 1 : prog < 0.7 || easy ? 2 : 3) + k.act; const stay = ((easy ? 2700 : 2100) - 900 * prog) * k.stay; const gap = ((easy ? 1600 : 1200) - 600 * prog) * k.gap;
     this.holes.forEach(h => { if (h.jamo && now > h.until) this.hide(h); });
     const act = this.holes.filter(h => h.jamo).length;
     if (now >= this.nextSpawn && act < maxActive && el < this.dur - 1.2) {
@@ -2238,8 +2262,8 @@ const FallGame = {
     if (!this.running) return;
     const dt = Math.min(0.05, (now - this.last) / 1000); this.last = now;
     const el = (now - this.t0) / 1000; const prog = Math.min(1, el / this.dur); const single = !!this.L.game.single;
-    const easy = this.L.n <= 2; const speed = single ? (easy ? 12 + 8 * prog : 17 + 12 * prog) : 12 + 9 * prog;
-    const gap = single ? (easy ? 1700 : 1300) - 500 * prog : 2000 - 800 * prog;
+    const easy = this.L.n <= 2 && GStage === 1; const k = SK(); const speed = (single ? (easy ? 12 + 8 * prog : 17 + 12 * prog) : 12 + 9 * prog) * k.spd;
+    const gap = (single ? (easy ? 1700 : 1300) - 500 * prog : 2000 - 800 * prog) * k.gap;
     if (now >= this.nextSpawn && this.items.length < 6 && el < this.dur - 2) { this.spawn(speed); this.nextSpawn = now + gap; }
     for (const it of [...this.items]) {
       if (this.dir === 'down') it.y += it.speed * dt; else if (this.dir === 'up') it.y -= it.speed * dt; else it.x += it.speed * dt;
@@ -2339,7 +2363,7 @@ const RaceGame = {
     this.running = false; cancelAnimationFrame(this.raf); Input.handler = null;
     const total = totalWeight(this.units); const min = (performance.now() - this.startAt) / 60000; const speed = Math.round(total / Math.max(min, 0.01));
     const acc = Math.round(this.correct / (this.correct + this.errors) * 100); const win = !this.cpuDone;
-    let stars = speed >= this.L.game.t3 ? 3 : speed >= this.L.game.t2 ? 2 : 1; if (acc < 85) stars = Math.max(1, stars - 1);
+    const k = SK().cpu; let stars = speed >= this.L.game.t3 * k ? 3 : speed >= this.L.game.t2 * k ? 2 : 1; if (acc < 85) stars = Math.max(1, stars - 1);
     const p = prog(); p.best[this.L.n] = Math.max(p.best[this.L.n] || 0, speed);
     finishGame(this.L, stars, `${win ? '🏆 이겼어요!' : '아쉽게 졌지만 완주했어요!'}<br>속도 <b>${speed}</b>타/분 · 정확도 ${acc}%<br><small class="muted">다음 경주 상대는 내 기록에 맞춰 조금씩 빨라져요</small>`);
   },
