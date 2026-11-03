@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<!-- 타자연습 v2.4 (2026-11-03) · 한글 두벌식 10레벨 + 영어 자판 8레벨 · 제작 kingkongssam -->
+<!-- 타자연습 v2.5 (2026-11-03) · 한글 두벌식 10레벨 + 영어 자판 8레벨 · 제작 kingkongssam -->
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#ff7a2f">
-<title>타자연습 v2.4 — 기본 자리부터 차근차근 레벨 업</title>
+<title>타자연습 v2.5 — 기본 자리부터 차근차근 레벨 업</title>
 <style>
 :root{
   --bg:#eef4fb; --card:#ffffff; --ink:#1f2a3d; --muted:#556178; --btn:#c2410c; --btn-dark:#8f2f08;
@@ -474,9 +474,7 @@ body.show-hands .typing-finger-caption{display:block}
       </div>
       <div class="sect">✏️ 연습 <span class="sub">한 줄에 별 ★ 최대 3개</span></div>
       <div class="card lines" id="hub-lines"></div>
-      <div class="sect">🎲 섞어 치기 <span class="sub">새 글쇠와 앞에서 익힌 글쇠를 섞어 복습해요 · 할 때마다 새 글</span></div>
-      <div class="card gamecard" id="hub-mix"></div>
-      <div class="sect">🩹 약점 보충 <span class="sub">자주 틀리거나 느린 글쇠만 골라 연습해요</span></div>
+            <div class="sect">🩹 약점 보충 <span class="sub">자주 틀리거나 느린 글쇠만 골라 연습해요</span></div>
       <div class="card gamecard" id="hub-weak"></div>
       <div class="sect">🎮 게임 <span class="sub">새 글쇠를 다 연습하고 별 6개를 모으면 열려요</span></div>
       <div class="card gamecard" id="hub-game"></div>
@@ -980,7 +978,7 @@ function validateContent() {
 <script>
 /* ================= 저장 ================= */
 const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
-const APP_VERSION = '2.4', APP_DATE = '2026-11-03';
+const APP_VERSION = '2.5', APP_DATE = '2026-11-03';
 /* ===== 우리 반 공유(선택) : Firebase 설정 =====
    Firebase 콘솔 → 프로젝트 설정 → 내 앱(웹) → SDK 설정의 firebaseConfig 값을 아래에 그대로 붙여 넣으세요.
    Realtime Database를 만들고 databaseURL까지 넣어야 켜집니다. 비워 두면 혼자 쓰는 앱으로 돌아갑니다. */
@@ -1051,7 +1049,7 @@ let curCourse = DB.course === 'en' ? 'en' : 'ko';
 function progOf(u, course) { if (course === 'ko') return u; if (!u.en) u.en = newProg(); return u.en; }
 function prog() { return progOf(user(), curCourse); }
 function LV(n, course = curCourse) { return COURSES[course].levels[n - 1]; }
-function levelStarInfo(p, L) { const n = L.n; let s = 0; for (let i = 0; i < L.lines.length; i++) s += p.lines[n + '-' + i] || 0; const g = p.games[n] || 0; return {practice: s, game: g, total: s + g}; }
+function levelStarInfo(p, L) { const n = L.n; let s = p.lines[n + '-mix'] || 0; for (let i = 0; i < L.lines.length; i++) s += p.lines[n + '-' + i] || 0; const g = p.games[n] || 0; return {practice: s, game: g, total: s + g}; }
 function totalStars(u) { let s = 0; Object.entries(COURSES).forEach(([c, C]) => { const p = progOf(u, c); C.levels.forEach(L => s += levelStarInfo(p, L).total); }); return s; }
 const DAILY_GOAL = 5;
 function dayKey(d = new Date()) { return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
@@ -1955,10 +1953,10 @@ function openHub(n) {
     r.onclick = () => startPractice(n, i);
     lines.appendChild(r);
   });
-  // 섞어 치기
-  { const mc = $('#hub-mix'); const ago = daysAgo(p, n); const due = p.passed[n] && ago !== null && ago >= 3;
-    mc.innerHTML = `<div class="icon">🎲</div><div class="body"><div class="name">섞어 치기${due ? ' <span class="newrec" style="background:#ede9fe;color:#6d28d9;font-size:12px">🔁 복습할 때예요</span>' : ''}</div><div class="desc">${due ? `이 레벨을 ${ago}일 동안 안 했어요. 잊기 전에 한 번 쳐 봐요! ` : ''}${n > 1 ? '이 레벨 글쇠에 앞 레벨 글쇠를 섞어' : '이 레벨 글쇠를 무작위로'} 2줄. 별은 없지만 오늘 연습 줄에 들어가요.</div></div><button class="btn">연습</button>`;
-    mc.querySelector('.btn').onclick = () => startPractice(n, 'mix'); }
+  { const st = p.lines[n + '-mix'] || 0; const ago = daysAgo(p, n); const due = p.passed[n] && ago !== null && ago >= 3;
+    const r = document.createElement('button'); r.className = 'line-row';
+    r.innerHTML = `<span class="num">${L.lines.length + 1}</span><span class="txt">🎲 섞어 치기${due ? ' <span class="newrec" style="background:#ede9fe;color:#6d28d9;font-size:12px">🔁 복습할 때예요</span>' : ''}<small>${n > 1 ? '새 글쇠 + 앞에서 익힌 글쇠' : '이 레벨 글쇠'}를 무작위로 · 할 때마다 새 글</small></span>${starsHTML(st)}<span class="btn sm">${st ? '다시' : '시작'}</span>`;
+    r.onclick = () => startPractice(n, 'mix'); lines.appendChild(r); }
   // 약점 보충
   const wk = weakKeys(p, L); const wc = $('#hub-weak');
   if (wk.length) {
@@ -2007,7 +2005,7 @@ const Practice = {
     show('scr-practice'); $('#pr-rider').textContent = avatarOf(user());
     $('#pr-title').textContent = `${levelLabel(this.L)} · ${this.L.title}`;
     const rule = this.free ? '틀려도 넘어가요 · ⌫로 고치고 줄 끝에 Enter ↵' : '틀리면 멈춰요 · 줄 끝에 Enter ↵';
-    const head = this.mode === 'challenge' ? '🚀 레벨 업 도전 (정확도 90% 이상 통과) · ' : this.mode === 'weak' ? `🩹 약점 보충 (${this.weak.join(' ')}) · ` : this.mode === 'mix' ? '🎲 섞어 치기 (복습) · ' : this.mode === 'test' ? '⏱ 1분 속도 재기 · 남은 시간 60초 · ' : `연습 ${idx + 1}/${this.L.lines.length} · ${lineReps(this.L.lines[idx])}번 이어 치기 · 정확도 ${LINE_PASS}% 이상 통과 · `;
+    const head = this.mode === 'challenge' ? '🚀 레벨 업 도전 (정확도 90% 이상 통과) · ' : this.mode === 'weak' ? `🩹 약점 보충 (${this.weak.join(' ')}) · ` : this.mode === 'mix' ? `🎲 섞어 치기 ${this.L.lines.length + 1}/${this.L.lines.length + 1} · 정확도 ${LINE_PASS}% 이상 통과 · ` : this.mode === 'test' ? '⏱ 1분 속도 재기 · 남은 시간 60초 · ' : `연습 ${idx + 1}/${this.L.lines.length} · ${lineReps(this.L.lines[idx])}번 이어 치기 · 정확도 ${LINE_PASS}% 이상 통과 · `;
     $('#pr-sub').textContent = head + rule + (this.mode === 'test' ? '' : ` · 🎯 목표 ${this.L.target}타/분`);
     mountKB('#pr-kb', false, this.units); mountHands('#pr-hands'); updateBlindBtn();
     this.spans = buildTextDOM($('#pr-text'), this.text); this.paint(); this.updateStats();
@@ -2111,28 +2109,23 @@ const Practice = {
     const newRec = speed > this.bestBefore && this.bestBefore > 0; const hitTarget = speed >= this.L.target;
     const statHTML = `<div class="statgrid"><div><b>${speed}</b><span>타/분</span></div><div><b>${acc}%</b><span>정확도</span></div><div><b>${this.maxCombo}</b><span>최고 연속</span></div></div><div style="margin:4px 0 8px">${newRec ? '<span class="newrec">🏆 새 기록!</span> ' : ''}${hitTarget ? `<span class="newrec" style="background:#dcfce7;color:#15803d">🎯 목표 ${this.L.target}타 달성!</span>` : `<span class="muted" style="font-size:13px;font-weight:700">🎯 목표 ${this.L.target}타/분</span>`}</div>${missedHTML}${restHTML}`;
     if (goalNow) setTimeout(() => toast(`🎯 오늘 목표 ${DAILY_GOAL}줄 달성! 내일 또 만나요`), 600);
-    if (this.mode === 'mix') {
-      save(); updateChip(); if (acc >= LINE_PASS) Snd.done(); else Snd.pop();
-      Modal.show({title: acc >= 97 ? '🎉 완벽해요!' : acc >= LINE_PASS ? '👍 잘 기억하고 있어요!' : '💪 한 번 더!', html: statHTML + `<p class="muted" style="margin:0">${acc >= LINE_PASS ? '다음 섞어 치기는 또 다른 글이 나와요.' : `정확도 ${LINE_PASS}% 이상이면 잘 기억하고 있는 거예요.`}</p>`, primary: {label: '새 글로 또 하기', fn: () => startPractice(n, 'mix')}, secondary: activityBackAction()});
-      return;
-    }
     if (this.mode === 'weak') {
       save(); updateChip(); if (acc >= 90) Snd.done(); else Snd.pop();
       Modal.show({title: acc >= 90 ? '🩹 약점이 줄었어요!' : '💪 한 번 더!', html: statHTML + (acc >= 90 ? '<p class="muted" style="margin:0">틀린 횟수를 절반으로 줄였어요.</p>' : '<p class="muted" style="margin:0">정확도 90% 이상이면 틀린 횟수가 줄어요.</p>'), primary: {label: '다시 하기', fn: () => startPractice(n, 'weak')}, secondary: activityBackAction()});
       return;
     }
-    if (this.mode === 'line') {
-      const stars = lineStars(acc, speed, this.L.target); const key = n + '-' + this.idx; const before = levelStarInfo(p, this.L);
+    if (this.mode === 'line' || this.mode === 'mix') {
+      const isMix = this.mode === 'mix'; const stars = lineStars(acc, speed, this.L.target); const key = n + '-' + (isMix ? 'mix' : this.idx); const before = levelStarInfo(p, this.L);
       p.lines[key] = Math.max(p.lines[key] || 0, stars); save(); const after = levelStarInfo(p, this.L); updateChip();
       if (stars >= 2) Snd.done(); else if (stars === 1) Snd.pop();
       if (stars === 3) confetti(60, 1600);
-      const hasNext = this.idx + 1 < this.L.lines.length;
+      const hasNext = !isMix; const nextIdx = this.idx + 1 < this.L.lines.length ? this.idx + 1 : 'mix';
       const title = stars === 3 ? '🎉 완벽해요!' : stars === 2 ? '😊 잘했어요!' : stars === 1 ? '👍 통과!' : '💪 한 번 더!';
       const msg = stars === 0 ? `<p class="muted" style="margin:0 0 8px">정확도 <b>${LINE_PASS}%</b> 이상이면 통과예요. 천천히 정확하게!</p>` : stars < 3 ? `<p class="muted" style="margin:0 0 8px;font-size:13px">별 3개: 정확도 97% 이상 + 목표 ${this.L.target}타/분</p>` : '';
       Modal.show({
         title, html: bigStarsHTML(stars) + statHTML + msg,
-        primary: stars === 0 ? {label: '다시 하기', fn: () => startPractice(n, this.idx)} : hasNext ? {label: '다음 줄 ▶', fn: () => startPractice(n, this.idx + 1)} : activityBackAction(),
-        secondary: stars === 0 ? activityBackAction() : {label: '다시 하기', fn: () => startPractice(n, this.idx)}
+        primary: stars === 0 ? {label: '다시 하기', fn: () => startPractice(n, isMix ? 'mix' : this.idx)} : hasNext ? {label: nextIdx === 'mix' ? '🎲 섞어 치기 ▶' : '다음 줄 ▶', fn: () => startPractice(n, nextIdx)} : activityBackAction(),
+        secondary: stars === 0 ? activityBackAction() : {label: isMix ? '새 글로 또 하기' : '다시 하기', fn: () => startPractice(n, isMix ? 'mix' : this.idx)}
       });
       checkUnlocks(n, before, after);
     } else {
