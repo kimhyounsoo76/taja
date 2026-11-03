@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<!-- 타자연습 v2.3 (2026-11-03) · 한글 두벌식 10레벨 + 영어 자판 8레벨 · 제작 kingkongssam -->
+<!-- 타자연습 v2.4 (2026-11-03) · 한글 두벌식 10레벨 + 영어 자판 8레벨 · 제작 kingkongssam -->
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#ff7a2f">
-<title>타자연습 v2.3 — 기본 자리부터 차근차근 레벨 업</title>
+<title>타자연습 v2.4 — 기본 자리부터 차근차근 레벨 업</title>
 <style>
 :root{
   --bg:#eef4fb; --card:#ffffff; --ink:#1f2a3d; --muted:#556178; --btn:#c2410c; --btn-dark:#8f2f08;
@@ -474,7 +474,9 @@ body.show-hands .typing-finger-caption{display:block}
       </div>
       <div class="sect">✏️ 연습 <span class="sub">한 줄에 별 ★ 최대 3개</span></div>
       <div class="card lines" id="hub-lines"></div>
-      <div class="sect">🩹 약점 보충 <span class="sub">자주 틀린 글쇠만 골라 연습해요</span></div>
+      <div class="sect">🎲 섞어 치기 <span class="sub">새 글쇠와 앞에서 익힌 글쇠를 섞어 복습해요 · 할 때마다 새 글</span></div>
+      <div class="card gamecard" id="hub-mix"></div>
+      <div class="sect">🩹 약점 보충 <span class="sub">자주 틀리거나 느린 글쇠만 골라 연습해요</span></div>
       <div class="card gamecard" id="hub-weak"></div>
       <div class="sect">🎮 게임 <span class="sub">새 글쇠를 다 연습하고 별 6개를 모으면 열려요</span></div>
       <div class="card gamecard" id="hub-game"></div>
@@ -669,6 +671,10 @@ function lineText(L, idx) {
     out.push(t);
   }
   return out.join('\n');
+}
+function mergeKeyTimes(p, kt) {
+  p.kms = p.kms || {}; p.kn = p.kn || {};
+  Object.entries(kt || {}).forEach(([k, [ms, c]]) => { if ((p.kn[k] || 0) > 60) { p.kn[k] = Math.round(p.kn[k] / 2); p.kms[k] = Math.round(p.kms[k] / 2); } p.kn[k] = (p.kn[k] || 0) + c; p.kms[k] = Math.round((p.kms[k] || 0) + ms); });
 }
 function lineReps(t) { const w = totalWeight(textUnits(t)); return Math.max(2, Math.min(3, Math.ceil(45 / Math.max(w, 1)))); }
 function pick(arr, n) { const a = [...arr]; for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a.slice(0, n); }
@@ -974,7 +980,7 @@ function validateContent() {
 <script>
 /* ================= 저장 ================= */
 const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
-const APP_VERSION = '2.3', APP_DATE = '2026-11-03';
+const APP_VERSION = '2.4', APP_DATE = '2026-11-03';
 /* ===== 우리 반 공유(선택) : Firebase 설정 =====
    Firebase 콘솔 → 프로젝트 설정 → 내 앱(웹) → SDK 설정의 firebaseConfig 값을 아래에 그대로 붙여 넣으세요.
    Realtime Database를 만들고 databaseURL까지 넣어야 켜집니다. 비워 두면 혼자 쓰는 앱으로 돌아갑니다. */
@@ -1019,7 +1025,7 @@ function normProg(src, levelsLen) {
   p.unlocked = NUM(src.unlocked, 1, levelsLen) || 1; p.master = !!src.master;
   const copyNum = (from, to, lo, hi) => { if (from && typeof from === 'object') Object.keys(from).forEach(k => { if (/^[\w\-ㄱ-ㅣA-Za-z;,.'!?]{1,8}$/.test(k)) to[k] = NUM(from[k], lo, hi); }); };
   if (src.gameOpen && typeof src.gameOpen === 'object') { p.gameOpen = {}; Object.keys(src.gameOpen).forEach(k => { if (/^\d{1,2}$/.test(k) && src.gameOpen[k]) p.gameOpen[k] = true; }); }
-  copyNum(src.lines, p.lines, 0, 3); copyNum(src.games, p.games, 0, 3); copyNum(src.gst, p.gst, 0, 3); copyNum(src.best, p.best, 0, 2000);
+  copyNum(src.lines, p.lines, 0, 3); copyNum(src.games, p.games, 0, 3); copyNum(src.gst, p.gst, 0, 3); p.kms = {}; copyNum(src.kms, p.kms, 0, 1e8); p.kn = {}; copyNum(src.kn, p.kn, 0, 1e6); p.last = {}; copyNum(src.last, p.last, 0, 1e6); copyNum(src.best, p.best, 0, 2000);
   if (src.passed && typeof src.passed === 'object') Object.keys(src.passed).forEach(k => { if (src.passed[k] && NUM(k, 1, levelsLen) == k) p.passed[k] = true; });
   p.missed = {}; copyNum(src.missed, p.missed, 0, 1e6); p.seen = {}; copyNum(src.seen, p.seen, 0, 1e7);
   if (src.testBest) p.testBest = NUM(src.testBest, 0, 2000); if (src.testAcc) p.testAcc = NUM(src.testAcc, 0, 100);
@@ -1056,8 +1062,41 @@ const HOME_OF = {ko: {L5: 'ㅁ', L4: 'ㄴ', L3: 'ㅇ', L2: 'ㄹ', R2: 'ㅓ', R3:
 function weakKeys(p, L, n = 3) {
   const m = p.missed || {}, seen = p.seen || {};
   const rate = ([k, c]) => c / Math.max(c, (seen[k] || 0) + c);
-  return Object.entries(m).filter(([k, c]) => c >= 2 && L.allowed.has(k) && k !== ' ' && k !== '\n' && rate([k, c]) >= 0.08).sort((a, b) => rate(b) - rate(a) || b[1] - a[1]).slice(0, n);
+  const bad = Object.entries(m).filter(([k, c]) => c >= 2 && L.allowed.has(k) && k !== ' ' && k !== '\n' && rate([k, c]) >= 0.08).sort((a, b) => rate(b) - rate(a) || b[1] - a[1]).slice(0, n).map(([k, c]) => [k, c, `${c}번`]);
+  // 느린 글쇠: 10번 넘게 친 글쇠 가운데 평균 시간이 내 가운데값의 1.5배 넘는 것 (정확도×속도를 함께 보는 방식)
+  const avg = Object.keys(p.kn || {}).filter(k => (p.kn[k] || 0) >= 10 && L.allowed.has(k) && k !== ' ').map(k => [k, p.kms[k] / p.kn[k]]);
+  if (avg.length >= 4 && bad.length < n) {
+    const sorted = avg.map(x => x[1]).sort((a, b) => a - b); const med = sorted[Math.floor(sorted.length / 2)];
+    avg.filter(([k, t]) => t >= med * 1.5 && !bad.some(b => b[0] === k)).sort((a, b) => b[1] - a[1]).slice(0, n - bad.length).forEach(([k, t]) => bad.push([k, 0, '느려요']));
+  }
+  return bad;
 }
+/* 섞어 치기(복습): 이 레벨 새 글쇠 + 앞에서 익힌 글쇠·낱말을 무작위로. 할 때마다 새 글 */
+function genMixText(L) {
+  const lang = L.course; const levels = COURSES[lang].levels; const prev = levels.filter(x => x.n < L.n);
+  const single = L.pool.every(w => [...w].length === 1);
+  const lines = [];
+  if (single) {
+    const fresh = (L.newJamo || L.pool).filter(k => k !== ' ' && L.allowed.has(k));
+    const old = [...new Set(prev.flatMap(x => (x.newJamo || []).filter(k => k !== ' ' && [...k].length === 1)))].filter(k => L.allowed.has(k));
+    for (let li = 0; li < 2; li++) {
+      const groups = [];
+      for (let g = 0; g < 5; g++) { const a = []; for (let i = 0; i < 4; i++) a.push(old.length && (i === 3 || (i > 0 && Math.random() < 0.3)) ? old[Math.floor(Math.random() * old.length)] : fresh[Math.floor(Math.random() * fresh.length)]); groups.push(pick(a, a.length).join('')); }
+      lines.push(groups.join(' '));
+    }
+  } else {
+    const cur = pick(L.pool.filter(w => !/[.!?]/.test(w)), 99); const before = pick(prev.flatMap(x => x.pool).filter(w => [...w].length > 1 && !/[.!?]/.test(w)), 99);
+    if (!cur.length) return pick(L.pool, 2).join('\n'); // 문장 레벨: 문장 두 개를 무작위로
+    const src = cur; let ci = 0, bi = 0;
+    for (let li = 0; li < 2; li++) {
+      const ws = []; let w = 0; const limit = lang === 'en' ? 34 : 22;
+      while (w < limit) { const fromOld = before.length && Math.random() < 0.4; const t = fromOld ? before[bi++ % before.length] : src[ci++ % src.length]; if (ws.includes(t)) { if (ci > 200) break; continue; } ws.push(t); w += [...t].length + 1; }
+      lines.push(ws.join(' '));
+    }
+  }
+  return lines.join('\n');
+}
+function daysAgo(p, n) { const d = (p.last || {})[n]; return d ? Math.floor(Date.now() / 864e5) - d : null; }
 function genWeakText(L, keys) {
   const lang = L.course; const map = LAYOUT[lang].CHAR_KEY; const parts = [];
   const levels = COURSES[lang].levels.filter(x => x.n <= L.n);
@@ -1065,12 +1104,13 @@ function genWeakText(L, keys) {
     const key = map[k]; if (!key) return;
     const f = FINGER[key.code] || 'T'; let home = HOME_OF[lang][f] || '';
     if (key.shift) { const base = LAYOUT[lang].KEYDEF[key.code].base; if (L.allowed.has(base)) home = base; }
-    if (!L.allowed.has(home) || home === ' ') home = '';
+    if (!L.allowed.has(home) || home === ' ' || home === k) home = '';
+    if (!home) { const others = Object.values(HOME_OF[lang]).filter(h => h && h !== k && h !== ' ' && L.allowed.has(h)); if (others.length) home = others[Math.floor(Math.random() * others.length)]; }
     if (home) parts.push(`${home}${k}${home} ${home}${k}${home} ${k}${home}${k}`); else parts.push(`${k}${k}${k} ${k}${k}${k}`);
-    const words = []; levels.forEach(x => x.pool.forEach(w => { if (w.length <= 6 && [...w].some(ch => charJamos(ch).includes(k)) && !words.includes(w)) words.push(w); }));
+    const words = []; levels.forEach(x => x.pool.forEach(w => { if (w.length <= 6 && [...w].length >= 2 && [...w].some(ch => charJamos(ch).includes(k)) && !words.includes(w)) words.push(w); }));
     pick(words, 2).forEach(w => parts.push(w));
   });
-  return parts.join(' ');
+  let t = parts.join(' '); const one = t; while (t && [...t].length < 30) t += ' ' + one; return t;
 }
 function genTestText(course) {
   const levels = COURSES[course].levels; const src = levels.slice(-2).flatMap(l => l.pool);
@@ -1686,7 +1726,7 @@ async function restoreFromCloud(name) {
 }
 function mergeProg(a, b) {
   const mx = (x, y) => { Object.keys(y || {}).forEach(k => { x[k] = Math.max(x[k] || 0, y[k] || 0); }); };
-  mx(a.lines, b.lines); mx(a.games, b.games); a.gst = a.gst || {}; mx(a.gst, b.gst); mx(a.best, b.best); a.missed = a.missed || {}; mx(a.missed, b.missed); a.seen = a.seen || {}; mx(a.seen, b.seen);
+  mx(a.lines, b.lines); mx(a.games, b.games); a.last = a.last || {}; mx(a.last, b.last); if (!a.kn || Object.keys(a.kn).length < Object.keys(b.kn || {}).length) { a.kn = Object.assign({}, b.kn || {}); a.kms = Object.assign({}, b.kms || {}); } a.gst = a.gst || {}; mx(a.gst, b.gst); mx(a.best, b.best); a.missed = a.missed || {}; mx(a.missed, b.missed); a.seen = a.seen || {}; mx(a.seen, b.seen);
   Object.keys(b.passed || {}).forEach(k => { a.passed[k] = true; });
   a.unlocked = Math.max(a.unlocked || 1, b.unlocked || 1); a.master = a.master || b.master;
   if (b.testBest) a.testBest = Math.max(a.testBest || 0, b.testBest);
@@ -1771,7 +1811,7 @@ function openRecord() {
     h += `<table class="rec"><tr><th>레벨</th><th>이름</th><th>최고 타수</th><th>별</th><th>상태</th></tr>`;
     C.levels.forEach(L => { const i = levelStarInfo(p, L); const st = p.passed[L.n] ? '통과 ✓' : L.n <= p.unlocked ? '진행 중' : '잠김'; h += `<tr><td>${L.n}</td><td class="l">${esc(L.title)}</td><td>${p.best[L.n] || '-'}</td><td>★ ${i.total}</td><td>${st}</td></tr>`; });
     h += '</table>';
-    if (wk.length) h += `<div class="card" style="margin-bottom:14px"><div style="font-weight:900;margin-bottom:6px">🩹 ${C.name} 자주 틀린 글쇠</div><div class="weakkeys">${wk.map(([k, cnt]) => `<span class="k" style="background:#fee2e2">${esc(k)}<small>${cnt}번</small></span>`).join('')}</div></div>`;
+    if (wk.length) h += `<div class="card" style="margin-bottom:14px"><div style="font-weight:900;margin-bottom:6px">🩹 ${C.name} 자주 틀린 글쇠</div><div class="weakkeys">${wk.map(([k, cnt, lab]) => `<span class="k" style="background:#fee2e2">${esc(k)}<small>${lab}</small></span>`).join('')}</div></div>`;
   });
   const days = Object.keys(u.days || {}).sort().reverse().slice(0, 14);
   h += `<div class="sect">📅 최근 연습 <span class="sub">하루 ${DAILY_GOAL}줄이 목표</span></div><table class="rec"><tr><th>날짜</th><th>줄</th><th>시간</th><th>글자</th><th>목표</th></tr>`;
@@ -1915,12 +1955,16 @@ function openHub(n) {
     r.onclick = () => startPractice(n, i);
     lines.appendChild(r);
   });
+  // 섞어 치기
+  { const mc = $('#hub-mix'); const ago = daysAgo(p, n); const due = p.passed[n] && ago !== null && ago >= 3;
+    mc.innerHTML = `<div class="icon">🎲</div><div class="body"><div class="name">섞어 치기${due ? ' <span class="newrec" style="background:#ede9fe;color:#6d28d9;font-size:12px">🔁 복습할 때예요</span>' : ''}</div><div class="desc">${due ? `이 레벨을 ${ago}일 동안 안 했어요. 잊기 전에 한 번 쳐 봐요! ` : ''}${n > 1 ? '이 레벨 글쇠에 앞 레벨 글쇠를 섞어' : '이 레벨 글쇠를 무작위로'} 2줄. 별은 없지만 오늘 연습 줄에 들어가요.</div></div><button class="btn">연습</button>`;
+    mc.querySelector('.btn').onclick = () => startPractice(n, 'mix'); }
   // 약점 보충
   const wk = weakKeys(p, L); const wc = $('#hub-weak');
   if (wk.length) {
-    wc.innerHTML = `<div class="icon">🩹</div><div class="body"><div class="name">자주 틀린 글쇠</div><div class="weakkeys" style="margin:6px 0">${wk.map(([k, c]) => { const key = LAYOUT[L.course].CHAR_KEY[k]; const f = key ? (FINGER[key.code] || 'T') : 'T'; return `<span class="k f-${f}">${esc(k)}<small>${c}번</small></span>`; }).join('')}</div><div class="desc">기본 자리 ↔ 이 글쇠 왕복과 낱말로 골라 연습해요. 잘하면 틀린 횟수가 줄어요.</div></div><button class="btn">연습</button>`;
+    wc.innerHTML = `<div class="icon">🩹</div><div class="body"><div class="name">자주 틀린 글쇠</div><div class="weakkeys" style="margin:6px 0">${wk.map(([k, c, lab]) => { const key = LAYOUT[L.course].CHAR_KEY[k]; const f = key ? (FINGER[key.code] || 'T') : 'T'; return `<span class="k f-${f}">${esc(k)}<small>${lab}</small></span>`; }).join('')}</div><div class="desc">기본 자리 ↔ 이 글쇠 왕복과 낱말로 골라 연습해요. 잘하면 틀린 횟수가 줄어요.</div></div><button class="btn">연습</button>`;
     wc.querySelector('.btn').onclick = () => startPractice(n, 'weak');
-  } else wc.innerHTML = `<div class="icon">👍</div><div class="body"><div class="name">아직 약점이 없어요</div><div class="desc">연습하다 틀린 글쇠가 여기에 모여요.</div></div>`;
+  } else wc.innerHTML = `<div class="icon">👍</div><div class="body"><div class="name">아직 약점이 없어요</div><div class="desc">연습하다 자주 틀리거나 유난히 느린 글쇠가 여기에 모여요.</div></div>`;
   // 게임
   const g = L.game; const gate = gameGate(L, p); const gUnlocked = gate.ok; const gc = $('#hub-game');
   gc.innerHTML = `<div class="icon">${g.icon}</div><div class="body"><div class="name">${esc(g.name)} ${p.games[n] ? starsHTML(p.games[n]) : ''}</div><div class="desc">${esc(g.rule)}</div>${gUnlocked ? '' : `<div class="locknote" style="margin-top:6px">🔒 ${gate.missing.length ? `새 글쇠 <b>${gate.missing.map(esc).join(' ')}</b> 줄(${gate.lines.join(', ')}번)을 마치고, ` : ''}연습 별 ${GAME_UNLOCK}개를 모으면 열려요 (지금 ${gate.stars}개)</div>`}</div>`;
@@ -1955,15 +1999,15 @@ const Practice = {
   L: null, idx: 0, mode: 'line', free: false, text: '', units: [], typed: [], errors: 0, correct: 0, combo: 0, maxCombo: 0, startAt: null, timer: null, spans: [], bestBefore: 0, missed: {}, limit: 0, weak: [],
   start(n, idx) {
     stopAll(); curLevel = n; this.L = LV(n); setLang(this.L.course); this.idx = idx;
-    this.mode = idx === 'challenge' ? 'challenge' : idx === 'weak' ? 'weak' : idx === 'test' ? 'test' : 'line';
+    this.mode = idx === 'challenge' ? 'challenge' : idx === 'weak' ? 'weak' : idx === 'mix' ? 'mix' : idx === 'test' ? 'test' : 'line';
     this.free = this.mode === 'test' ? true : !!this.L.free; this.limit = this.mode === 'test' ? 60 : 0; this.missed = {}; this.weak = [];
     if (this.mode === 'weak') { this.weak = weakKeys(prog(), this.L).map(x => x[0]); if (!this.weak.length) { openHub(n); return; } }
-    this.text = this.mode === 'test' ? genTestText(this.L.course) : (this.mode === 'challenge' ? this.L.challenge : this.mode === 'weak' ? genWeakText(this.L, this.weak) : lineText(this.L, idx)) + '\n';
-    this.units = textUnits(this.text); this.typed = []; this.errors = 0; this.correct = 0; this.combo = 0; this.maxCombo = 0; this.startAt = null; this.bestBefore = prog().best[n] || 0;
+    this.text = this.mode === 'test' ? genTestText(this.L.course) : (this.mode === 'challenge' ? this.L.challenge : this.mode === 'weak' ? genWeakText(this.L, this.weak) : this.mode === 'mix' ? genMixText(this.L) : lineText(this.L, idx)) + '\n';
+    this.units = textUnits(this.text); this.kt = {}; this.lastOkT = 0; this.typed = []; this.errors = 0; this.correct = 0; this.combo = 0; this.maxCombo = 0; this.startAt = null; this.bestBefore = prog().best[n] || 0;
     show('scr-practice'); $('#pr-rider').textContent = avatarOf(user());
     $('#pr-title').textContent = `${levelLabel(this.L)} · ${this.L.title}`;
     const rule = this.free ? '틀려도 넘어가요 · ⌫로 고치고 줄 끝에 Enter ↵' : '틀리면 멈춰요 · 줄 끝에 Enter ↵';
-    const head = this.mode === 'challenge' ? '🚀 레벨 업 도전 (정확도 90% 이상 통과) · ' : this.mode === 'weak' ? `🩹 약점 보충 (${this.weak.join(' ')}) · ` : this.mode === 'test' ? '⏱ 1분 속도 재기 · 남은 시간 60초 · ' : `연습 ${idx + 1}/${this.L.lines.length} · ${lineReps(this.L.lines[idx])}번 이어 치기 · 정확도 ${LINE_PASS}% 이상 통과 · `;
+    const head = this.mode === 'challenge' ? '🚀 레벨 업 도전 (정확도 90% 이상 통과) · ' : this.mode === 'weak' ? `🩹 약점 보충 (${this.weak.join(' ')}) · ` : this.mode === 'mix' ? '🎲 섞어 치기 (복습) · ' : this.mode === 'test' ? '⏱ 1분 속도 재기 · 남은 시간 60초 · ' : `연습 ${idx + 1}/${this.L.lines.length} · ${lineReps(this.L.lines[idx])}번 이어 치기 · 정확도 ${LINE_PASS}% 이상 통과 · `;
     $('#pr-sub').textContent = head + rule + (this.mode === 'test' ? '' : ` · 🎯 목표 ${this.L.target}타/분`);
     mountKB('#pr-kb', false, this.units); mountHands('#pr-hands'); updateBlindBtn();
     this.spans = buildTextDOM($('#pr-text'), this.text); this.paint(); this.updateStats();
@@ -2007,6 +2051,7 @@ const Practice = {
       return;
     }
     if (ch === u.jamo) {
+      const nowT = performance.now(); if (this.lastOkT && nowT - this.lastOkT < 3000 && u.jamo !== '\n' && u.jamo !== ' ' && this.mode !== 'test') { const kt = this.kt || (this.kt = {}); const e = kt[u.jamo] || (kt[u.jamo] = [0, 0]); e[0] += nowT - this.lastOkT; e[1]++; } this.lastOkT = nowT;
       this.typed.push({ok: true}); this.correct++; this.combo++; this.maxCombo = Math.max(this.maxCombo, this.combo); KB.flash(code, true); Snd.ok(); this.paint();
       if (this.combo > 0 && this.combo % 10 === 0 && this.typed.length < this.units.length) this.comboFx();
       if (this.typed.length >= this.units.length) this.finish();
@@ -2052,6 +2097,7 @@ const Practice = {
     const goalNow = countsToday && td.lines === DAILY_GOAL;
     // 틀린 글쇠 누적
     p.missed = p.missed || {}; Object.entries(this.missed).forEach(([k, c]) => { p.missed[k] = (p.missed[k] || 0) + c; });
+    mergeKeyTimes(p, this.kt); if (this.mode !== 'test') { p.last = p.last || {}; p.last[n] = Math.floor(Date.now() / 864e5); }
     if (this.mode === 'weak' && acc >= 90) this.weak.forEach(k => { p.missed[k] = Math.floor((p.missed[k] || 0) / 2); });
     const missedTop = Object.entries(this.missed).sort((a, b) => b[1] - a[1]).slice(0, 3);
     const missedHTML = missedTop.length ? `<div class="muted" style="font-size:13px;font-weight:700;margin-bottom:6px">자주 틀린 글쇠: ${missedTop.map(([k, c]) => `<b>${esc(k)}</b> ${c}번`).join(' · ')}</div>` : '';
@@ -2065,6 +2111,11 @@ const Practice = {
     const newRec = speed > this.bestBefore && this.bestBefore > 0; const hitTarget = speed >= this.L.target;
     const statHTML = `<div class="statgrid"><div><b>${speed}</b><span>타/분</span></div><div><b>${acc}%</b><span>정확도</span></div><div><b>${this.maxCombo}</b><span>최고 연속</span></div></div><div style="margin:4px 0 8px">${newRec ? '<span class="newrec">🏆 새 기록!</span> ' : ''}${hitTarget ? `<span class="newrec" style="background:#dcfce7;color:#15803d">🎯 목표 ${this.L.target}타 달성!</span>` : `<span class="muted" style="font-size:13px;font-weight:700">🎯 목표 ${this.L.target}타/분</span>`}</div>${missedHTML}${restHTML}`;
     if (goalNow) setTimeout(() => toast(`🎯 오늘 목표 ${DAILY_GOAL}줄 달성! 내일 또 만나요`), 600);
+    if (this.mode === 'mix') {
+      save(); updateChip(); if (acc >= LINE_PASS) Snd.done(); else Snd.pop();
+      Modal.show({title: acc >= 97 ? '🎉 완벽해요!' : acc >= LINE_PASS ? '👍 잘 기억하고 있어요!' : '💪 한 번 더!', html: statHTML + `<p class="muted" style="margin:0">${acc >= LINE_PASS ? '다음 섞어 치기는 또 다른 글이 나와요.' : `정확도 ${LINE_PASS}% 이상이면 잘 기억하고 있는 거예요.`}</p>`, primary: {label: '새 글로 또 하기', fn: () => startPractice(n, 'mix')}, secondary: activityBackAction()});
+      return;
+    }
     if (this.mode === 'weak') {
       save(); updateChip(); if (acc >= 90) Snd.done(); else Snd.pop();
       Modal.show({title: acc >= 90 ? '🩹 약점이 줄었어요!' : '💪 한 번 더!', html: statHTML + (acc >= 90 ? '<p class="muted" style="margin:0">틀린 횟수를 절반으로 줄였어요.</p>' : '<p class="muted" style="margin:0">정확도 90% 이상이면 틀린 횟수가 줄어요.</p>'), primary: {label: '다시 하기', fn: () => startPractice(n, 'weak')}, secondary: activityBackAction()});
