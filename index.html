@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<!-- 타자 모험 v2.0 (2026-11-03) · 한글 두벌식 10레벨 + 영어 자판 8레벨 · 제작 kingkongssam -->
+<!-- 타자 모험 v2.1 우리반용 (2026-11-03) · 한글 두벌식 10레벨 + 영어 자판 8레벨 · 제작 kingkongssam -->
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#ff7a2f">
-<title>타자 모험 v2.0 — 기본 자리부터 차근차근 레벨 업</title>
+<title>타자 모험 v2.1 — 기본 자리부터 차근차근 레벨 업</title>
 <style>
 :root{
   --bg:#eef4fb; --card:#ffffff; --ink:#1f2a3d; --muted:#556178; --btn:#c2410c; --btn-dark:#8f2f08;
@@ -434,7 +434,7 @@ body.show-hands .typing-finger-caption{display:block}
         <div class="inrow" id="class-row" style="display:none;margin-top:8px">
           <input id="class-code" aria-label="반 코드" placeholder="반 코드 (선생님이 알려 준 6자 이상 코드)" maxlength="20" autocomplete="off">
         </div>
-        <div class="muted" id="class-note" style="display:none;font-size:13px;font-weight:700;margin-top:6px">반 코드를 쓰면 친구들과 지도에서 서로 위치를 볼 수 있어요. 다른 컴퓨터에서도 같은 이름·코드면 기록이 이어져요.</div>
+        <div class="muted" id="class-note" style="display:none;font-size:13px;font-weight:700;margin-top:6px">선생님이 알려 준 반 코드를 써야 시작할 수 있어요. 친구들과 지도에서 서로 위치를 보고, 다른 컴퓨터에서도 같은 이름이면 기록이 이어져요.</div>
       </div>
       <div class="card howto">
         🗺️ 지도의 길을 따라 한 레벨씩 올라가요. 한글 10레벨, 영어 8레벨!<br>
@@ -941,7 +941,7 @@ function validateContent() {
 <script>
 /* ================= 저장 ================= */
 const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
-const APP_VERSION = '2.0', APP_DATE = '2026-11-03';
+const APP_VERSION = '2.1', APP_DATE = '2026-11-03';
 /* ===== 우리 반 공유(선택) : Firebase 설정 =====
    Firebase 콘솔 → 프로젝트 설정 → 내 앱(웹) → SDK 설정의 firebaseConfig 값을 아래에 그대로 붙여 넣으세요.
    Realtime Database를 만들고 databaseURL까지 넣어야 켜집니다. 비워 두면 혼자 쓰는 앱으로 돌아갑니다. */
@@ -954,6 +954,8 @@ const FIREBASE_CONFIG = {
   messagingSenderId: '490587783376',
   appId: '1:490587783376:web:7f071d5b91a202a1cd9ed5'
 };
+/* 우리반용: 반 코드를 하나로 고정. 이 코드를 정확히 써야만 시작할 수 있다 (빈칸이면 꺼짐) */
+const FIXED_CLASS = '킹콩반아이들';
 const FIREBASE_CDN = 'https://www.gstatic.com/firebasejs/12.11.0/';
 const NEED_STARS = 12, GAME_UNLOCK = 6;
 /* 게임 열림 조건: 연습 별 6개 + 이 레벨 새 글쇠가 처음 나오는 줄을 모두 별 1개 이상 */
@@ -1637,6 +1639,11 @@ function renderUser() {
 function selectUser(name) {
   name = String(name || '').replace(/[\u0000-\u001f<>"'`]/g, '').trim().slice(0, 12); if (!name) { toast('이름(별명)을 써 주세요'); $('#user-name').focus(); return; }
   if (Cloud.enabled()) DB.classCode = ($('#class-code').value || '').replace(/[^\w가-힣-]/g, '').slice(0, 20);
+  if (FIXED_CLASS) {
+    const typed = ($('#class-code').value || '').trim();
+    if (typed !== FIXED_CLASS) { toast(typed ? '반 코드가 맞지 않아요. 선생님께 물어보세요' : '반 코드를 써야 시작할 수 있어요'); $('#class-code').focus(); $('#class-code').select(); return; }
+    DB.classCode = FIXED_CLASS;
+  }
   if (Cloud.enabled() && DB.classCode && DB.classCode.length < 6) { toast('반 코드는 6자 이상이에요'); DB.classCode = ''; }
   if (!hasUser(DB, name)) DB.users[name] = newUser(name, pickedAvatar);
   DB.current = name; DB.users[name].lastSeen = Date.now(); save(); renderMap();
@@ -1820,6 +1827,7 @@ function renderClass() {
 $$('#cls-tabs .tab').forEach(t => t.onclick = () => { clsCourse = t.dataset.course; renderClass(); });
 $$('#cls-sort .tab').forEach(t => t.onclick = () => { clsSort = t.dataset.sort; renderClass(); });
 $('#cls-back').onclick = () => { Cloud.unwatch(); renderMap(); };
+if (FIXED_CLASS) $('#cls-change').style.display = 'none';
 $('#cls-change').onclick = () => { Cloud.unwatch(); renderUser(); setTimeout(() => $('#class-code').focus(), 50); };
 
 /* ================= 레벨 허브 ================= */
@@ -2354,7 +2362,8 @@ applyHands();
 (function init() {
   const bad = validateContent(); if (bad.length) console.warn('콘텐츠 검사:', bad);
   if (Cloud.enabled() && Cloud.code()) Cloud.init().then(ok => { if (ok && user()) Cloud.push().catch(() => {}); });
-  if (DB.current && DB.users[DB.current]) renderMap(); else renderUser();
+  if (FIXED_CLASS && DB.classCode !== FIXED_CLASS) { DB.classCode = ''; renderUser(); }
+  else if (DB.current && DB.users[DB.current]) renderMap(); else renderUser();
 })();
 </script>
 </body>
