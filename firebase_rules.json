@@ -18,6 +18,19 @@
         "info": {
           ".write": "$code.length >= 6 && !data.exists()",
           ".validate": "newData.hasChildren(['name']) && newData.child('name').isString() && newData.child('name').val().length <= 20"
+        },
+        "chat": {
+          ".write": "$code.length >= 6 && !newData.exists()",
+          "$id": {
+            ".write": "$code.length >= 6 && (!newData.exists() || root.child('classes/'+$code+'/settings/chatOff').val() !== true)",
+            ".validate": "newData.hasChildren(['name','text','t']) && newData.child('name').isString() && newData.child('name').val().length <= 12 && newData.child('text').isString() && newData.child('text').val().length >= 1 && newData.child('text').val().length <= 60 && newData.child('t').isNumber()"
+          }
+        },
+        "settings": {
+          ".write": "$code.length >= 6",
+          "chatOff": {
+            ".validate": "newData.isBoolean()"
+          }
         }
       }
     }
