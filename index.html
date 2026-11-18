@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<!-- 타자 모험 v3.1 우리반용 (2026-11-03) · 한글 두벌식 10레벨 + 영어 자판 8레벨 · 제작 kingkongssam -->
+<!-- 타자 모험 v3.2 우리반용 (2026-11-03) · 한글 두벌식 10레벨 + 영어 자판 8레벨 · 제작 kingkongssam -->
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#ff7a2f">
-<title>타자 모험 v3.1 — 기본 자리부터 차근차근 레벨 업</title>
+<title>타자 모험 v3.2 — 기본 자리부터 차근차근 레벨 업</title>
 <style>
 :root{
   --bg:#eef4fb; --card:#ffffff; --ink:#1f2a3d; --muted:#556178; --btn:#c2410c; --btn-dark:#8f2f08;
@@ -1015,7 +1015,7 @@ function validateContent() {
 <script>
 /* ================= 저장 ================= */
 const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
-const APP_VERSION = '3.1', APP_DATE = '2026-11-03';
+const APP_VERSION = '3.2', APP_DATE = '2026-11-03';
 /* ===== 우리 반 공유(선택) : Firebase 설정 =====
    Firebase 콘솔 → 프로젝트 설정 → 내 앱(웹) → SDK 설정의 firebaseConfig 값을 아래에 그대로 붙여 넣으세요.
    Realtime Database를 만들고 databaseURL까지 넣어야 켜집니다. 비워 두면 혼자 쓰는 앱으로 돌아갑니다. */
@@ -1878,7 +1878,7 @@ const Chat = {
     const box = $('#chat-list'); const nearBottom = box.scrollHeight - box.scrollTop - box.clientHeight < 80; const me = (user() || {}).name;
     if (!this.msgs.length) { box.innerHTML = '<div class="chatempty">아직 대화가 없어요.<br>첫 인사를 해 볼까요? 👋</div>'; }
     else box.innerHTML = this.msgs.map(m => { const mine = m.name === me; const t = typeof m.t === 'number' ? new Date(m.t) : null; const hm = t ? `${t.getHours()}:${String(t.getMinutes()).padStart(2, '0')}` : '';
-      return `<div class="cmsg${mine ? ' me' : ''}"><span class="av">${esc(String(m.avatar || '🙂').slice(0, 4))}</span><div class="bd">${mine ? '' : `<span class="who">${esc(String(m.name).slice(0, 12))}</span>`}<div class="bub">${esc(String(m.text).slice(0, 60))}</div><span class="meta">${hm}${m.kpm ? ` · ⚡ ${NUM(m.kpm, 0, 2000)}타/분` : ''}${this.admin ? ` <button class="del" data-id="${esc(m.id)}" aria-label="지우기">✕</button>` : ''}</span></div></div>`; }).join('');
+      return `<div class="cmsg${mine ? ' me' : ''}"><span class="av">${esc(String(m.avatar || '🙂').slice(0, 4))}</span><div class="bd"><span class="who">${esc(String(m.name).slice(0, 12))}${mine ? ' (나)' : ''}</span><div class="bub">${esc(String(m.text).slice(0, 60))}</div><span class="meta">${hm}${m.kpm ? ` · ⚡ ${NUM(m.kpm, 0, 2000)}타/분` : ''}${this.admin ? ` <button class="del" data-id="${esc(m.id)}" aria-label="지우기">✕</button>` : ''}</span></div></div>`; }).join('');
     if (this.admin) box.querySelectorAll('.del').forEach(b => b.onclick = () => Cloud.chatRemove(b.dataset.id).catch(() => toast('지우지 못했어요')));
     if (nearBottom || !this._scrolled) { box.scrollTop = box.scrollHeight; this._scrolled = true; }
     const inp = $('#chat-input'), btn = $('#chat-send');
