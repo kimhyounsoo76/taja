@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<!-- 타자연습 v2.6 (2026-11-03) · 한글 두벌식 10레벨 + 영어 자판 8레벨 · 제작 kingkongssam -->
+<!-- 타자연습 v2.7 (2026-11-03) · 한글 두벌식 10레벨 + 영어 자판 8레벨 · 제작 kingkongssam -->
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#ff7a2f">
-<title>타자연습 v2.6 — 기본 자리부터 차근차근 레벨 업</title>
+<title>타자연습 v2.7 — 기본 자리부터 차근차근 레벨 업</title>
 <style>
 :root{
   --bg:#eef4fb; --card:#ffffff; --ink:#1f2a3d; --muted:#556178; --btn:#c2410c; --btn-dark:#8f2f08;
@@ -452,6 +452,51 @@ table.rec td.l{text-align:left;font-weight:800}
 @keyframes burst{0%{transform:translate(0,0) scale(1);opacity:1}100%{transform:translate(var(--dx),var(--dy)) scale(.3);opacity:0}}
 @media (prefers-reduced-motion:reduce){.drift,.spin,.sway,.rainfx,.bubblefx i,.lanefx,.wave,.flame,.tw,.item.up .string,.item.right .fish-tail{animation:none!important}}
 
+
+/* 지도 그림 */
+.trail.mapbg{background-color:#d8f3c6;background-image:var(--tile),linear-gradient(180deg,#a8dcff 0,#d6f1ff 70px,#d8f3c6 150px,#c3eaa9 60%,#b2e294 100%);border-radius:24px;padding:46px 10px 22px;box-shadow:inset 0 0 0 3px rgba(255,255,255,.6)}
+.road-edge{fill:none;stroke:#c9a66b;stroke-width:30;stroke-linecap:round;stroke-linejoin:round;opacity:.55}
+.road{fill:none;stroke:#efd9ab;stroke-width:24;stroke-linecap:round;stroke-linejoin:round}
+.road-mid{fill:none;stroke:#fff;stroke-width:3;stroke-dasharray:9 11;stroke-linecap:round;opacity:.9}
+.road-done{fill:none;stroke:#ff922b;stroke-width:6;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:2 12}
+.node.place .ball{width:92px;height:92px;background:radial-gradient(circle at 50% 35%,#c8f2a8,#7ccf5c 70%,#5fb246);border:4px solid #fff;box-shadow:0 6px 0 #4a9a36,0 12px 18px rgba(30,60,30,.22);overflow:visible}
+.node.place .ball .lm-svg{width:76%;height:76%;filter:drop-shadow(0 2px 1px rgba(0,0,0,.18))}
+.node.place .ball .num{position:absolute;top:-8px;left:-8px;width:30px;height:30px;border-radius:50%;background:#fff;color:var(--ink);font-size:15px;font-weight:900;display:grid;place-items:center;box-shadow:0 2px 0 #cfd9e6}
+.node.place.cur .ball{background:radial-gradient(circle at 50% 35%,#ffe8cc,#ffb26b 70%,#ff922b);box-shadow:0 6px 0 var(--accent-dark),0 0 0 10px rgba(255,122,47,.22);animation:glow 1.6s ease-in-out infinite alternate}
+@keyframes glow{to{box-shadow:0 6px 0 var(--accent-dark),0 0 0 16px rgba(255,122,47,.08)}}
+.node.place.cur .ball .num{background:var(--accent);color:#fff;box-shadow:0 2px 0 var(--accent-dark)}
+.node.place.passed .ball{background:radial-gradient(circle at 50% 35%,#fff3bf,#ffd43b 70%,#fab005);box-shadow:0 6px 0 #e67700,0 12px 18px rgba(80,60,0,.2)}
+.node.place.passed .ball .num{background:#2fbf71;color:#fff;box-shadow:0 2px 0 #1f8f55}
+.node.place .ball .flag{position:absolute;top:-14px;right:-6px;font-size:24px;filter:drop-shadow(0 2px 1px rgba(0,0,0,.2))}
+.node.place.locked .ball{background:radial-gradient(circle at 50% 35%,#f1f3f5,#ced4da);box-shadow:0 6px 0 #adb5bd}
+.node.place.locked .ball .lm-svg{filter:grayscale(1);opacity:.45}
+.node.place .ball .lock{position:absolute;font-size:28px;filter:drop-shadow(0 2px 2px rgba(0,0,0,.25))}
+.node.place .ttl,.node.place .st{background:rgba(255,255,255,.85);box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.lm-spin{animation:spin 6s linear infinite}
+@media (max-width:480px){.node.place .ball{width:76px;height:76px}.trail.mapbg{padding:42px 4px 18px}}
+
+/* 캐릭터 얼굴 */
+svg.face{width:1.2em;height:1.2em;display:inline-block;vertical-align:middle;overflow:visible}
+#avatar-pick button svg.face{width:44px;height:44px}
+#uc-av svg.face{width:26px;height:26px}
+.node .av svg.face{width:46px;height:46px}
+.cmsg .av svg.face{width:34px;height:34px}
+.rider svg.face{width:30px;height:30px}
+
+/* 별·레벨 업 연출 */
+.bigstars{display:flex;justify-content:center;gap:6px}
+.bigstars b{width:58px;height:58px;position:relative}
+.bigstars b svg{width:100%;height:100%;display:block}
+.bigstars b:nth-child(2){transform:translateY(-8px)}
+.bigstars b.on:nth-child(2){animation:starpop2 .4s .15s backwards}
+@keyframes starpop2{0%{transform:translateY(-8px) scale(0) rotate(-30deg)}70%{transform:translateY(-8px) scale(1.3)}100%{transform:translateY(-8px) scale(1)}}
+.bigstars .shine{position:absolute;inset:-10px;border-radius:50%;background:radial-gradient(circle,rgba(255,224,102,.55),rgba(255,224,102,0) 65%);z-index:-1;animation:shine 1.6s ease-in-out infinite alternate}
+@keyframes shine{from{transform:scale(.8);opacity:.6}to{transform:scale(1.15);opacity:1}}
+.cheer{display:flex;justify-content:center;align-items:flex-end;gap:10px;margin:2px 0 6px}
+.cheer svg.face{width:72px;height:72px;animation:jump .55s ease-in-out infinite alternate}
+.cheer .lmup{width:64px;height:64px;border-radius:50%;background:radial-gradient(circle at 50% 35%,#fff3bf,#ffd43b 70%,#fab005);display:grid;place-items:center;border:3px solid #fff;box-shadow:0 4px 0 #e67700}
+.cheer .lmup .lm-svg{width:76%;height:76%}
+@keyframes jump{from{transform:translateY(0) rotate(-4deg)}to{transform:translateY(-12px) rotate(4deg)}}
 /* ---------- responsive ---------- */
 @media (max-width:480px){#uc-stars{display:none}}
 @media (max-width:640px){
@@ -1066,7 +1111,7 @@ function validateContent() {
 <script>
 /* ================= 저장 ================= */
 const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
-const APP_VERSION = '2.6', APP_DATE = '2026-11-19';
+const APP_VERSION = '2.7', APP_DATE = '2026-11-19';
 /* ===== 우리 반 공유(선택) : Firebase 설정 =====
    Firebase 콘솔 → 프로젝트 설정 → 내 앱(웹) → SDK 설정의 firebaseConfig 값을 아래에 그대로 붙여 넣으세요.
    Realtime Database를 만들고 databaseURL까지 넣어야 켜집니다. 비워 두면 혼자 쓰는 앱으로 돌아갑니다. */
@@ -1206,7 +1251,10 @@ function genTestText(course) {
 }
 function esc(s) { return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 function starsHTML(n, max = 3) { let s = '<span class="stars">'; for (let i = 0; i < max; i++) s += `<b class="${i < n ? 'on' : ''}">★</b>`; return s + '</span>'; }
-function bigStarsHTML(n) { let s = '<div class="bigstars">'; for (let i = 0; i < 3; i++) s += `<b class="${i < n ? 'on' : ''}">★</b>`; return s + '</div>'; }
+function bigStarsHTML(n) {
+  const star = on => `<svg viewBox="0 0 64 64" aria-hidden="true"><defs><linearGradient id="sg${on ? 1 : 0}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${on ? '#ffe066' : '#e9ecef'}"/><stop offset="1" stop-color="${on ? '#fab005' : '#ced4da'}"/></linearGradient></defs><path d="M32 4 L40 23 L60 24 L44 37 L50 57 L32 46 L14 57 L20 37 L4 24 L24 23Z" fill="url(#sg${on ? 1 : 0})" stroke="${on ? '#f08c00' : '#ced4da'}" stroke-width="3" stroke-linejoin="round"/>${on ? '<path d="M20 26 L28 25 L31 17" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round" opacity=".8"/><circle cx="26" cy="35" r="2.4" fill="#5c3a1e"/><circle cx="38" cy="35" r="2.4" fill="#5c3a1e"/><path d="M27 41 Q32 45 37 41" stroke="#5c3a1e" stroke-width="2" fill="none" stroke-linecap="round"/>' : ''}</svg>`;
+  let s = `<div class="bigstars" role="img" aria-label="별 ${n}개">`; for (let i = 0; i < 3; i++) s += `<b class="${i < n ? 'on' : ''}">${star(i < n)}${i < n ? '<i class="shine"></i>' : ''}</b>`; return s + '</div>';
+}
 
 /* ================= 소리 ================= */
 const Snd = {
@@ -1283,7 +1331,7 @@ function updateChip() {
   const u = user(); const chip = $('#userchip');
   if (!u) { chip.classList.remove('on'); $('#btn-class').style.display = 'none'; $('#btn-record').style.display = 'none'; return; }
   $('#btn-class').style.display = classAvailable() ? '' : 'none'; $('#btn-record').style.display = '';
-  chip.classList.add('on'); $('#uc-av').textContent = avatarOf(u); $('#uc-name').textContent = u.name; $('#uc-stars').textContent = '⭐ ' + totalStars(u);
+  chip.classList.add('on'); $('#uc-av').innerHTML = ART.face(avatarOf(u)); $('#uc-name').textContent = u.name; $('#uc-stars').textContent = '⭐ ' + totalStars(u);
 }
 
 /* ---- 모달 ---- */
@@ -1781,7 +1829,7 @@ function renderUser() {
     const u = DB.users[n];
     const b = document.createElement('div'); b.className = 'u'; b.setAttribute('role', 'button'); b.tabIndex = 0; b.setAttribute('aria-label', n + ' 선택');
     b.addEventListener('keydown', ev => { if ((ev.key === 'Enter' || ev.key === ' ') && ev.target === b) { ev.preventDefault(); selectUser(n); } });
-    b.innerHTML = `<span style="font-size:22px;line-height:1">${avatarOf(u)}</span><span>${esc(n)}</span><span class="lv">한 LV${u.unlocked}${u.en ? ' · 영 LV' + u.en.unlocked : ''}</span><button class="x" title="지우기" aria-label="${esc(n)} 기록 지우기">✕</button>`;
+    b.innerHTML = `<span style="font-size:22px;line-height:1">${ART.face(avatarOf(u))}</span><span>${esc(n)}</span><span class="lv">한 LV${u.unlocked}${u.en ? ' · 영 LV' + u.en.unlocked : ''}</span><button class="x" title="지우기" aria-label="${esc(n)} 기록 지우기">✕</button>`;
     b.onclick = () => { selectUser(n); };
     b.querySelector('.x').onclick = ev => { ev.stopPropagation(); Modal.show({title: '기록을 지울까요?', html: `<b>${esc(n)}</b>의 기록이 모두 사라져요.`, primary: {label: '지우기', fn: () => { delete DB.users[n]; if (DB.current === n) DB.current = null; save(); if (classAvailableFor()) Cloud.remove(n).catch(() => {}); renderUser(); }}, secondary: {label: '취소'}}); };
     list.appendChild(b);
@@ -1791,7 +1839,7 @@ function renderUser() {
   $('#class-row').style.display = Cloud.enabled() ? '' : 'none'; $('#class-note').style.display = Cloud.enabled() ? '' : 'none';
   $('#class-code').value = DB.classCode || '';
   const ap = $('#avatar-pick'); ap.innerHTML = '';
-  AVATARS.forEach(a => { const b = document.createElement('button'); b.textContent = a; b.className = a === pickedAvatar ? 'on' : ''; b.onclick = () => { pickedAvatar = a; ap.querySelectorAll('button').forEach(x => x.classList.toggle('on', x.textContent === a)); Snd.pop(); }; ap.appendChild(b); });
+  AVATARS.forEach(a => { const b = document.createElement('button'); b.innerHTML = ART.face(a); b.setAttribute('aria-label', a); b.className = a === pickedAvatar ? 'on' : ''; b.onclick = () => { pickedAvatar = a; ap.querySelectorAll('button').forEach(x => x.classList.toggle('on', x.textContent === a)); Snd.pop(); }; ap.appendChild(b); });
 }
 function selectUser(name) {
   name = String(name || '').replace(/[\u0000-\u001f<>"'`]/g, '').trim().slice(0, 12); if (!name) { toast('이름(별명)을 써 주세요'); $('#user-name').focus(); return; }
@@ -1843,12 +1891,14 @@ function renderMap(course) {
   C.levels.forEach(L => {
     const info = levelStarInfo(p, L); const passed = !!p.passed[L.n]; const locked = L.n > p.unlocked; const cur = !locked && !passed;
     const c = document.createElement('button'); c.className = 'node ' + (locked ? 'locked' : passed ? 'passed' : 'cur');
-    c.innerHTML = `<div class="ball">${locked ? '🔒' : L.n}${passed ? '<span class="tag">통과</span>' : cur ? '<span class="tag">여기!</span>' : ''}${cur ? `<span class="av">${avatarOf(u)}</span>` : ''}</div>
+    c.classList.add('place');
+    c.innerHTML = `<div class="ball">${ART.landmark(L.n)}<span class="num">${L.n}</span>${locked ? '<span class="lock">🔒</span>' : ''}${passed ? '<span class="flag">🚩</span><span class="tag">통과</span>' : cur ? '<span class="tag">여기!</span>' : ''}${cur ? `<span class="av">${ART.face(avatarOf(u))}</span>` : ''}</div>
       <div class="ttl">${esc(L.title)}</div>${locked ? '' : `<div class="st">⭐ ${info.total}/${NEED_STARS}</div>`}`;
     c.disabled = locked;
     c.onclick = () => openHub(L.n);
     grid.appendChild(c);
   });
+  $('#trail').classList.add('mapbg'); $('#trail').style.setProperty('--tile', ART.mapTile());
   layoutTrail(p);
   $('#class-card').style.display = classAvailable() ? 'flex' : 'none';
   const mc = $('#master-card'); mc.style.display = p.master ? 'block' : 'none';
@@ -1873,7 +1923,8 @@ function layoutTrail(p, ids) {
     svg.setAttribute('viewBox', `0 0 ${Math.round(tr.width)} ${Math.round(tr.height)}`); svg.style.width = tr.width + 'px'; svg.style.height = tr.height + 'px';
     const path = arr => arr.map((q, i) => (i ? 'L' : 'M') + q[0] + ' ' + q[1]).join(' ');
     const curIdx = Math.min(nodes.length - 1, Math.max(0, (p ? p.unlocked : 1) - 1));
-    svg.innerHTML = `<path class="rail" d="${path(pts)}"/><path class="rail done" d="${path(pts.slice(0, curIdx + 1))}"/>`;
+    const dpath = path(pts), dn = path(pts.slice(0, curIdx + 1));
+    svg.innerHTML = `<path class="road-edge" d="${dpath}"/><path class="road" d="${dpath}"/><path class="road-mid" d="${dpath}"/><path class="road-done" d="${dn}"/>`;
   });
 }
 window.addEventListener('resize', () => { if ($('#scr-map').classList.contains('on')) layoutTrail(prog()); if ($('#scr-class').classList.contains('on')) layoutTrail(prog(), CLS_IDS); });
@@ -1972,7 +2023,7 @@ function renderClass() {
     const best = Math.max(r.ko && r.ko.best || 0, r.en && r.en.best || 0);
     const isToday = r.updatedAt && r.updatedAt >= today.getTime();
     const tl = r.today && r.today.date === dayKey() ? r.today.lines : 0;
-    d.innerHTML = `<span class="rk">${medal}</span><span class="av">${esc(r.avatar || '🙂')}</span><span class="nm">${esc(r.name)}${isToday ? ` <span class="today">오늘 ${tl}줄</span>` : ''}<small>한글 LV${r.ko ? r.ko.lv : 1}${r.ko && r.ko.master ? '👑' : ''} · 영어 LV${r.en ? r.en.lv : 1}${r.en && r.en.master ? '👑' : ''}${best ? ' · 최고 ' + best + '타/분' : ''}</small></span><span class="pt">⭐ ${r.total || 0}</span>`;
+    d.innerHTML = `<span class="rk">${medal}</span><span class="av">${ART.face(r.avatar || '🙂')}</span><span class="nm">${esc(r.name)}${isToday ? ` <span class="today">오늘 ${tl}줄</span>` : ''}<small>한글 LV${r.ko ? r.ko.lv : 1}${r.ko && r.ko.master ? '👑' : ''} · 영어 LV${r.en ? r.en.lv : 1}${r.en && r.en.master ? '👑' : ''}${best ? ' · 최고 ' + best + '타/분' : ''}</small></span><span class="pt">⭐ ${r.total || 0}</span>`;
     rank.appendChild(d);
   });
 }
@@ -2090,7 +2141,7 @@ const Practice = {
     if (this.mode === 'weak') { this.weak = weakKeys(prog(), this.L).map(x => x[0]); if (!this.weak.length) { openHub(n); return; } }
     this.text = this.mode === 'test' ? genTestText(this.L.course) : (this.mode === 'challenge' ? this.L.challenge : this.mode === 'weak' ? genWeakText(this.L, this.weak) : this.mode === 'mix' ? genMixText(this.L) : lineText(this.L, idx)) + '\n';
     this.units = textUnits(this.text); this.kt = {}; this.lastOkT = 0; this.typed = []; this.errors = 0; this.correct = 0; this.combo = 0; this.maxCombo = 0; this.startAt = null; this.bestBefore = prog().best[n] || 0;
-    show('scr-practice'); $('#pr-rider').textContent = avatarOf(user());
+    show('scr-practice'); $('#pr-rider').innerHTML = ART.face(avatarOf(user()));
     $('#pr-title').textContent = `${levelLabel(this.L)} · ${this.L.title}`;
     const rule = this.free ? '틀려도 넘어가요 · ⌫로 고치고 줄 끝에 Enter ↵' : '틀리면 멈춰요 · 줄 끝에 Enter ↵';
     const head = this.mode === 'challenge' ? '🚀 레벨 업 도전 (정확도 90% 이상 통과) · ' : this.mode === 'weak' ? `🩹 약점 보충 (${this.weak.join(' ')}) · ` : this.mode === 'mix' ? `🎲 섞어 치기 ${this.L.lines.length + 1}/${this.L.lines.length + 1} · 정확도 ${LINE_PASS}% 이상 통과 · ` : this.mode === 'test' ? '⏱ 1분 속도 재기 · 남은 시간 60초 · ' : `연습 ${idx + 1}/${this.L.lines.length} · ${lineReps(this.L.lines[idx])}번 이어 치기 · 정확도 ${LINE_PASS}% 이상 통과 · `;
@@ -2223,10 +2274,10 @@ const Practice = {
         const first = !p.passed[n]; p.passed[n] = true; p.unlocked = Math.max(p.unlocked, Math.min(n + 1, levels.length));
         if (last) p.master = true; save(); updateChip();
         Snd.levelup(); confetti();
-        const nextL = levels[n];
+        const nextL = levels[n]; const cheer = `<div class="cheer">${ART.face(avatarOf(user()))}<span class="lmup">${ART.landmark(last ? n : nextL.n)}</span></div>`;
         Modal.show({
           title: last ? `🏆 ${cname} 타자 마스터!` : '🎉 레벨 업!',
-          html: statHTML + (last ? `<p>${cname} 코스의 모든 레벨을 통과했어요! 정말 대단해요.<br>이제 자유롭게 연습하며 기록을 깨 봐요.</p>` : `<p>${first ? '다음 레벨이 열렸어요!' : '다시 한번 멋지게 통과!'}<br><b>LEVEL ${nextL.n} · ${esc(nextL.title)}</b> (${esc(nextL.keys)})</p>`),
+          html: cheer + statHTML + (last ? `<p>${cname} 코스의 모든 레벨을 통과했어요! 정말 대단해요.<br>이제 자유롭게 연습하며 기록을 깨 봐요.</p>` : `<p>${first ? '다음 레벨이 열렸어요!' : '다시 한번 멋지게 통과!'}<br><b>LEVEL ${nextL.n} · ${esc(nextL.title)}</b> (${esc(nextL.keys)})</p>`),
           primary: last ? {label: '지도로', fn: () => renderMap()} : {label: `LEVEL ${nextL.n} 시작 ▶`, fn: () => openHub(nextL.n)},
           secondary: last ? null : {label: '지도로', fn: () => renderMap()}
         });
@@ -2452,6 +2503,50 @@ const ART = {
     return name === '🚗' ? this.car('#fa5252', '#c92a2a') : name === '🚙' ? this.car('#4dabf7', '#1971c2') : name === '🐰' ? this.rabbit() : name === '🐢' ? this.turtle() : name === '🚀' ? this.rocket() : name === '🛸' ? this.ufo() : `<span class="emo">${name}</span>`;
   },
   tail(h) { return this.svg('0 0 40 60', `<path d="M40 30 L4 4 Q12 30 4 56Z" fill="hsl(${h} 85% 58%)"/><path d="M40 30 L14 14 Q18 30 14 46Z" fill="hsl(${h} 90% 68%)"/>`, 'fish-tail', 'none'); },
+
+  landmark(n) {
+    const g = [
+      '<path d="M12 50 L32 14 L52 50Z" fill="#ff6b6b"/><path d="M32 14 L24 50 L40 50Z" fill="#fff"/><path d="M28 50 L32 36 L36 50Z" fill="#c92a2a"/><path d="M32 14 V6" stroke="#495057" stroke-width="2"/><path d="M32 6 L42 9 L32 12Z" fill="#ffd43b"/>',
+      '<rect x="29" y="34" width="7" height="18" rx="2" fill="#8b5e34"/><circle cx="32" cy="24" r="16" fill="#40c057"/><circle cx="22" cy="30" r="10" fill="#37b24d"/><circle cx="42" cy="30" r="10" fill="#37b24d"/><circle cx="27" cy="19" r="4" fill="#8ce99a" opacity=".8"/><circle cx="38" cy="26" r="2.5" fill="#ff6b6b"/><circle cx="26" cy="30" r="2.5" fill="#ff6b6b"/>',
+      '<ellipse cx="32" cy="40" rx="24" ry="12" fill="#4dabf7"/><ellipse cx="32" cy="38" rx="20" ry="8" fill="#74c0fc"/><ellipse cx="20" cy="40" rx="6" ry="3" fill="#51cf66"/><g transform="translate(36 26)"><ellipse cx="0" cy="8" rx="9" ry="6" fill="#ffd43b"/><circle cx="6" cy="1" r="5" fill="#ffd43b"/><circle cx="7.5" cy="0" r="1" fill="#212529"/><path d="M10 2 L14 3 L10 4Z" fill="#ff922b"/></g>',
+      '<rect x="16" y="28" width="32" height="24" rx="2" fill="#ffe8cc"/><path d="M10 30 L32 12 L54 30Z" fill="#fa5252"/><rect x="28" y="38" width="9" height="14" rx="1" fill="#a9713f"/><rect x="19" y="33" width="7" height="7" fill="#74c0fc"/><rect x="40" y="33" width="7" height="7" fill="#74c0fc"/><rect x="40" y="14" width="5" height="10" fill="#868e96"/>',
+      '<path d="M26 54 L29 24 L35 24 L38 54Z" fill="#e9ecef"/><path d="M26 54 L29 24 L35 24 L38 54Z" fill="none" stroke="#adb5bd" stroke-width="1.5"/><rect x="29" y="44" width="6" height="10" fill="#a9713f"/><g class="lm-spin" style="transform-origin:32px 22px"><path d="M32 22 L32 4 L38 6Z" fill="#ffd8a8"/><path d="M32 22 L50 22 L48 28Z" fill="#ffd8a8"/><path d="M32 22 L32 40 L26 38Z" fill="#ffd8a8"/><path d="M32 22 L14 22 L16 16Z" fill="#ffd8a8"/></g><circle cx="32" cy="22" r="3" fill="#868e96"/>',
+      '<rect x="4" y="40" width="56" height="14" rx="4" fill="#4dabf7"/><path d="M6 40 Q32 14 58 40" fill="none" stroke="#a9713f" stroke-width="6"/><path d="M6 36 H58" stroke="#8b5e34" stroke-width="4"/><g stroke="#8b5e34" stroke-width="2"><path d="M16 36 V30"/><path d="M24 36 V26"/><path d="M32 36 V24"/><path d="M40 36 V26"/><path d="M48 36 V30"/></g>',
+      '<path d="M24 54 L27 16 L37 16 L40 54Z" fill="#fff"/><path d="M25.2 40 L38.8 40 L39.4 47 L24.6 47Z" fill="#fa5252"/><path d="M26.4 26 L37.6 26 L38.2 33 L25.8 33Z" fill="#fa5252"/><rect x="25" y="8" width="14" height="9" rx="2" fill="#ffe066"/><path d="M24 8 L32 2 L40 8Z" fill="#fa5252"/><path d="M39 12 L56 6 L56 18Z" fill="#fff3bf" opacity=".85"/>',
+      '<rect x="14" y="26" width="36" height="26" fill="#ced4da"/><rect x="10" y="18" width="12" height="34" fill="#adb5bd"/><rect x="42" y="18" width="12" height="34" fill="#adb5bd"/><path d="M10 18 L16 8 L22 18Z" fill="#7048e8"/><path d="M42 18 L48 8 L54 18Z" fill="#7048e8"/><path d="M28 52 V42 Q32 36 36 42 V52Z" fill="#8b5e34"/><path d="M48 8 V2 L56 4 L48 6" fill="#ff6b6b" stroke="#495057" stroke-width="1"/><g fill="#ced4da"><rect x="14" y="22" width="6" height="5"/><rect x="24" y="22" width="6" height="5"/><rect x="34" y="22" width="6" height="5"/><rect x="44" y="22" width="6" height="5"/></g>',
+      '<path d="M2 54 L22 18 L34 34 L44 22 L62 54Z" fill="#748ffc"/><path d="M22 18 L15 31 L20 29 L24 33 L28 27Z" fill="#fff"/><path d="M44 22 L39 31 L44 29 L48 31Z" fill="#fff"/><path d="M2 54 L22 18 L26 54Z" fill="#5c7cfa" opacity=".6"/>',
+      '<rect x="20" y="46" width="24" height="8" rx="2" fill="#a9713f"/><rect x="26" y="40" width="12" height="7" fill="#fab005"/><path d="M18 12 H46 V20 Q46 36 32 38 Q18 36 18 20Z" fill="#ffd43b"/><path d="M18 16 Q8 16 10 24 Q12 30 19 28" fill="none" stroke="#fab005" stroke-width="3"/><path d="M46 16 Q56 16 54 24 Q52 30 45 28" fill="none" stroke="#fab005" stroke-width="3"/><path d="M32 18 l2.4 5 5.4.6 -4 3.7 1.1 5.3 -4.9-2.7 -4.9 2.7 1.1-5.3 -4-3.7 5.4-.6z" fill="#fff"/>'
+    ];
+    return this.svg('0 0 64 64', g[(n - 1) % g.length], 'lm-svg', 'xMidYMid meet');
+  },
+  mapTile() {
+    const t = `<svg xmlns="http://www.w3.org/2000/svg" width="220" height="170" viewBox="0 0 220 170"><g opacity=".55"><circle cx="30" cy="40" r="9" fill="#69db7c"/><rect x="28" y="46" width="4" height="9" fill="#a9713f"/><circle cx="160" cy="120" r="11" fill="#51cf66"/><rect x="158" y="128" width="4" height="10" fill="#a9713f"/><circle cx="120" cy="30" r="3" fill="#ff8fab"/><circle cx="70" cy="130" r="3" fill="#ffd43b"/><circle cx="200" cy="70" r="3" fill="#fff"/><circle cx="90" cy="85" r="2.5" fill="#b197fc"/><path d="M50 100 l3 -7 l3 7z" fill="#5fb246"/><path d="M185 30 l3 -7 l3 7z" fill="#5fb246"/></g></svg>`;
+    return `url("data:image/svg+xml,${encodeURIComponent(t)}")`;
+  },
+  face(av) {
+    const F = this.FACES[av]; if (!F) return `<span class="emo-face">${esc(String(av || '🙂').slice(0, 4))}</span>`;
+    return this.svg('0 0 64 64', F(), 'face', 'xMidYMid meet');
+  },
+  FACES: (() => {
+    const eyes = (y = 33, c = '#212529') => `<circle cx="24" cy="${y}" r="3.4" fill="${c}"/><circle cx="40" cy="${y}" r="3.4" fill="${c}"/><circle cx="25.2" cy="${y - 1.2}" r="1.2" fill="#fff"/><circle cx="41.2" cy="${y - 1.2}" r="1.2" fill="#fff"/>`;
+    const cheeks = (o = .55) => `<ellipse cx="17" cy="41" rx="4.5" ry="2.8" fill="#ff8fab" opacity="${o}"/><ellipse cx="47" cy="41" rx="4.5" ry="2.8" fill="#ff8fab" opacity="${o}"/>`;
+    const smile = (y = 44) => `<path d="M28 ${y} Q32 ${y + 4} 36 ${y}" stroke="#5c3a1e" stroke-width="1.8" fill="none" stroke-linecap="round"/>`;
+    const head = c => `<circle cx="32" cy="36" r="23" fill="${c}"/>`;
+    return {
+      '🐱': () => `<path d="M12 26 L14 6 L28 16Z" fill="#ff9f43"/><path d="M52 26 L50 6 L36 16Z" fill="#ff9f43"/><path d="M15 21 L16 11 L24 16Z" fill="#ffc9de"/><path d="M49 21 L48 11 L40 16Z" fill="#ffc9de"/>${head('#ffb366')}<path d="M26 16 Q32 20 38 16" stroke="#e8590c" stroke-width="2.5" fill="none"/>${eyes()}${cheeks()}<path d="M30 39 L34 39 L32 41.5Z" fill="#f783ac"/>${smile(42)}<g stroke="#8a5a32" stroke-width="1.2" stroke-linecap="round"><path d="M20 40 L8 38"/><path d="M20 43 L8 45"/><path d="M44 40 L56 38"/><path d="M44 43 L56 45"/></g>`,
+      '🐶': () => `${head('#e8b98a')}<ellipse cx="12" cy="34" rx="7" ry="15" fill="#8b5e34" transform="rotate(14 12 34)"/><ellipse cx="52" cy="34" rx="7" ry="15" fill="#8b5e34" transform="rotate(-14 52 34)"/><ellipse cx="32" cy="44" rx="11" ry="8.5" fill="#fff4e6"/>${eyes(32)}<ellipse cx="32" cy="40" rx="4" ry="3" fill="#212529"/>${smile(45)}<ellipse cx="32" cy="50" rx="3" ry="3.5" fill="#ff8fab"/>`,
+      '🐰': () => `<ellipse cx="23" cy="13" rx="6" ry="15" fill="#fff" stroke="#e9ecef" stroke-width="1.5"/><ellipse cx="41" cy="13" rx="6" ry="15" fill="#fff" stroke="#e9ecef" stroke-width="1.5"/><ellipse cx="23" cy="14" rx="3" ry="10" fill="#ffc9de"/><ellipse cx="41" cy="14" rx="3" ry="10" fill="#ffc9de"/><circle cx="32" cy="38" r="22" fill="#fff" stroke="#e9ecef" stroke-width="1.5"/>${eyes(36)}${cheeks(.7)}<ellipse cx="32" cy="42" rx="2.8" ry="2" fill="#f783ac"/>${smile(45)}`,
+      '🦊': () => `<path d="M10 28 L12 4 L28 18Z" fill="#ff7a2f"/><path d="M54 28 L52 4 L36 18Z" fill="#ff7a2f"/><path d="M12 10 L14 5 L18 12Z" fill="#212529"/><path d="M52 10 L50 5 L46 12Z" fill="#212529"/>${head('#ff8a3d')}<path d="M10 38 Q20 36 32 54 Q44 36 54 38 Q50 58 32 59 Q14 58 10 38Z" fill="#fff"/>${eyes(32)}<ellipse cx="32" cy="45" rx="3.4" ry="2.6" fill="#212529"/>`,
+      '🐻': () => `<circle cx="14" cy="16" r="8" fill="#a9713f"/><circle cx="50" cy="16" r="8" fill="#a9713f"/><circle cx="14" cy="16" r="4" fill="#e9c9a1"/><circle cx="50" cy="16" r="4" fill="#e9c9a1"/>${head('#a9713f')}<ellipse cx="32" cy="44" rx="10" ry="8" fill="#e9c9a1"/>${eyes(32)}<ellipse cx="32" cy="41" rx="3.6" ry="2.6" fill="#3b2614"/>${smile(46)}`,
+      '🐼': () => `<circle cx="14" cy="16" r="8" fill="#212529"/><circle cx="50" cy="16" r="8" fill="#212529"/><circle cx="32" cy="36" r="23" fill="#fff" stroke="#dee2e6" stroke-width="1.5"/><ellipse cx="23" cy="33" rx="6" ry="7.5" fill="#212529" transform="rotate(-25 23 33)"/><ellipse cx="41" cy="33" rx="6" ry="7.5" fill="#212529" transform="rotate(25 41 33)"/><circle cx="24" cy="32" r="2.6" fill="#fff"/><circle cx="40" cy="32" r="2.6" fill="#fff"/><circle cx="24.5" cy="32.5" r="1.3" fill="#212529"/><circle cx="40.5" cy="32.5" r="1.3" fill="#212529"/><ellipse cx="32" cy="42" rx="3.4" ry="2.4" fill="#212529"/>${smile(46)}${cheeks(.45)}`,
+      '🐸': () => `<circle cx="20" cy="18" r="10" fill="#69db7c"/><circle cx="44" cy="18" r="10" fill="#69db7c"/><circle cx="20" cy="18" r="6.5" fill="#fff"/><circle cx="44" cy="18" r="6.5" fill="#fff"/><circle cx="21" cy="19" r="3.4" fill="#212529"/><circle cx="45" cy="19" r="3.4" fill="#212529"/><ellipse cx="32" cy="40" rx="25" ry="20" fill="#69db7c"/><ellipse cx="32" cy="46" rx="16" ry="9" fill="#b2f2bb"/><path d="M20 40 Q32 50 44 40" stroke="#2b8a3e" stroke-width="2.4" fill="none" stroke-linecap="round"/>${cheeks(.6)}<circle cx="29" cy="34" r="1" fill="#2b8a3e"/><circle cx="35" cy="34" r="1" fill="#2b8a3e"/>`,
+      '🦁': () => { let m = ''; for (let i = 0; i < 14; i++) { const t = i / 14 * Math.PI * 2; m += `<circle cx="${32 + Math.cos(t) * 25}" cy="${35 + Math.sin(t) * 25}" r="9" fill="${i % 2 ? '#e8590c' : '#f76707'}"/>`; } return `${m}<circle cx="16" cy="18" r="6" fill="#ffc078"/><circle cx="48" cy="18" r="6" fill="#ffc078"/>${head('#ffc078')}<ellipse cx="32" cy="44" rx="10" ry="7.5" fill="#fff4e6"/>${eyes(32)}<path d="M28.5 40 L35.5 40 L32 43.5Z" fill="#8b5e34"/>${smile(46)}${cheeks(.45)}`; },
+      '🐯': () => `<circle cx="14" cy="16" r="8" fill="#ff922b"/><circle cx="50" cy="16" r="8" fill="#ff922b"/><circle cx="14" cy="16" r="4" fill="#fff"/><circle cx="50" cy="16" r="4" fill="#fff"/>${head('#ff922b')}<g fill="#212529"><path d="M28 14 L30 22 L32 14Z"/><path d="M33 14 L34 21 L36 14Z"/><path d="M10 32 L18 34 L10 37Z"/><path d="M54 32 L46 34 L54 37Z"/><path d="M11 42 L18 41 L12 46Z"/><path d="M53 42 L46 41 L52 46Z"/></g><ellipse cx="32" cy="45" rx="11" ry="8" fill="#fff"/>${eyes(31)}<ellipse cx="32" cy="41" rx="3.6" ry="2.6" fill="#f783ac"/>${smile(46)}`,
+      '🐨': () => `<circle cx="11" cy="24" r="11" fill="#adb5bd"/><circle cx="53" cy="24" r="11" fill="#adb5bd"/><circle cx="11" cy="24" r="6.5" fill="#f1f3f5"/><circle cx="53" cy="24" r="6.5" fill="#f1f3f5"/>${head('#ced4da')}${eyes(32)}<ellipse cx="32" cy="42" rx="6" ry="7.5" fill="#495057"/><ellipse cx="30" cy="39.5" rx="1.6" ry="2.2" fill="#868e96"/>${cheeks(.5)}`,
+      '🐵': () => `<circle cx="10" cy="36" r="8" fill="#8b5e34"/><circle cx="54" cy="36" r="8" fill="#8b5e34"/><circle cx="10" cy="36" r="4.5" fill="#f3d2a8"/><circle cx="54" cy="36" r="4.5" fill="#f3d2a8"/>${head('#8b5e34')}<path d="M32 22 C22 16 14 26 18 36 C14 46 22 56 32 56 C42 56 50 46 46 36 C50 26 42 16 32 22Z" fill="#f3d2a8"/>${eyes(33)}<ellipse cx="30" cy="42" rx="1.2" ry="1.6" fill="#5c3a1e"/><ellipse cx="34" cy="42" rx="1.2" ry="1.6" fill="#5c3a1e"/><path d="M26 47 Q32 52 38 47" stroke="#5c3a1e" stroke-width="2" fill="none" stroke-linecap="round"/>`,
+      '🐥': () => `<path d="M30 14 Q28 6 32 4 Q34 8 33 14Z" fill="#fab005"/><path d="M34 14 Q36 7 40 7 Q39 11 36 15Z" fill="#fab005"/>${head('#ffd43b')}<ellipse cx="32" cy="50" rx="14" ry="6" fill="#ffe066"/>${eyes(33)}<path d="M27 40 L37 40 L32 46Z" fill="#ff922b"/><path d="M27 40 L37 40 L32 42.5Z" fill="#e8590c"/>${cheeks(.7)}`
+    };
+  })(),
   /* ---- 효과 ---- */
   burst(parent, xPct, yPct, opt = {}) {
     if (!parent || DB.lowfx) return; const n = opt.n || 12; const colors = opt.colors || ['#ff6b6b', '#ffd43b', '#4dabf7', '#69db7c', '#b197fc', '#ff922b'];
