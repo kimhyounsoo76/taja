@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<!-- 타자 모험 v4.5 우리반용 (2026-11-19) · 한글 두벌식 10레벨 + 영어 자판 8레벨 · 제작 kingkongssam -->
+<!-- 타자 모험 v4.6 우리반용 (2026-11-19) · 한글 두벌식 10레벨 + 영어 자판 8레벨 · 제작 kingkongssam -->
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#ff7a2f">
-<title>타자 모험 v4.5 — 기본 자리부터 차근차근 레벨 업</title>
+<title>타자 모험 v4.6 — 기본 자리부터 차근차근 레벨 업</title>
 <style>
 :root{
   --bg:#eef4fb; --card:#ffffff; --ink:#1f2a3d; --muted:#556178; --btn:#c2410c; --btn-dark:#8f2f08;
@@ -1263,7 +1263,7 @@ function validateContent() {
 <script>
 /* ================= 저장 ================= */
 const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
-const APP_VERSION = '4.5', APP_DATE = '2026-11-20';
+const APP_VERSION = '4.6', APP_DATE = '2026-11-20';
 /* ===== 우리 반 공유(선택) : Firebase 설정 =====
    Firebase 콘솔 → 프로젝트 설정 → 내 앱(웹) → SDK 설정의 firebaseConfig 값을 아래에 그대로 붙여 넣으세요.
    Realtime Database를 만들고 databaseURL까지 넣어야 켜집니다. 비워 두면 혼자 쓰는 앱으로 돌아갑니다. */
@@ -1299,7 +1299,7 @@ function load() {
   let d = null; try { d = JSON.parse(localStorage.getItem(LS_KEY)); } catch (e) { d = null; }
   const out = {users: Object.create(null), current: null, sound: true, hands: true};
   if (d && typeof d === 'object') {
-    ['current', 'sound', 'hands', 'classCode', 'classOk', 'className', 'course', 'blind', 'teacherOk', 'music', 'chatStat'].forEach(k => { if (k in d) out[k] = d[k]; });
+    ['current', 'sound', 'hands', 'classCode', 'classOk', 'className', 'course', 'blind', 'teacherOk', 'teacherKeep', 'music', 'chatStat'].forEach(k => { if (k in d) out[k] = d[k]; });
     if (d.users && typeof d.users === 'object') Object.keys(d.users).forEach(n => { const u = normalizeUser(d.users[n], n); if (u) out.users[n] = u; });
   }
   if (!hasUser(out, out.current)) out.current = null;
@@ -2000,6 +2000,7 @@ function paintText(spans, units, typed, container) {
 
 /* ================= 사용자 화면 ================= */
 function renderUser() {
+  Boss.admin = false; Boss.tv = false; Boss.play = false; Chat.admin = false;
   show('scr-user'); updateChip();
   const list = $('#user-list'); list.innerHTML = '';
   const names = Object.keys(DB.users).sort((a, b) => (DB.users[b].lastSeen || 0) - (DB.users[a].lastSeen || 0));
@@ -2115,11 +2116,11 @@ var Music = {
 document.addEventListener('visibilitychange', () => { if (document.hidden && Music.on) { const d = DB.music; DB.music = false; Music.sync(); DB.music = d; } else Music.sync(); });
 /* ================= 3D 그래픽 (three.js) — 불러오지 못하면 평면 그림 그대로 ================= */
 var G3 = {
-  URL: 'https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.min.js', T: null, loading: null, failed: false, geo: {}, mats: {},
+  URL: 'https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.min.js', URL2: 'https://unpkg.com/three@0.160.0/build/three.module.min.js', T: null, loading: null, failed: false, geo: {}, mats: {},
   webgl() { try { const c = document.createElement('canvas'); return !!(c.getContext('webgl2') || c.getContext('webgl')); } catch (e) { return false; } },
   load() {
     if (this.T) return Promise.resolve(this.T); if (this.failed) return Promise.resolve(null);
-    if (!this.loading) this.loading = (this.webgl() ? import(this.URL) : Promise.reject(0)).then(m => { this.T = m; return m; }).catch(() => { this.failed = true; return null; });
+    if (!this.loading) this.loading = (this.webgl() ? import(this.URL).catch(() => import(this.URL2)) : Promise.reject(0)).then(m => { this.T = m; return m; }).catch(() => { this.failed = true; return null; });
     return this.loading;
   },
   g(key, mk) { return this.geo[key] || (this.geo[key] = mk()); },
@@ -2190,7 +2191,7 @@ var G3 = {
   /* ---------- 지도 ---------- */
   map: {
     v: null, key: '', st: null, trail: null, world: null, pts: [], anim: [], cols: 0, seen: {}, at: {}, walk: null, scr: 'scr-map',
-    show(trail, st) { this.st = st; this.trail = trail; G3.load().then(T => { if (!T || !$('#' + this.scr).classList.contains('on')) return; try { this._show(); } catch (e) { console.warn('3D 지도 실패', e); G3.failed = true; [G3.map, G3.cmap].forEach(m => { if (m.trail) { m.trail.classList.remove('g3'); m.trail.style.height = ''; } if (m.v) { m.v.dispose(); m.v = null; } }); layoutTrail(prog()); if (typeof CLS_IDS !== 'undefined' && $('#scr-class').classList.contains('on')) layoutTrail(prog(), CLS_IDS); } }); },
+    show(trail, st) { this.st = st; this.trail = trail; this.seq = (this.seq || 0) + 1; if (this.walk) this.walk.cb = null; G3.load().then(T => { if (!T || !$('#' + this.scr).classList.contains('on')) return; try { this._show(); } catch (e) { console.warn('3D 지도 실패', e); G3.failed = true; [G3.map, G3.cmap].forEach(m => { if (m.trail) { m.trail.classList.remove('g3'); m.trail.style.height = ''; } if (m.v) { m.v.dispose(); m.v = null; } }); layoutTrail(prog()); if (typeof CLS_IDS !== 'undefined' && $('#scr-class').classList.contains('on')) layoutTrail(prog(), CLS_IDS); } }); },
     relayout() { if (this.v && this.trail && this.st && this.trail.classList.contains('g3')) { try { this._show(); } catch (e) {} } },
     _show() {
       const trail = this.trail, st = this.st; let host = trail.querySelector('.g3-host'); if (!host) { host = document.createElement('div'); host.className = 'g3-host'; trail.prepend(host); }
@@ -2399,8 +2400,9 @@ G3.game = {
     const objs = new Map(), dying = [];
     A.push((t, dt) => { const lay = host.querySelector('.layer'); if (!lay) return; const w = lay.clientWidth, h = lay.clientHeight; if (!w || !h) return; const u = HH / h, seen = new Set();
       lay.querySelectorAll('.item').forEach(el => { if (el.classList.contains('pop')) return; seen.add(el); let ob = objs.get(el); if (!ob) { ob = mk(el); objs.set(el, ob); S.add(ob.g); }
-        const c = el.querySelector('.bln, .fishb') || el.querySelector('.tag'); const cx = el.offsetLeft - el.offsetWidth / 2 + c.offsetLeft + c.offsetWidth / 2, cy = el.offsetTop - el.offsetHeight / 2 + c.offsetTop + c.offsetHeight / 2;
-        ob.g.position.set((cx / w - .5) * HH * cam.aspect, (.5 - cy / h) * HH, 0); ob.upd(t, {w: c.offsetWidth * u, h: c.offsetHeight * u}); });
+        if (ob.mw !== w) { ob.mw = w; const c = el.querySelector('.bln, .fishb') || el.querySelector('.tag'); ob.dx = c.offsetLeft + c.offsetWidth / 2 - el.offsetWidth / 2; ob.dy = c.offsetTop + c.offsetHeight / 2 - el.offsetHeight / 2; ob.cw = c.offsetWidth; ob.ch = c.offsetHeight; }
+        const cx = (parseFloat(el.style.left) || 0) / 100 * w + ob.dx, cy = (parseFloat(el.style.top) || 0) / 100 * h + ob.dy;
+        ob.g.position.set((cx / w - .5) * HH * cam.aspect, (.5 - cy / h) * HH, 0); ob.upd(t, {w: ob.cw * u, h: ob.ch * u}); });
       objs.forEach((ob, el) => { if (!seen.has(el)) { objs.delete(el); dying.push({g: ob.g, t: 0, s: ob.g.scale.clone()}); } });
       for (let i = dying.length - 1; i >= 0; i--) { const d = dying[i]; d.t += dt; d.g.scale.copy(d.s).multiplyScalar(1 + d.t * 5); if (d.t > .1) { S.remove(d.g); dying.splice(i, 1); } } });
   },
@@ -2462,7 +2464,8 @@ G3.game = {
 G3.cmap = Object.assign({}, G3.map, {scr: 'scr-class', v: null, key: '', st: null, trail: null, world: null, pts: [], anim: []});
 /* ================= 선생님 점검 모드 ================= */
 const TEACHER = '점검 선생님', TEACHER_PW = typeof ADMIN_PW !== 'undefined' ? ADMIN_PW : 'kingkong2026';
-function isTeacher() { return !!DB.teacherOk && DB.current === TEACHER; }
+let TEACH_SESSION = false;
+function isTeacher() { return (TEACH_SESSION || (!!DB.teacherOk && !!DB.teacherKeep)) && DB.current === TEACHER; }
 function fillTeacher(u) { Object.entries(COURSES).forEach(([c, C]) => { const p = progOf(u, c); p.unlocked = C.levels.length; p.master = true; p.gst = p.gst || {}; C.levels.forEach(L => { p.passed[L.n] = true; for (let i = 0; i < L.lines.length; i++) p.lines[L.n + '-' + i] = Math.max(3, p.lines[L.n + '-' + i] || 0); p.lines[L.n + '-mix'] = 3; p.games[L.n] = 3; [1, 2, 3].forEach(s => { p.gst[L.n + '-' + s] = 3; }); }); }); }
 function teacherEnter() {
   const go = async () => {
@@ -2473,9 +2476,9 @@ function teacherEnter() {
     if (!hasUser(DB, TEACHER)) DB.users[TEACHER] = newUser(TEACHER, '🦁'); fillTeacher(DB.users[TEACHER]); DB.current = TEACHER; DB.users[TEACHER].lastSeen = Date.now(); DB.users[TEACHER].sawPosture = true; save(); renderMap();
     toast('👩‍🏫 선생님 점검 모드: 모든 레벨·게임·단계가 열려 있어요');
   };
-  if (DB.teacherOk) { go(); return; }
-  Modal.show({title: '👩‍🏫 선생님 점검 모드', html: '<p class="muted" style="margin:0 0 8px;font-size:14px">모든 레벨·게임·단계가 열린 점검용 계정으로 들어가요. 반 기록에는 남지 않아요.</p><input id="tch-pw" type="password" maxlength="30" autocomplete="off" placeholder="선생님 비밀번호" style="width:100%;font:inherit;padding:10px 12px;border:2px solid #e2e8f0;border-radius:12px">',
-    primary: {label: '들어가기', fn: () => { if ($('#tch-pw').value !== TEACHER_PW) { toast('비밀번호가 맞지 않아요'); return; } go(); }}, secondary: {label: '닫기', fn: () => {}}});
+  if (TEACH_SESSION || (DB.teacherOk && DB.teacherKeep)) { go(); return; }
+  Modal.show({title: '👩‍🏫 선생님 점검 모드', html: '<p class="muted" style="margin:0 0 8px;font-size:14px">모든 레벨·게임·단계가 열린 점검용 계정으로 들어가요. 반 기록에는 남지 않아요.</p><input id="tch-pw" type="password" maxlength="30" autocomplete="off" placeholder="선생님 비밀번호" style="width:100%;font:inherit;padding:10px 12px;border:2px solid #e2e8f0;border-radius:12px"><label style="display:flex;gap:6px;align-items:center;margin-top:10px;font-size:14px;font-weight:700"><input type="checkbox" id="tch-keep"> 이 기기에서 비밀번호 기억하기 (내 컴퓨터에서만 켜세요)</label>',
+    primary: {label: '들어가기', fn: () => { if ($('#tch-pw').value !== TEACHER_PW) { toast('비밀번호가 맞지 않아요'); return; } TEACH_SESSION = true; DB.teacherKeep = $('#tch-keep').checked; go(); }}, secondary: {label: '닫기', fn: () => {}}});
   setTimeout(() => $('#tch-pw') && $('#tch-pw').focus(), 50);
 }
 function renderMap(course) {
