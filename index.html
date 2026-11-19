@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<!-- 타자 모험 v5.0 우리반용 (2026-11-19) · 한글 두벌식 10레벨 + 영어 자판 8레벨 · 제작 kingkongssam -->
+<!-- 타자 모험 v5.1 우리반용 (2026-11-19) · 한글 두벌식 10레벨 + 영어 자판 8레벨 · 제작 kingkongssam -->
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#ff7a2f">
-<title>타자 모험 v5.0 — 기본 자리부터 차근차근 레벨 업</title>
+<title>타자 모험 v5.1 — 기본 자리부터 차근차근 레벨 업</title>
 <style>
 :root{
   --bg:#eef4fb; --card:#ffffff; --ink:#1f2a3d; --muted:#556178; --btn:#c2410c; --btn-dark:#8f2f08;
@@ -690,7 +690,7 @@ body.show-hands .typing-finger-caption{display:block}
           <input id="class-code" aria-label="반 코드" placeholder="반 코드 (선생님이 알려 준 6자 이상 코드)" maxlength="20" autocomplete="off">
         </div>
         <div class="muted" id="class-note" style="display:none;font-size:13px;font-weight:700;margin-top:6px">선생님이 알려 준 반 코드를 써야 시작할 수 있어요. 친구들과 지도에서 서로 위치를 보고, 다른 컴퓨터에서도 같은 이름이면 기록이 이어져요.</div>
-        <button class="btn sec sm" id="reg-class" type="button" style="display:none;margin-top:10px">👩‍🏫 선생님: 학급 등록</button> <button class="btn sec sm" id="tch-enter" type="button" style="margin-top:10px">🔧 선생님 점검 모드</button> <button class="btn sec sm" id="tch-acct" type="button" style="margin-top:10px">🔑 선생님 계정</button>
+        <button class="btn sec sm" id="tch-menu" type="button" style="display:none;margin-top:10px">👩‍🏫 선생님</button>
       </div>
       <div class="card howto">
         🗺️ 지도의 길을 따라 한 레벨씩 올라가요. 한글 10레벨, 영어 8레벨!<br>
@@ -1263,7 +1263,7 @@ function validateContent() {
 <script>
 /* ================= 저장 ================= */
 const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
-const APP_VERSION = '5.0', APP_DATE = '2026-11-20';
+const APP_VERSION = '5.1', APP_DATE = '2026-11-20';
 /* ===== 우리 반 공유(선택) : Firebase 설정 =====
    Firebase 콘솔 → 프로젝트 설정 → 내 앱(웹) → SDK 설정의 firebaseConfig 값을 아래에 그대로 붙여 넣으세요.
    Realtime Database를 만들고 databaseURL까지 넣어야 켜집니다. 비워 두면 혼자 쓰는 앱으로 돌아갑니다. */
@@ -2015,7 +2015,7 @@ function renderUser() {
   list.style.display = names.length ? '' : 'none';
   $('#user-name').value = '';
   $('#class-row').style.display = Cloud.enabled() ? '' : 'none'; $('#class-note').style.display = Cloud.enabled() ? '' : 'none';
-  $('#class-code').value = DB.classCode || ''; if ($('#reg-class')) $('#reg-class').style.display = FIXED_CLASS && Cloud.enabled() ? '' : 'none';
+  $('#class-code').value = DB.classCode || ''; if ($('#tch-menu')) $('#tch-menu').style.display = Cloud.enabled() ? '' : 'none';
   const ap = $('#avatar-pick'); ap.innerHTML = '';
   AVATARS.forEach(a => { const b = document.createElement('button'); b.innerHTML = ART.face(a); b.setAttribute('aria-label', a); b.className = a === pickedAvatar ? 'on' : ''; b.onclick = () => { pickedAvatar = a; ap.querySelectorAll('button').forEach(x => x.classList.toggle('on', x.textContent === a)); Snd.pop(); }; ap.appendChild(b); });
 }
@@ -2079,7 +2079,7 @@ function openRegister() {
     }}, secondary: {label: '닫기', fn: () => {}}});
   setTimeout(() => $('#reg-name') && $('#reg-name').focus(), 50);
 }
-$('#reg-class').onclick = () => teacherGate(openRegister);
+
 $('#user-name').addEventListener('keydown', e => { if (e.key === 'Enter') selectUser(e.target.value); });
 $('#btn-user').onclick = () => { stopAll(); renderUser(); };
 $('#btn-sound').onclick = () => { DB.sound = !DB.sound; save(); $('#btn-sound').textContent = DB.sound ? '🔊' : '🔇'; if (DB.sound) Snd.ok(); Music.sync(); };
@@ -2478,7 +2478,7 @@ async function teacherGate(ok) {
   toast('선생님 계정을 확인하고 있어요…'); if (!(await Auth.init())) { toast('인터넷 연결을 확인해 주세요'); return; }
   if (Auth.teacher) { ok(); return; }
   const after = async () => { if (Auth.teacher) { toast('👩‍🏫 ' + Auth.me().email + ' 선생님으로 확인됐어요'); ok(); return; }
-    try { const r = await Auth.claimOrRequest(); if (r === 'claimed') { toast('👩‍🏫 첫 선생님으로 등록됐어요'); ok(); } else Modal.show({title: '승인 요청을 보냈어요', html: `<p><b>${esc(Auth.me().email)}</b> 계정으로 요청했어요.</p><p>이미 등록된 선생님이 시작 화면의 <b>🔑 선생님 계정</b>에서 승인하면 쓸 수 있어요.</p>`, primary: {label: '확인', fn: () => {}}}); }
+    try { const r = await Auth.claimOrRequest(); if (r === 'claimed') { toast('👩‍🏫 첫 선생님으로 등록됐어요'); ok(); } else Modal.show({title: '승인 요청을 보냈어요', html: `<p><b>${esc(Auth.me().email)}</b> 계정으로 요청했어요.</p><p>이미 등록된 선생님이 시작 화면의 <b>👩‍🏫 선생님</b>에서 승인하면 쓸 수 있어요.</p>`, primary: {label: '확인', fn: () => {}}}); }
     catch (e) { toast('요청하지 못했어요. Firebase 규칙을 확인해 주세요'); } };
   if (Auth.user) { after(); return; }
   Modal.show({title: '👩‍🏫 선생님 로그인', html: '<p style="margin:0">선생님 기능은 구글 계정으로 로그인해야 쓸 수 있어요. 학생은 로그인하지 않아요.</p>',
@@ -2486,11 +2486,12 @@ async function teacherGate(ok) {
 }
 async function openTeacherAccount() {
   toast('선생님 계정을 확인하고 있어요…'); if (!(await Auth.init())) { toast('인터넷 연결을 확인해 주세요'); return; }
-  if (!Auth.user) { teacherGate(openTeacherAccount); return; }
+  if (!Auth.user || !Auth.teacher) { if (!Auth.user) { teacherGate(openTeacherAccount); return; } }
   let reqs = {}; if (Auth.teacher) { try { reqs = (await Cloud.fb.get(Cloud.fb.ref(Cloud.db, 'teacherReq'))).val() || {}; } catch (e) {} }
   const rows = Object.entries(reqs).map(([uid, r]) => `<div style="display:flex;align-items:center;gap:8px;margin:6px 0"><span style="flex:1;overflow:hidden;text-overflow:ellipsis">${esc(String((r && r.name) || '').slice(0, 40))} <small class="muted">${esc(String((r && r.email) || '').slice(0, 80))}</small></span><button class="btn sm" data-ok="${esc(uid)}">승인</button><button class="btn sec sm" data-no="${esc(uid)}">거절</button></div>`).join('');
-  Modal.show({title: '🔑 선생님 계정', html: `<p style="margin:0 0 6px"><b>${esc(Auth.me().email)}</b><br>${Auth.teacher ? '✅ 등록된 선생님이에요.' : '⏳ 아직 승인되지 않았어요. 등록된 선생님이 승인해야 해요.'}</p>${Auth.teacher ? `<div class="sect" style="margin:10px 0 4px;font-size:15px">승인 요청</div><div id="tch-reqs">${rows || '<span class="muted">요청이 없어요.</span>'}</div>` : ''}`,
+  Modal.show({title: '👩‍🏫 선생님', html: `<p style="margin:0 0 6px"><b>${esc(Auth.me().email)}</b><br>${Auth.teacher ? '✅ 등록된 선생님이에요.' : '⏳ 아직 승인되지 않았어요. 등록된 선생님이 승인해야 해요.'}</p>${Auth.teacher ? `<div style="display:grid;gap:8px;margin:10px 0"><button class="btn" id="tm-check">🔧 점검 모드로 들어가기</button><button class="btn sec" id="tm-reg">🏫 학급 등록</button></div><div class="sect" style="margin:10px 0 4px;font-size:15px">승인 요청</div><div id="tch-reqs">${rows || '<span class="muted">요청이 없어요.</span>'}</div>` : ''}`,
     primary: {label: '닫기', fn: () => {}}, secondary: {label: '로그아웃', fn: () => { Auth.signOut().then(() => { Boss.admin = false; Chat.admin = false; if (DB.current === TEACHER) { DB.current = ''; save(); renderUser(); } toast('로그아웃했어요'); }); }}});
+  if ($('#tm-check')) { $('#tm-check').onclick = () => { Modal.hide(); teacherEnter(); }; $('#tm-reg').onclick = () => { Modal.hide(); openRegister(); }; }
   $$('#tch-reqs button').forEach(b => b.onclick = async () => { const uid = b.dataset.ok || b.dataset.no, f = Cloud.fb; try { if (b.dataset.ok) await f.set(f.ref(Cloud.db, 'teachers/' + uid), true); await f.remove(f.ref(Cloud.db, 'teacherReq/' + uid)); toast(b.dataset.ok ? '승인했어요' : '거절했어요'); Modal.hide(); openTeacherAccount(); } catch (e) { toast('처리하지 못했어요'); } });
 }
 const TEACHER = '점검 선생님';
@@ -2727,8 +2728,7 @@ $('#boss-start').onclick = e => { e.currentTarget.blur(); Boss.start(); };
 $('#boss-stop').onclick = e => { e.currentTarget.blur(); Boss.stop(); };
 $('#boss-tv').onclick = e => { e.currentTarget.blur(); Boss.tv = !Boss.tv; $('#scr-boss').classList.toggle('tv', Boss.tv); $('#boss-tv').textContent = Boss.tv ? '⌨️ 학생 화면' : '📺 TV 화면'; Boss._kids = ''; Boss.render(); };
 $('#boss-card-btn').onclick = () => Boss.open();
-$('#tch-enter').onclick = () => teacherEnter();
-$('#tch-acct').onclick = () => openTeacherAccount();
+$('#tch-menu').onclick = () => openTeacherAccount();
 $('#boss-play').onchange = e => { Boss.play = e.target.checked; e.target.blur(); if (Boss.play) { Boss._joining = ''; Boss.join(); } Boss.render(); };
 
 $('#btn-chat').onclick = () => Chat.openScreen();
