@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<!-- 타자연습 v3.0 (2026-11-03) · 한글 두벌식 10레벨 + 영어 자판 8레벨 · 제작 kingkongssam -->
+<!-- 타자연습 v3.1 (2026-11-03) · 한글 두벌식 10레벨 + 영어 자판 8레벨 · 제작 kingkongssam -->
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#ff7a2f">
-<title>타자연습 v3.0 — 기본 자리부터 차근차근 레벨 업</title>
+<title>타자연습 v3.1 — 기본 자리부터 차근차근 레벨 업</title>
 <style>
 :root{
   --bg:#eef4fb; --card:#ffffff; --ink:#1f2a3d; --muted:#556178; --btn:#c2410c; --btn-dark:#8f2f08;
@@ -514,6 +514,11 @@ svg.face{width:1.2em;height:1.2em;display:inline-block;vertical-align:middle;ove
 .trail.g3 .node.place .ttl,.trail.g3 .node.place .st{background:rgba(255,255,255,.92);box-shadow:0 2px 0 rgba(0,60,110,.15);border-radius:99px;padding:1px 9px}
 .trail.g3 .node.place .ttl{font-size:13px;max-width:calc(var(--u,40px) * 3.6);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .trail.g3 .node.place .st{font-size:12px}
+.trail.g3 .node.cls{transform:translate(-50%,calc(var(--u,40px) * 1.2));flex-direction:row;gap:4px;align-items:center}
+.trail.g3 .node.cls .ball{width:24px;height:24px;font-size:13px;background:#fff;box-shadow:0 2px 0 #cfd9e6;flex:none}
+.trail.g3 .node.cls .who{display:none}
+.trail.g3 .node.cls .ttl{background:rgba(255,255,255,.92);border-radius:99px;padding:1px 9px;font-size:13px;white-space:nowrap;max-width:none;box-shadow:0 2px 0 rgba(0,60,110,.15)}
+.node .cnt{display:none}.trail.g3 .node .cnt{display:inline;color:#7048e8}
 /* ---------- responsive ---------- */
 @media (max-width:480px){#uc-stars{display:none}}
 @media (max-width:640px){
@@ -1128,7 +1133,7 @@ function validateContent() {
 <script>
 /* ================= 저장 ================= */
 const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
-const APP_VERSION = '3.0', APP_DATE = '2026-11-19';
+const APP_VERSION = '3.1', APP_DATE = '2026-11-19';
 /* ===== 우리 반 공유(선택) : Firebase 설정 =====
    Firebase 콘솔 → 프로젝트 설정 → 내 앱(웹) → SDK 설정의 firebaseConfig 값을 아래에 그대로 붙여 넣으세요.
    Realtime Database를 만들고 databaseURL까지 넣어야 켜집니다. 비워 두면 혼자 쓰는 앱으로 돌아갑니다. */
@@ -1160,7 +1165,7 @@ function load() {
   let d = null; try { d = JSON.parse(localStorage.getItem(LS_KEY)); } catch (e) { d = null; }
   const out = {users: Object.create(null), current: null, sound: true, hands: true};
   if (d && typeof d === 'object') {
-    ['current', 'sound', 'hands', 'classCode', 'course', 'blind'].forEach(k => { if (k in d) out[k] = d[k]; });
+    ['current', 'sound', 'hands', 'classCode', 'course', 'blind', 'teacherOk'].forEach(k => { if (k in d) out[k] = d[k]; });
     if (d.users && typeof d.users === 'object') Object.keys(d.users).forEach(n => { const u = normalizeUser(d.users[n], n); if (u) out.users[n] = u; });
   }
   if (!hasUser(out, out.current)) out.current = null;
@@ -1322,7 +1327,7 @@ const Cloud = {
     return {name: u.name, avatar: avatarOf(u), ko: sum('ko'), en: sum('en'), total: totalStars(u), keys: u.totalKeys || 0, today: {date: dayKey(), lines: td.lines, min: Math.round(td.sec / 60)}, test: {ko: progOf(u, 'ko').testBest || 0, en: progOf(u, 'en').testBest || 0}, ver: APP_VERSION};
   },
   async push() {
-    const u = user(); if (!u || !this.code() || !(await this.init())) return;
+    const u = user(); if (!u || isTeacher() || !this.code() || !(await this.init())) return;
     const rec = this.summary(u); const j = JSON.stringify([rec, u]); if (j === this.lastJSON) return;
     rec.updatedAt = this.fb.serverTimestamp(); const k = this.key(u.name);
     await this.fb.set(this.fb.ref(this.db, `classes/${this.code()}/students/${k}`), rec);
@@ -1842,7 +1847,7 @@ function renderUser() {
   show('scr-user'); updateChip();
   const list = $('#user-list'); list.innerHTML = '';
   const names = Object.keys(DB.users).sort((a, b) => (DB.users[b].lastSeen || 0) - (DB.users[a].lastSeen || 0));
-  names.forEach(n => {
+  names.filter(n => n !== TEACHER).forEach(n => {
     const u = DB.users[n];
     const b = document.createElement('div'); b.className = 'u'; b.setAttribute('role', 'button'); b.tabIndex = 0; b.setAttribute('aria-label', n + ' 선택');
     b.addEventListener('keydown', ev => { if ((ev.key === 'Enter' || ev.key === ' ') && ev.target === b) { ev.preventDefault(); selectUser(n); } });
@@ -1971,8 +1976,8 @@ var G3 = {
   flag(c = '#fa5252', h = 1.3) { const f = this.m(this.box(.5, .32, .03), c, .27, h - .18, 0); return {g: this.grp([this.m(this.cyl(.03, .03, h, 6), '#868e96', 0, h / 2, 0), this.m(this.sph(.06, 8), '#ffd43b', 0, h, 0), f]), f}; },
   /* ---------- 지도 ---------- */
   map: {
-    v: null, key: '', st: null, trail: null, world: null, pts: [], anim: [], cols: 0,
-    show(trail, st) { this.st = st; this.trail = trail; G3.load().then(T => { if (!T || !$('#scr-map').classList.contains('on')) return; try { this._show(); } catch (e) { console.warn('3D 지도 실패', e); G3.failed = true; trail.classList.remove('g3'); trail.style.height = ''; if (this.v) { this.v.dispose(); this.v = null; } layoutTrail(prog()); } }); },
+    v: null, key: '', st: null, trail: null, world: null, pts: [], anim: [], cols: 0, scr: 'scr-map',
+    show(trail, st) { this.st = st; this.trail = trail; G3.load().then(T => { if (!T || !$('#' + this.scr).classList.contains('on')) return; try { this._show(); } catch (e) { console.warn('3D 지도 실패', e); G3.failed = true; [G3.map, G3.cmap].forEach(m => { if (m.trail) { m.trail.classList.remove('g3'); m.trail.style.height = ''; } if (m.v) { m.v.dispose(); m.v = null; } }); layoutTrail(prog()); if (typeof CLS_IDS !== 'undefined' && $('#scr-class').classList.contains('on')) layoutTrail(prog(), CLS_IDS); } }); },
     relayout() { if (this.v && this.trail && this.st && this.trail.classList.contains('g3')) { try { this._show(); } catch (e) {} } },
     _show() {
       const trail = this.trail, st = this.st; let host = trail.querySelector('.g3-host'); if (!host) { host = document.createElement('div'); host.className = 'g3-host'; trail.prepend(host); }
@@ -2026,6 +2031,9 @@ var G3 = {
         if (locked) lm.traverse(dim);
         else for (let j = 0; j < 3; j++) { const a = rnd() * 6.28, d = 1.2 + rnd() * .25; const x = Math.cos(a) * d, z = Math.sin(a) * d; isl.add(j === 0 ? G.m(G.sph(.14, 6), '#adb5bd', x, .2, z, {flatShading: true}) : G.grp([G.m(G.sph(.07, 6), ['#ff8fab', '#ffd43b', '#fff', '#b197fc'][Math.floor(rnd() * 4)], 0, .3, 0), G.m(G.cyl(.015, .015, .16, 4), '#2f9e44', 0, .22, 0)], x, 0, z)); }
         if (s === 2) { const f = G.flag('#fa5252', 1.25); f.g.position.set(-1.15, .15, .55); isl.add(f.g); A.push(t0 => { f.f.rotation.y = Math.sin(t0 * 4 + i) * .45; }); }
+        (st.who && st.who[i] || []).forEach(([av, me], j, arr) => { const a0 = Math.PI * (.5 + (j - (arr.length - 1) / 2) * .26), kid = G.animal(av); const x = Math.cos(a0) * 1.22, z = Math.sin(a0) * 1.12 + .12; kid.position.set(x, .15, z); kid.scale.setScalar(.56); isl.add(kid);
+          if (me) { const rg = G.m(G.tor(.34, .05), '#ff922b', x, .19, z, {emissive: '#ff7a2f', emissiveIntensity: 1}); rg.rotation.x = Math.PI / 2; rg.castShadow = false; isl.add(rg); }
+          A.push(t0 => { kid.position.y = .15 + Math.abs(Math.sin(t0 * 2.6 + i + j * 1.3)) * (me ? .26 : .12); kid.rotation.y = Math.sin(t0 * .9 + j) * .4; }); });
         if (i + 1 === st.cur) {
           const ring = G.m(G.tor(1.72, .07), '#ff922b', 0, .2, 0, {emissive: '#ff7a2f', emissiveIntensity: 1}); ring.rotation.x = Math.PI / 2; ring.castShadow = false; isl.add(ring);
           const me = G.animal(st.av); me.position.set(.75, .15, .95); me.scale.setScalar(.82); isl.add(me);
@@ -2043,6 +2051,25 @@ var G3 = {
     }
   }
 };
+G3.cmap = Object.assign({}, G3.map, {scr: 'scr-class', v: null, key: '', st: null, trail: null, world: null, pts: [], anim: []});
+/* ================= 선생님 점검 모드 ================= */
+const TEACHER = '점검 선생님', TEACHER_PW = typeof ADMIN_PW !== 'undefined' ? ADMIN_PW : 'kingkong2026';
+function isTeacher() { return !!DB.teacherOk && DB.current === TEACHER; }
+function fillTeacher(u) { Object.entries(COURSES).forEach(([c, C]) => { const p = progOf(u, c); p.unlocked = C.levels.length; p.master = true; p.gst = p.gst || {}; C.levels.forEach(L => { p.passed[L.n] = true; for (let i = 0; i < L.lines.length; i++) p.lines[L.n + '-' + i] = Math.max(3, p.lines[L.n + '-' + i] || 0); p.lines[L.n + '-mix'] = 3; p.games[L.n] = 3; [1, 2, 3].forEach(s => { p.gst[L.n + '-' + s] = 3; }); }); }); }
+function teacherEnter() {
+  const go = async () => {
+    DB.teacherOk = true;
+    if (typeof FIXED_CLASS !== 'undefined' && FIXED_CLASS) { const typed = ($('#class-code').value || '').trim(); let code = DB.classCode || FIXED_CLASS;
+      if (typed && (typed === FIXED_CLASS || typed === DB.classOk)) code = typed; else if (typed && CLASS_RE.test(typed)) { const info = await Cloud.classInfo(typed); if (info && !info.offline) { code = typed; DB.classOk = typed; DB.className = info.name; } else toast('등록되지 않은 반 코드라서 원래 반으로 들어가요'); }
+      if (code === FIXED_CLASS && DB.classOk !== code) { DB.classOk = code; DB.className = '킹콩반'; } DB.classCode = code; }
+    if (!hasUser(DB, TEACHER)) DB.users[TEACHER] = newUser(TEACHER, '🦁'); fillTeacher(DB.users[TEACHER]); DB.current = TEACHER; DB.users[TEACHER].lastSeen = Date.now(); DB.users[TEACHER].sawPosture = true; save(); renderMap();
+    toast('👩‍🏫 선생님 점검 모드: 모든 레벨·게임·단계가 열려 있어요');
+  };
+  if (DB.teacherOk) { go(); return; }
+  Modal.show({title: '👩‍🏫 선생님 점검 모드', html: '<p class="muted" style="margin:0 0 8px;font-size:14px">모든 레벨·게임·단계가 열린 점검용 계정으로 들어가요. 반 기록에는 남지 않아요.</p><input id="tch-pw" type="password" maxlength="30" autocomplete="off" placeholder="선생님 비밀번호" style="width:100%;font:inherit;padding:10px 12px;border:2px solid #e2e8f0;border-radius:12px">',
+    primary: {label: '들어가기', fn: () => { if ($('#tch-pw').value !== TEACHER_PW) { toast('비밀번호가 맞지 않아요'); return; } go(); }}, secondary: {label: '닫기', fn: () => {}}});
+  setTimeout(() => $('#tch-pw') && $('#tch-pw').focus(), 50);
+}
 function renderMap(course) {
   stopAll(); show('scr-map'); updateChip();
   const u = user(); if (!u) { renderUser(); return; }
@@ -2093,7 +2120,7 @@ function layoutTrail(p, ids) {
     svg.innerHTML = `<path class="road-edge" d="${dpath}"/><path class="road" d="${dpath}"/><path class="road-mid" d="${dpath}"/><path class="road-done" d="${dn}"/>`;
   });
 }
-window.addEventListener('resize', () => { if ($('#scr-map').classList.contains('on')) { layoutTrail(prog()); G3.map.relayout(); } if ($('#scr-class').classList.contains('on')) layoutTrail(prog(), CLS_IDS); });
+window.addEventListener('resize', () => { if ($('#scr-map').classList.contains('on')) { layoutTrail(prog()); G3.map.relayout(); } if ($('#scr-class').classList.contains('on')) { layoutTrail(prog(), CLS_IDS); G3.cmap.relayout(); } });
 
 /* ================= 내 기록 ================= */
 function recordText(u) {
@@ -2174,10 +2201,11 @@ function renderClass() {
     const here = list.filter(r => posOf(r) === L.n).sort((a, b) => (b.total || 0) - (a.total || 0));
     const n = document.createElement('div'); n.className = 'node cls';
     const shown = here.slice(0, 8);
-    n.innerHTML = `<div class="ball">${L.n}</div><div class="ttl">${esc(L.title)}</div><div class="who">${shown.map(r => `<span class="${me && r.name === me.name ? 'me' : ''}" title="${esc(r.name)}">${esc(r.avatar || '🙂')}</span>`).join('')}${here.length > 8 ? `<small>+${here.length - 8}</small>` : ''}</div>`;
+    n.innerHTML = `<div class="ball">${L.n}</div><div class="ttl">${esc(L.title)}<span class="cnt">${here.length ? ' · ' + here.length + '명' : ''}</span></div><div class="who">${shown.map(r => `<span class="${me && r.name === me.name ? 'me' : ''}" title="${esc(r.name)}">${esc(r.avatar || '🙂')}</span>`).join('')}${here.length > 8 ? `<small>+${here.length - 8}</small>` : ''}</div>`;
     grid.appendChild(n);
   });
   layoutTrail(prog(), CLS_IDS);
+  G3.cmap.show($('#ctrail'), {course: clsCourse, av: '', cur: 0, lv: C.levels.map(() => 1), who: C.levels.map(L => list.filter(r => posOf(r) === L.n).sort((a, b) => (b.total || 0) - (a.total || 0)).slice(0, 6).map(r => [String(r.avatar || '🐱').slice(0, 4), me && r.name === me.name ? 1 : 0]))});
   const rank = $('#cls-rank'); rank.innerHTML = '';
   const today = new Date(); today.setHours(0, 0, 0, 0);
   const tdl = r => r.today.date === dayKey() ? r.today.lines : 0;
@@ -2934,6 +2962,7 @@ window.addEventListener('resize', () => { if (KB.el && KB.el.parentElement) KB.f
 $('#btn-sound').textContent = DB.sound ? '🔊' : '🔇';
 applyHands();
 (function init() {
+  if (/[?#&]teacher\b/.test(location.search + location.hash)) setTimeout(teacherEnter, 300);
   const bad = validateContent(); if (bad.length) console.warn('콘텐츠 검사:', bad);
   if (Cloud.enabled() && Cloud.code()) Cloud.init().then(ok => { if (ok && user()) Cloud.push().catch(() => {}); });
   if (DB.current && DB.users[DB.current]) renderMap(); else renderUser();

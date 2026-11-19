@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<!-- 타자 모험 v4.0 우리반용 (2026-11-19) · 한글 두벌식 10레벨 + 영어 자판 8레벨 · 제작 kingkongssam -->
+<!-- 타자 모험 v4.1 우리반용 (2026-11-19) · 한글 두벌식 10레벨 + 영어 자판 8레벨 · 제작 kingkongssam -->
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#ff7a2f">
-<title>타자 모험 v4.0 — 기본 자리부터 차근차근 레벨 업</title>
+<title>타자 모험 v4.1 — 기본 자리부터 차근차근 레벨 업</title>
 <style>
 :root{
   --bg:#eef4fb; --card:#ffffff; --ink:#1f2a3d; --muted:#556178; --btn:#c2410c; --btn-dark:#8f2f08;
@@ -598,6 +598,11 @@ svg.face{width:1.2em;height:1.2em;display:inline-block;vertical-align:middle;ove
 .trail.g3 .node.place .ttl{font-size:13px;max-width:calc(var(--u,40px) * 3.6);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .trail.g3 .node.place .st{font-size:12px}
 #boss-arena.g3 .scene,#boss-arena.g3 .t-zone,#boss-arena.g3 .t-pull{display:none}
+.trail.g3 .node.cls{transform:translate(-50%,calc(var(--u,40px) * 1.2));flex-direction:row;gap:4px;align-items:center}
+.trail.g3 .node.cls .ball{width:24px;height:24px;font-size:13px;background:#fff;box-shadow:0 2px 0 #cfd9e6;flex:none}
+.trail.g3 .node.cls .who{display:none}
+.trail.g3 .node.cls .ttl{background:rgba(255,255,255,.92);border-radius:99px;padding:1px 9px;font-size:13px;white-space:nowrap;max-width:none;box-shadow:0 2px 0 rgba(0,60,110,.15)}
+.node .cnt{display:none}.trail.g3 .node .cnt{display:inline;color:#7048e8}
 /* ---------- responsive ---------- */
 @media (max-width:480px){#uc-stars{display:none} #uc-name{display:none} #topbar{gap:4px!important;padding:6px 8px!important} #topbar .iconbtn{width:30px!important;height:30px!important;font-size:14px!important} #topbar .userchip{padding:3px 6px!important}}
 @media (max-width:400px){#topbar .logo{display:none}}
@@ -675,7 +680,7 @@ body.show-hands .typing-finger-caption{display:block}
           <input id="class-code" aria-label="반 코드" placeholder="반 코드 (선생님이 알려 준 6자 이상 코드)" maxlength="20" autocomplete="off">
         </div>
         <div class="muted" id="class-note" style="display:none;font-size:13px;font-weight:700;margin-top:6px">선생님이 알려 준 반 코드를 써야 시작할 수 있어요. 친구들과 지도에서 서로 위치를 보고, 다른 컴퓨터에서도 같은 이름이면 기록이 이어져요.</div>
-        <button class="btn sec sm" id="reg-class" type="button" style="display:none;margin-top:10px">👩‍🏫 선생님: 학급 등록</button>
+        <button class="btn sec sm" id="reg-class" type="button" style="display:none;margin-top:10px">👩‍🏫 선생님: 학급 등록</button> <button class="btn sec sm" id="tch-enter" type="button" style="margin-top:10px">🔧 선생님 점검 모드</button>
       </div>
       <div class="card howto">
         🗺️ 지도의 길을 따라 한 레벨씩 올라가요. 한글 10레벨, 영어 8레벨!<br>
@@ -756,7 +761,7 @@ body.show-hands .typing-finger-caption{display:block}
       </div>
       <div id="boss-admin" class="classbar" style="display:none"><b style="color:#7c3aed">👩‍🏫</b>
         <label>한 판 <select id="boss-dur"><option value="30">30초</option><option value="40" selected>40초</option><option value="60">60초</option></select></label>
-        <button class="btn sm" id="boss-start">새 경기 (팀 나누기)</button><button class="btn sec sm" id="boss-stop">끝내기</button><button class="btn sec sm" id="boss-tv">📺 TV 화면</button>
+        <button class="btn sm" id="boss-start">새 경기 (팀 나누기)</button><button class="btn sec sm" id="boss-stop">끝내기</button><button class="btn sec sm" id="boss-tv">📺 TV 화면</button><label id="boss-play-lb" style="display:none"><input type="checkbox" id="boss-play"> 나도 참가(점검용)</label>
       </div>
       <div class="bossarena" id="boss-arena"></div>
       <div class="bossmsg" id="boss-msg"></div>
@@ -1248,7 +1253,7 @@ function validateContent() {
 <script>
 /* ================= 저장 ================= */
 const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
-const APP_VERSION = '4.0', APP_DATE = '2026-11-19';
+const APP_VERSION = '4.1', APP_DATE = '2026-11-19';
 /* ===== 우리 반 공유(선택) : Firebase 설정 =====
    Firebase 콘솔 → 프로젝트 설정 → 내 앱(웹) → SDK 설정의 firebaseConfig 값을 아래에 그대로 붙여 넣으세요.
    Realtime Database를 만들고 databaseURL까지 넣어야 켜집니다. 비워 두면 혼자 쓰는 앱으로 돌아갑니다. */
@@ -1284,7 +1289,7 @@ function load() {
   let d = null; try { d = JSON.parse(localStorage.getItem(LS_KEY)); } catch (e) { d = null; }
   const out = {users: Object.create(null), current: null, sound: true, hands: true};
   if (d && typeof d === 'object') {
-    ['current', 'sound', 'hands', 'classCode', 'classOk', 'className', 'course', 'blind', 'chatStat'].forEach(k => { if (k in d) out[k] = d[k]; });
+    ['current', 'sound', 'hands', 'classCode', 'classOk', 'className', 'course', 'blind', 'teacherOk', 'chatStat'].forEach(k => { if (k in d) out[k] = d[k]; });
     if (d.users && typeof d.users === 'object') Object.keys(d.users).forEach(n => { const u = normalizeUser(d.users[n], n); if (u) out.users[n] = u; });
   }
   if (!hasUser(out, out.current)) out.current = null;
@@ -1446,7 +1451,7 @@ const Cloud = {
     return {name: u.name, avatar: avatarOf(u), ko: sum('ko'), en: sum('en'), total: totalStars(u), keys: u.totalKeys || 0, today: {date: dayKey(), lines: td.lines, min: Math.round(td.sec / 60)}, test: {ko: progOf(u, 'ko').testBest || 0, en: progOf(u, 'en').testBest || 0}, ver: APP_VERSION};
   },
   async push() {
-    const u = user(); if (!u || !this.code() || !(await this.init())) return;
+    const u = user(); if (!u || isTeacher() || !this.code() || !(await this.init())) return;
     const rec = this.summary(u); const j = JSON.stringify([rec, u]); if (j === this.lastJSON) return;
     rec.updatedAt = this.fb.serverTimestamp(); const k = this.key(u.name);
     await this.fb.set(this.fb.ref(this.db, `classes/${this.code()}/students/${k}`), rec);
@@ -1988,7 +1993,7 @@ function renderUser() {
   show('scr-user'); updateChip();
   const list = $('#user-list'); list.innerHTML = '';
   const names = Object.keys(DB.users).sort((a, b) => (DB.users[b].lastSeen || 0) - (DB.users[a].lastSeen || 0));
-  names.forEach(n => {
+  names.filter(n => n !== TEACHER).forEach(n => {
     const u = DB.users[n];
     const b = document.createElement('div'); b.className = 'u'; b.setAttribute('role', 'button'); b.tabIndex = 0; b.setAttribute('aria-label', n + ' 선택');
     b.addEventListener('keydown', ev => { if ((ev.key === 'Enter' || ev.key === ' ') && ev.target === b) { ev.preventDefault(); selectUser(n); } });
@@ -2006,7 +2011,7 @@ function renderUser() {
 }
 let classChecking = false;
 async function selectUser(name) {
-  name = String(name || '').replace(/[\u0000-\u001f<>"'`]/g, '').trim().slice(0, 12); if (!name) { toast('이름(별명)을 써 주세요'); $('#user-name').focus(); return; }
+  name = String(name || '').replace(/[\u0000-\u001f<>"'`]/g, '').trim().slice(0, 12); if (name === TEACHER) { teacherEnter(); return; } if (!name) { toast('이름(별명)을 써 주세요'); $('#user-name').focus(); return; }
   if (Cloud.enabled()) DB.classCode = ($('#class-code').value || '').replace(/[^\w가-힣-]/g, '').slice(0, 20);
   if (FIXED_CLASS) {
     const typed = ($('#class-code').value || '').trim(); const bad = msg => { toast(msg); $('#class-code').focus(); $('#class-code').select(); };
@@ -2025,7 +2030,7 @@ async function selectUser(name) {
   if (Cloud.enabled() && DB.classCode && DB.classCode.length < 6) { toast('반 코드는 6자 이상이에요'); DB.classCode = ''; }
   if (!hasUser(DB, name)) DB.users[name] = newUser(name, pickedAvatar);
   DB.current = name; DB.users[name].lastSeen = Date.now(); save(); renderMap();
-  if (classAvailable()) restoreFromCloud(name);
+  if (classAvailable() && !isTeacher()) restoreFromCloud(name);
 }
 async function restoreFromCloud(name) {
   const rec = await Cloud.pull(name); const u = DB.users[name]; if (!u || DB.current !== name) return;
@@ -2148,8 +2153,8 @@ var G3 = {
   flag(c = '#fa5252', h = 1.3) { const f = this.m(this.box(.5, .32, .03), c, .27, h - .18, 0); return {g: this.grp([this.m(this.cyl(.03, .03, h, 6), '#868e96', 0, h / 2, 0), this.m(this.sph(.06, 8), '#ffd43b', 0, h, 0), f]), f}; },
   /* ---------- 지도 ---------- */
   map: {
-    v: null, key: '', st: null, trail: null, world: null, pts: [], anim: [], cols: 0,
-    show(trail, st) { this.st = st; this.trail = trail; G3.load().then(T => { if (!T || !$('#scr-map').classList.contains('on')) return; try { this._show(); } catch (e) { console.warn('3D 지도 실패', e); G3.failed = true; trail.classList.remove('g3'); trail.style.height = ''; if (this.v) { this.v.dispose(); this.v = null; } layoutTrail(prog()); } }); },
+    v: null, key: '', st: null, trail: null, world: null, pts: [], anim: [], cols: 0, scr: 'scr-map',
+    show(trail, st) { this.st = st; this.trail = trail; G3.load().then(T => { if (!T || !$('#' + this.scr).classList.contains('on')) return; try { this._show(); } catch (e) { console.warn('3D 지도 실패', e); G3.failed = true; [G3.map, G3.cmap].forEach(m => { if (m.trail) { m.trail.classList.remove('g3'); m.trail.style.height = ''; } if (m.v) { m.v.dispose(); m.v = null; } }); layoutTrail(prog()); if (typeof CLS_IDS !== 'undefined' && $('#scr-class').classList.contains('on')) layoutTrail(prog(), CLS_IDS); } }); },
     relayout() { if (this.v && this.trail && this.st && this.trail.classList.contains('g3')) { try { this._show(); } catch (e) {} } },
     _show() {
       const trail = this.trail, st = this.st; let host = trail.querySelector('.g3-host'); if (!host) { host = document.createElement('div'); host.className = 'g3-host'; trail.prepend(host); }
@@ -2203,6 +2208,9 @@ var G3 = {
         if (locked) lm.traverse(dim);
         else for (let j = 0; j < 3; j++) { const a = rnd() * 6.28, d = 1.2 + rnd() * .25; const x = Math.cos(a) * d, z = Math.sin(a) * d; isl.add(j === 0 ? G.m(G.sph(.14, 6), '#adb5bd', x, .2, z, {flatShading: true}) : G.grp([G.m(G.sph(.07, 6), ['#ff8fab', '#ffd43b', '#fff', '#b197fc'][Math.floor(rnd() * 4)], 0, .3, 0), G.m(G.cyl(.015, .015, .16, 4), '#2f9e44', 0, .22, 0)], x, 0, z)); }
         if (s === 2) { const f = G.flag('#fa5252', 1.25); f.g.position.set(-1.15, .15, .55); isl.add(f.g); A.push(t0 => { f.f.rotation.y = Math.sin(t0 * 4 + i) * .45; }); }
+        (st.who && st.who[i] || []).forEach(([av, me], j, arr) => { const a0 = Math.PI * (.5 + (j - (arr.length - 1) / 2) * .26), kid = G.animal(av); const x = Math.cos(a0) * 1.22, z = Math.sin(a0) * 1.12 + .12; kid.position.set(x, .15, z); kid.scale.setScalar(.56); isl.add(kid);
+          if (me) { const rg = G.m(G.tor(.34, .05), '#ff922b', x, .19, z, {emissive: '#ff7a2f', emissiveIntensity: 1}); rg.rotation.x = Math.PI / 2; rg.castShadow = false; isl.add(rg); }
+          A.push(t0 => { kid.position.y = .15 + Math.abs(Math.sin(t0 * 2.6 + i + j * 1.3)) * (me ? .26 : .12); kid.rotation.y = Math.sin(t0 * .9 + j) * .4; }); });
         if (i + 1 === st.cur) {
           const ring = G.m(G.tor(1.72, .07), '#ff922b', 0, .2, 0, {emissive: '#ff7a2f', emissiveIntensity: 1}); ring.rotation.x = Math.PI / 2; ring.castShadow = false; isl.add(ring);
           const me = G.animal(st.av); me.position.set(.75, .15, .95); me.scale.setScalar(.82); isl.add(me);
@@ -2281,6 +2289,25 @@ G3.tug = {
     const d = this.d || 10, cx = this.x * .55; v.cam.position.set(cx, 2.4 + d * .27, d); v.cam.lookAt(cx, 1.15, 0); v.sun.target.position.set(cx, 0, 0);
   }
 };
+G3.cmap = Object.assign({}, G3.map, {scr: 'scr-class', v: null, key: '', st: null, trail: null, world: null, pts: [], anim: []});
+/* ================= 선생님 점검 모드 ================= */
+const TEACHER = '점검 선생님', TEACHER_PW = typeof ADMIN_PW !== 'undefined' ? ADMIN_PW : 'kingkong2026';
+function isTeacher() { return !!DB.teacherOk && DB.current === TEACHER; }
+function fillTeacher(u) { Object.entries(COURSES).forEach(([c, C]) => { const p = progOf(u, c); p.unlocked = C.levels.length; p.master = true; p.gst = p.gst || {}; C.levels.forEach(L => { p.passed[L.n] = true; for (let i = 0; i < L.lines.length; i++) p.lines[L.n + '-' + i] = Math.max(3, p.lines[L.n + '-' + i] || 0); p.lines[L.n + '-mix'] = 3; p.games[L.n] = 3; [1, 2, 3].forEach(s => { p.gst[L.n + '-' + s] = 3; }); }); }); }
+function teacherEnter() {
+  const go = async () => {
+    DB.teacherOk = true;
+    if (typeof FIXED_CLASS !== 'undefined' && FIXED_CLASS) { const typed = ($('#class-code').value || '').trim(); let code = DB.classCode || FIXED_CLASS;
+      if (typed && (typed === FIXED_CLASS || typed === DB.classOk)) code = typed; else if (typed && CLASS_RE.test(typed)) { const info = await Cloud.classInfo(typed); if (info && !info.offline) { code = typed; DB.classOk = typed; DB.className = info.name; } else toast('등록되지 않은 반 코드라서 원래 반으로 들어가요'); }
+      if (code === FIXED_CLASS && DB.classOk !== code) { DB.classOk = code; DB.className = '킹콩반'; } DB.classCode = code; }
+    if (!hasUser(DB, TEACHER)) DB.users[TEACHER] = newUser(TEACHER, '🦁'); fillTeacher(DB.users[TEACHER]); DB.current = TEACHER; DB.users[TEACHER].lastSeen = Date.now(); DB.users[TEACHER].sawPosture = true; save(); renderMap();
+    toast('👩‍🏫 선생님 점검 모드: 모든 레벨·게임·단계가 열려 있어요');
+  };
+  if (DB.teacherOk) { go(); return; }
+  Modal.show({title: '👩‍🏫 선생님 점검 모드', html: '<p class="muted" style="margin:0 0 8px;font-size:14px">모든 레벨·게임·단계가 열린 점검용 계정으로 들어가요. 반 기록에는 남지 않아요.</p><input id="tch-pw" type="password" maxlength="30" autocomplete="off" placeholder="선생님 비밀번호" style="width:100%;font:inherit;padding:10px 12px;border:2px solid #e2e8f0;border-radius:12px">',
+    primary: {label: '들어가기', fn: () => { if ($('#tch-pw').value !== TEACHER_PW) { toast('비밀번호가 맞지 않아요'); return; } go(); }}, secondary: {label: '닫기', fn: () => {}}});
+  setTimeout(() => $('#tch-pw') && $('#tch-pw').focus(), 50);
+}
 function renderMap(course) {
   stopAll(); show('scr-map'); updateChip();
   const u = user(); if (!u) { renderUser(); return; }
@@ -2334,7 +2361,7 @@ const Chat = {
     $('#chat-toggle').textContent = this.off ? '채팅 켜기' : '채팅 끄기';
   },
   openScreen() {
-    if (!classAvailable()) return; stopAll(); show('scr-chat'); updateChip(); this.open = true; this._scrolled = false; this.msgs = [];
+    if (!classAvailable()) return; stopAll(); show('scr-chat'); updateChip(); if (isTeacher()) this.admin = true; this.open = true; this._scrolled = false; this.msgs = [];
     $('#chat-admin').style.display = this.admin ? '' : 'none'; $('#chat-list').innerHTML = '<div class="chatempty">대화를 불러오는 중…</div>'; this.renderStat();
     Cloud.init().then(ok => {
       if (!ok) { $('#chat-list').innerHTML = '<div class="chatempty">인터넷 연결을 확인해 주세요.</div>'; return; }
@@ -2400,7 +2427,7 @@ var Boss = {
   left() { const c = this.cur(); return Math.max(0, Math.ceil(((this.state.dur || 40) * 1000 + this.CNT - (this.now() - c.start)) / 1000)); },
   roundWinner() { const c = this.cur(); const r = this.state.res && this.state.res[c.round]; if (r) return r; const d = this.teamStat().diff; return Math.abs(d) < .5 ? 'd' : d > 0 ? 'w' : 'b'; },
   open() {
-    if (!classAvailable()) return; stopAll(); show('scr-boss'); updateChip();
+    if (!classAvailable()) return; stopAll(); show('scr-boss'); updateChip(); if (isTeacher()) this.admin = true; $('#boss-play-lb').style.display = isTeacher() ? '' : 'none';
     $('#boss-admin').style.display = this.admin ? '' : 'none'; $('#scr-boss').classList.toggle('tv', this.tv);
     $('#boss-arena').innerHTML = `${ART.scene('grass')}<div class="t-zone b"></div><div class="t-zone c"></div><div class="t-zone w"></div><div class="t-pull" id="t-pull"><div class="t-rope"></div><div class="t-flag"></div><div class="t-team b" id="t-team-b"></div><div class="t-team w" id="t-team-w"></div></div><div class="t-score" id="t-score"></div><div class="t-time" id="boss-time"></div><div class="t-tag b">◀ 청팀 쪽</div><div class="t-tag w">백팀 쪽 ▶</div><div class="b-over" id="boss-over"></div>`;
     G3.tug.attach($('#boss-arena'));
@@ -2419,7 +2446,7 @@ var Boss = {
     });
     clearInterval(this.timer); this.timer = setInterval(() => { this.render(); this.push(); }, 250);
   },
-  join() { if (this.tv || this.admin || !this.matchId() || !user()) return; const h = this.hits[this.key()]; if (h && String(h.id) === this.matchId() && h.team) return; if (this._joining === this.matchId()) return; this._joining = this.matchId(); this.sent = -1; this.push(true); },
+  join() { if (this.tv || (this.admin && !this.play) || !this.matchId() || !user()) return; const h = this.hits[this.key()]; if (h && String(h.id) === this.matchId() && h.team) return; if (this._joining === this.matchId()) return; this._joining = this.matchId(); this.sent = -1; this.push(true); },
   unwatch() { this.unsubs.forEach(u => { try { u(); } catch (e) {} }); this.unsubs = []; },
   close() { clearInterval(this.timer); this.push(true); this.unwatch(); Input.handler = null; G3.tug.dispose(); },
   newText() {
@@ -2428,7 +2455,7 @@ var Boss = {
     const box = $('#boss-text'); if (box) { this.spans = buildTextDOM(box, this.text); this.paint(); }
   },
   paint() { if (!this.spans.length) return; paintText(this.spans, this.units, Array.from({length: this.pos}, () => ({ok: true})), $('#boss-text')); KB.setNext(this.live() ? this.units[this.pos] || null : null); },
-  live() { return !this.tv && !this.admin && !!this.myTeam() && this.phase() === 'play'; },
+  live() { return !this.tv && !(this.admin && !this.play) && !!this.myTeam() && this.phase() === 'play'; },
   onKey(code, shift) {
     if (!this.live()) return; const u = this.units[this.pos]; if (!u) return; const ch = keyChar(code, shift); if (ch === null || ch === '\n' || ch === '\b') return;
     if (ch === u.jamo) {
@@ -2439,7 +2466,7 @@ var Boss = {
   },
   hitFx(d) { const ar = $('#boss-arena'); const t = this.myTeam(); G3.tug.kick(t); const x = t === 'b' ? 18 + Math.random() * 14 : 68 + Math.random() * 14; popText(ar, '+' + d, x, 30 + Math.random() * 15); if (this.combo % 15 === 0) ART.burst(ar, x, 40, {kind: 'star', n: 8, colors: ['#ffd43b', '#fff', t === 'b' ? '#339af0' : '#adb5bd']}); },
   push(force) {
-    const id = this.matchId(); if (!id || this.tv || this.admin || this.my === this.sent || !user()) return; const now = Date.now(); if (!force && now - this.pushT < 600) return; this.pushT = now;
+    const id = this.matchId(); if (!id || this.tv || (this.admin && !this.play) || this.my === this.sent || !user()) return; const now = Date.now(); if (!force && now - this.pushT < 600) return; this.pushT = now;
     const u = user(); const team = this.myTeam() || this.pickTeam(); const d = this.my, r = this.cur().round;
     Cloud.fb.set(Cloud.fb.ref(Cloud.db, `classes/${Cloud.code()}/boss/hits/${this.key()}`), {name: u.name, avatar: avatarOf(u), id, team, r, dmg: d, sum: this.sum, bc: this.bc}).then(() => { this.sent = d; }).catch(() => {});
   },
@@ -2452,7 +2479,7 @@ var Boss = {
     $('#t-score').innerHTML = ph === 'idle' ? '🪢 줄다리기 청백전' : `<span class="tb">청팀</span>${dots(w.b, '#1c7ed6')}<span class="rd">${c.round ? c.round + '판' : '대기'}</span>${dots(w.w, '#868e96')}<span class="tw">백팀</span>`;
     $('#boss-time').textContent = ph === 'play' ? `⏱ ${this.left()}` : '';
     const pull = $('#t-pull'); const pos = ph === 'idle' || ph === 'ready' || ph === 'count' ? 0 : (ph === 'end' && this.state.res && this.state.res[c.round] ? ({b: -1, w: 1, d: 0})[this.state.res[c.round]] : s.pos);
-    { const me = this.key(), mk = l => l.slice().sort((x, y) => (y.k === me) - (x.k === me) || (x.k < y.k ? -1 : 1)).map(m => ({k: m.k, av: String(m.avatar || '🐱').slice(0, 4), me: m.k === me && !this.tv && !this.admin})); if (s.b.sum > (this._sb || 0)) G3.tug.kick('b'); if (s.w.sum > (this._sw || 0)) G3.tug.kick('w'); this._sb = s.b.sum; this._sw = s.w.sum;
+    { const me = this.key(), mk = l => l.slice().sort((x, y) => (y.k === me) - (x.k === me) || (x.k < y.k ? -1 : 1)).map(m => ({k: m.k, av: String(m.avatar || '🐱').slice(0, 4), me: m.k === me && !this.tv && !(this.admin && !this.play)})); if (s.b.sum > (this._sb || 0)) G3.tug.kick('b'); if (s.w.sum > (this._sw || 0)) G3.tug.kick('w'); this._sb = s.b.sum; this._sw = s.w.sum;
       G3.tug.update({pos, phase: champ && ph !== 'play' && ph !== 'count' ? 'champ' : ph, winner: champ && ph !== 'play' && ph !== 'count' ? champ : ph === 'end' ? this.roundWinner() : '', b: mk(s.b.list), w: mk(s.w.list), tv: this.tv}); }
     pull.style.transform = `translateX(${pos * 25}%)`; pull.classList.toggle('stop', ph !== 'play');
     const kk = JSON.stringify([s.b.list.map(m => m.k + m.avatar), s.w.list.map(m => m.k + m.avatar), this.tv]); if (kk !== this._kids) { this._kids = kk; $('#t-team-b').innerHTML = this.kidsHTML(s.b.list, 'b'); $('#t-team-w').innerHTML = this.kidsHTML(s.w.list, 'w'); }
@@ -2504,6 +2531,8 @@ $('#boss-start').onclick = e => { e.currentTarget.blur(); Boss.start(); };
 $('#boss-stop').onclick = e => { e.currentTarget.blur(); Boss.stop(); };
 $('#boss-tv').onclick = e => { e.currentTarget.blur(); Boss.tv = !Boss.tv; $('#scr-boss').classList.toggle('tv', Boss.tv); $('#boss-tv').textContent = Boss.tv ? '⌨️ 학생 화면' : '📺 TV 화면'; Boss._kids = ''; Boss.render(); };
 $('#boss-card-btn').onclick = () => Boss.open();
+$('#tch-enter').onclick = () => teacherEnter();
+$('#boss-play').onchange = e => { Boss.play = e.target.checked; e.target.blur(); if (Boss.play) { Boss._joining = ''; Boss.join(); } Boss.render(); };
 
 $('#btn-chat').onclick = () => Chat.openScreen();
 $('#chat-back').onclick = () => { Cloud.chatUnwatch(); Chat.open = false; renderMap(); };
@@ -2535,7 +2564,7 @@ function layoutTrail(p, ids) {
     svg.innerHTML = `<path class="road-edge" d="${dpath}"/><path class="road" d="${dpath}"/><path class="road-mid" d="${dpath}"/><path class="road-done" d="${dn}"/>`;
   });
 }
-window.addEventListener('resize', () => { if ($('#scr-map').classList.contains('on')) { layoutTrail(prog()); G3.map.relayout(); } if ($('#scr-class').classList.contains('on')) layoutTrail(prog(), CLS_IDS); });
+window.addEventListener('resize', () => { if ($('#scr-map').classList.contains('on')) { layoutTrail(prog()); G3.map.relayout(); } if ($('#scr-class').classList.contains('on')) { layoutTrail(prog(), CLS_IDS); G3.cmap.relayout(); } });
 
 /* ================= 내 기록 ================= */
 function recordText(u) {
@@ -2616,10 +2645,11 @@ function renderClass() {
     const here = list.filter(r => posOf(r) === L.n).sort((a, b) => (b.total || 0) - (a.total || 0));
     const n = document.createElement('div'); n.className = 'node cls';
     const shown = here.slice(0, 8);
-    n.innerHTML = `<div class="ball">${L.n}</div><div class="ttl">${esc(L.title)}</div><div class="who">${shown.map(r => `<span class="${me && r.name === me.name ? 'me' : ''}" title="${esc(r.name)}">${ART.face(r.avatar || '🙂')}</span>`).join('')}${here.length > 8 ? `<small>+${here.length - 8}</small>` : ''}</div>`;
+    n.innerHTML = `<div class="ball">${L.n}</div><div class="ttl">${esc(L.title)}<span class="cnt">${here.length ? ' · ' + here.length + '명' : ''}</span></div><div class="who">${shown.map(r => `<span class="${me && r.name === me.name ? 'me' : ''}" title="${esc(r.name)}">${ART.face(r.avatar || '🙂')}</span>`).join('')}${here.length > 8 ? `<small>+${here.length - 8}</small>` : ''}</div>`;
     grid.appendChild(n);
   });
   layoutTrail(prog(), CLS_IDS);
+  G3.cmap.show($('#ctrail'), {course: clsCourse, av: '', cur: 0, lv: C.levels.map(() => 1), who: C.levels.map(L => list.filter(r => posOf(r) === L.n).sort((a, b) => (b.total || 0) - (a.total || 0)).slice(0, 6).map(r => [String(r.avatar || '🐱').slice(0, 4), me && r.name === me.name ? 1 : 0]))});
   const rank = $('#cls-rank'); rank.innerHTML = '';
   const today = new Date(); today.setHours(0, 0, 0, 0);
   const tdl = r => r.today.date === dayKey() ? r.today.lines : 0;
@@ -3389,6 +3419,7 @@ window.addEventListener('resize', () => { if (KB.el && KB.el.parentElement) KB.f
 $('#btn-sound').textContent = DB.sound ? '🔊' : '🔇';
 applyHands();
 (function init() {
+  if (/[?#&]teacher\b/.test(location.search + location.hash)) setTimeout(teacherEnter, 300);
   const bad = validateContent(); if (bad.length) console.warn('콘텐츠 검사:', bad);
   if (Cloud.enabled() && Cloud.code()) Cloud.init().then(ok => { if (ok && user()) Cloud.push().catch(() => {}); });
   if (FIXED_CLASS && (!DB.classCode || (DB.classCode !== FIXED_CLASS && DB.classCode !== DB.classOk))) { DB.classCode = ''; renderUser(); }
