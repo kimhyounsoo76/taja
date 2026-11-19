@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<!-- 타자 모험 v5.5 우리반용 (2026-11-19) · 한글 두벌식 10레벨 + 영어 자판 8레벨 · 제작 kingkongssam -->
+<!-- 타자 모험 v5.6 우리반용 (2026-11-19) · 한글 두벌식 10레벨 + 영어 자판 8레벨 · 제작 kingkongssam -->
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#ff7a2f">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
-<title>타자 모험 v5.5 — 기본 자리부터 차근차근 레벨 업</title>
+<title>타자 모험 v5.6 — 기본 자리부터 차근차근 레벨 업</title>
 <style>
 :root{
   --bg:#eef4fb; --card:#ffffff; --ink:#1f2a3d; --muted:#556178; --btn:#c2410c; --btn-dark:#8f2f08;
@@ -733,6 +733,20 @@ body.show-hands .kb .key.next{outline-color:var(--accent-dark)}
 #m-title{font-size:24px}
 @media (max-width:480px){#topbar .logo svg{width:26px;height:26px}.trail.g3 .node.place .ttl{font-size:13px;padding:2px 9px 2px 2px}.trail.g3 .node.place .ttl .n{width:20px;height:20px;font-size:12px}.gamecard .icon{width:46px;height:46px}}
 @media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;animation-iteration-count:1!important}}
+/* 게임 재미 요소 */
+.gj-combo{position:absolute;left:12px;top:10px;z-index:5;font-family:"Jua",inherit;font-synthesis:none;font-size:18px;color:#fff;background:rgba(20,50,74,.8);border-radius:999px;padding:3px 14px;pointer-events:none;white-space:nowrap}
+.gj-combo:empty{display:none}
+.gj-combo b{font-size:26px;color:#ffc93c;font-weight:400}
+.gj-combo i{font-style:normal;color:#ffb3a3;font-size:20px}
+.gj-combo.bump{animation:gjbump .18s ease-out}
+@keyframes gjbump{from{transform:scale(1.25)}to{transform:scale(1)}}
+.gj-combo.broke{background:rgba(120,130,140,.8);animation:ishake .3s}
+.gj-banner{position:absolute;left:50%;top:14%;transform:translate(-50%,-12px);opacity:0;transition:opacity .2s,transform .2s;z-index:5;background:#fff;color:var(--ink);border-radius:999px;padding:8px 20px;font-family:"Jua",inherit;font-synthesis:none;font-size:clamp(15px,3vw,24px);box-shadow:0 4px 0 rgba(0,40,90,.25);white-space:nowrap;pointer-events:none;max-width:94%;overflow:hidden;text-overflow:ellipsis}
+.gj-banner.on{opacity:1;transform:translate(-50%,0)}
+.stage.fever{box-shadow:0 0 0 4px var(--accent),0 4px 0 var(--line)}
+.item.gold .tag{background:#fff3bf!important;border-color:#ffc93c!important}.item.gold .tag::before{content:"★ ";color:#d98e00}
+.item.ice .tag{background:#e3f6ff!important;border-color:#74c0fc!important}.item.ice .tag::before{content:"❄ ";color:#1c7ed6}
+.hole.gold .sign{background:#fff3bf;border-color:#e8a100}.hole.ice .sign{background:#e3f6ff;border-color:#4dabf7}
 </style>
 </head>
 <body>
@@ -912,6 +926,7 @@ body.show-hands .kb .key.next{outline-color:var(--accent-dark)}
         <div class="chips">
           <div class="chip">⏱ <b id="g-time">0</b></div>
           <div class="chip"><span id="g-score-label">점수</span> <b id="g-score">0</b></div>
+          <div class="chip">최고 <b id="g-best">-</b></div>
           <div class="chip" id="g-lives-chip">❤️ <b id="g-lives">5</b></div>
         </div>
       </div>
@@ -1357,7 +1372,7 @@ function validateContent() {
 <script>
 /* ================= 저장 ================= */
 const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
-const APP_VERSION = '5.5', APP_DATE = '2026-11-20';
+const APP_VERSION = '5.6', APP_DATE = '2026-11-20';
 /* ===== 우리 반 공유(선택) : Firebase 설정 =====
    Firebase 콘솔 → 프로젝트 설정 → 내 앱(웹) → SDK 설정의 firebaseConfig 값을 아래에 그대로 붙여 넣으세요.
    Realtime Database를 만들고 databaseURL까지 넣어야 켜집니다. 비워 두면 혼자 쓰는 앱으로 돌아갑니다. */
@@ -2483,7 +2498,7 @@ G3.game = {
       const bm = G.mat('#e7f5ff', {transparent: true, opacity: .45}); for (let i = 0; i < 22; i++) { const b = add(G.m(G.sph(.07 + rnd() * .1, 8), bm, 0, 0, 0), (rnd() - .5) * 30, (rnd() - .5) * 13, -4 + rnd() * 5); b.castShadow = false; const sp = .8 + rnd(), ph = rnd() * 6; A.push((t, dt) => { b.position.y += sp * dt; b.position.x += Math.sin(t * 2 + ph) * dt * .3; if (b.position.y > 7) b.position.y = -7; }); }
       for (let i = 0; i < 9; i++) { const f = add(G.m(G.cone(.12, .42, 5), '#74c0fc', 0, 0, 0, {flatShading: true}), (rnd() - .5) * 30, 1 + rnd() * 3.5, -8 - rnd() * 3); f.rotation.z = Math.PI / 2; f.castShadow = false; A.push((t, dt) => { f.position.x -= dt * (1 + i * .08); if (f.position.x < -19) f.position.x = 19; }); }
     }
-    const hsl = (el, s, l) => { const h = Math.round((parseFloat(el.style.getPropertyValue('--hue')) || 0) / 20) * 20; return `hsl(${h}, ${s}%, ${l}%)`; };
+    const hsl = (el, s, l) => { const h = el.classList.contains('gold') ? 46 : el.classList.contains('ice') ? 198 : Math.round((parseFloat(el.style.getPropertyValue('--hue')) || 0) / 20) * 20; return `hsl(${h}, ${el.classList.contains('gold') ? 96 : s}%, ${el.classList.contains('ice') ? Math.min(92, l + 14) : l}%)`; };
     const mk = el => { const g = new T.Group(); let upd = null;
       if (dir === 'up') { const c = hsl(el, 85, 62); const b = G.m(G.sph(1, 22), c, 0, 0, -.6, {roughness: .35}); b.scale.set(1, 1.1, .5); const hi = G.m(G.sph(.16, 8), '#ffffff', -.38, .48, -.08, {emissive: '#ffffff', emissiveIntensity: .8}); hi.castShadow = false; g.add(b, hi, G.m(G.cone(.14, .2, 8), c, 0, -1.15, -.6), G.m(G.cyl(.012, .012, 1.5, 4), '#868e96', 0, -1.95, -.6)); upd = (t, r) => { g.scale.setScalar(Math.max(r.w * .62, r.h * .95)); g.rotation.z = Math.sin(t * 1.6 + g.id) * .06; }; }
       else if (dir === 'right') { const c = hsl(el, 88, 60), c2 = hsl(el, 85, 44), c3 = hsl(el, 90, 84); const f = new T.Group(); g.add(f); const ph = Math.random() * 6;
@@ -2495,7 +2510,7 @@ G3.game = {
         f.add(body, belly, band(.42), band(-.55), tail, dors, pelv, fin, G.m(G.sph(.3, 16), '#ffffff', .86, .28, .4), G.m(G.sph(.17, 12), '#14324a', .96, .28, .58), G.m(G.sph(.06, 8), '#ffffff', 1.02, .36, .7, {emissive: '#ffffff', emissiveIntensity: .8}));
         const ch = G.m(G.sph(.13, 10), '#ff8fab', .98, -.12, .5); ch.scale.set(1, .7, .4); const mo = G.m(G.tor(.1, .035, Math.PI), '#14324a', 1.3, -.2, .16); mo.rotation.set(0, .5, Math.PI); f.add(ch, mo);
         upd = (t, r) => { const b = Math.max(r.h * 1.0, .5); f.scale.setScalar(b); f.position.set(0, r.h * .5 + b * .62 + Math.sin(t * 3 + ph) * .05, -.4); f.rotation.z = Math.sin(t * 3 + ph) * .05; f.rotation.y = Math.sin(t * 2 + ph) * .12; tail.rotation.y = Math.sin(t * 10 + ph) * .55; fin.rotation.y = .3 + Math.sin(t * 8 + ph) * .5; }; }
-      else { const d = G.grp([G.m(G.sph(.42, 14), '#a5d8ff', 0, 0, 0, {roughness: .15}), G.m(G.cone(.36, .7, 12), '#a5d8ff', 0, .52, 0, {roughness: .15}), G.m(G.sph(.1, 8), '#ffffff', -.14, .1, .36)]); g.add(d); upd = (t, r) => { d.position.y = r.h * .5 + .62; d.scale.setScalar(.9 + Math.sin(t * 6 + g.id) * .04); }; }
+      else { const dc = el.classList.contains('gold') ? '#ffd43b' : el.classList.contains('ice') ? '#e3f6ff' : '#a5d8ff'; const d = G.grp([G.m(G.sph(.42, 14), dc, 0, 0, 0, {roughness: .15}), G.m(G.cone(.36, .7, 12), dc, 0, .52, 0, {roughness: .15}), G.m(G.sph(.1, 8), '#ffffff', -.14, .1, .36)]); g.add(d); upd = (t, r) => { d.position.y = r.h * .5 + .62; d.scale.setScalar(.9 + Math.sin(t * 6 + g.id) * .04); }; }
       g.traverse(x => { x.castShadow = false; }); return {g, upd}; };
     const objs = new Map(), dying = [];
     A.push((t, dt) => { const lay = host.querySelector('.layer'); if (!lay) return; const w = lay.clientWidth, h = lay.clientHeight; if (!w || !h) return; const u = HH / h, seen = new Set();
@@ -2520,12 +2535,13 @@ G3.game = {
       const dark = G.m(G.cyl(.78, .78, .04, 22), '#3b2414', 0, .03, 0); dark.castShadow = false; const rim = G.m(G.tor(.84, .2), '#a97a4c', 0, .04, 0, {flatShading: true}); rim.rotation.x = Math.PI / 2; rim.scale.z = .7;
       const m = new T.Group(); m.add(G.m(G.cyl(.6, .62, 1.5, 16), '#9c6b43', 0, .1, 0), G.m(G.sph(.62, 18), '#9c6b43', 0, .86, 0)); const bl = G.m(G.sph(.42, 14), '#f1d9b5', 0, .35, .36); bl.scale.set(1, 1.3, .6); m.add(bl, G.m(G.sph(.2, 12), '#f7c9a8', 0, .82, .55), G.m(G.sph(.085, 8), '#e64980', 0, .92, .72), G.m(G.box(.16, .14, .05), '#ffffff', 0, .66, .66));
       [-1, 1].forEach(s => { m.add(G.m(G.sph(.075, 8), '#212529', s * .22, 1.06, .5), G.m(G.sph(.13, 8), '#7a5233', s * .48, 1.28, 0), G.m(G.sph(.15, 8), '#7a5233', s * .62, .2, .42)); const ch = G.m(G.sph(.1, 8), '#ff8fab', s * .38, .84, .46); ch.scale.set(1, .7, .4); m.add(ch); });
-      g.add(dark, rim, m); return {el, g, m, k: 0, hit: 0}; });
+      const crown = G.grp([G.m(G.cyl(.36, .3, .2, 8), '#ffd43b', 0, 0, 0, {emissive: '#f59f00', emissiveIntensity: .5, metalness: .5, roughness: .3})].concat([0, 1, 2, 3, 4].map(i => G.m(G.cone(.09, .22, 4), '#ffd43b', Math.cos(i * 1.257) * .3, .2, Math.sin(i * 1.257) * .3, {emissive: '#f59f00', emissiveIntensity: .5}))), 0, 1.5, 0); const cap = G.grp([G.m(G.sph(.5, 12), '#74c0fc', 0, 0, 0), G.m(G.sph(.14, 8), '#ffffff', 0, .5, 0)], 0, 1.3, 0); cap.children[0].scale.y = .6; m.add(crown, cap);
+      g.add(dark, rim, m); return {el, g, m, crown, cap, k: 0, hit: 0}; });
     const lay = () => { const hr = host.getBoundingClientRect(); if (!hr.width) return; const pt = (px, py) => { const p = new T.Vector3(px / hr.width * 2 - 1, 1 - py / hr.height * 2, .5).unproject(cam), d = p.sub(cam.position).normalize(); return cam.position.clone().addScaledVector(d, -cam.position.y / d.y); };
-      H.forEach(h => { const r = h.el.getBoundingClientRect(), cx = r.left - hr.left + r.width / 2, cy = r.top - hr.top + r.height * .8; const p = pt(cx, cy), md = h.el.querySelector('.mole'), mw = (md && md.offsetWidth) || r.width * .5; const s = pt(cx + mw / 2, cy).distanceTo(pt(cx - mw / 2, cy)) / 1.65; h.g.position.copy(p); h.g.scale.setScalar(Math.max(.2, s)); }); fls.forEach(f => { f.visible = !H.some(h => h.g.position.distanceTo(f.position) < h.g.scale.x * 1.5); }); };
+      H.forEach(h => { const r = h.el.getBoundingClientRect(), cx = r.left - hr.left + r.width / 2, cy = r.top - hr.top + r.height * .7; const p = pt(cx, cy), md = h.el.querySelector('.mole'), mw = (md && md.offsetWidth) || r.width * .5; const s = pt(cx + mw / 2, cy).distanceTo(pt(cx - mw / 2, cy)) / 2.0; h.g.position.copy(p); h.g.scale.setScalar(Math.max(.2, s)); }); fls.forEach(f => { f.visible = !H.some(h => h.g.position.distanceTo(f.position) < h.g.scale.x * 1.5); }); };
     v.onresize = lay; cam.updateMatrixWorld(); setTimeout(lay, 0); setTimeout(lay, 300);
     A.push((t, dt) => H.forEach((h, i) => { const up = h.el.classList.contains('up'), hit = h.el.classList.contains('hit'); h.k += ((up ? 1 : 0) - h.k) * Math.min(1, dt * 16); h.hit += ((hit ? 1 : 0) - h.hit) * Math.min(1, dt * 22);
-      h.m.position.y = -1.75 + h.k * 1.75 + (up ? Math.sin(t * 5 + i) * .04 : 0); h.m.scale.set(1 + h.hit * .25, 1 - h.hit * .4, 1 + h.hit * .25); h.m.rotation.z = h.hit * -.25 + (up ? Math.sin(t * 3 + i) * .05 : 0); h.m.visible = h.k > .02; }));
+      h.m.position.y = -1.75 + h.k * 1.75 + (up ? Math.sin(t * 5 + i) * .04 : 0); h.m.scale.set(1 + h.hit * .25, 1 - h.hit * .4, 1 + h.hit * .25); h.m.rotation.z = h.hit * -.25 + (up ? Math.sin(t * 3 + i) * .05 : 0); h.m.visible = h.k > .02; if (up) { h.crown.visible = h.el.classList.contains('gold'); h.cap.visible = h.el.classList.contains('ice'); } }));
   },
   /* 경주 3종 */
   race(v, A, kind, o, host) {
@@ -3311,6 +3327,22 @@ function startPractice(n, idx) { Practice.start(n, idx); }
 
 /* ================= 게임 공통 ================= */
 let CurrentGame = null;
+/* ================= 게임 재미 요소: 연속 배수 · 황금/얼음 · 마지막 10초 · 내 최고 기록 ================= */
+const GJ = {
+  combo: 0, max: 0, slowUntil: 0, fever: false, best: 0, beat: false, stage: null, _bt: 0,
+  begin(L) { this.combo = 0; this.max = 0; this.slowUntil = 0; this.fever = false; this.beat = false; this.best = (prog().gbest || {})[L.n + '-' + GStage] || 0; const st = this.stage = $('#g-stage');
+    ['gj-combo', 'gj-banner'].forEach(id => { const d = document.createElement('div'); d.className = id; d.id = id; st.appendChild(d); }); const b = $('#g-best'); if (b) b.textContent = this.best || '-'; },
+  lv() { return this.combo >= 20 ? 3 : this.combo >= 10 ? 2 : this.combo >= 5 ? 1.5 : 1; },
+  hit(base, quiet) { this.combo++; this.max = Math.max(this.max, this.combo); const pts = Math.round(base * this.lv() * (this.fever ? 2 : 1)); this.show(); if (!quiet) Snd.tone(520 + Math.min(this.combo, 20) * 26, .07, 'triangle', .045, .03); return pts; },
+  miss() { const e = $('#gj-combo'); if (e && this.combo >= 5) { e.classList.add('broke'); setTimeout(() => { e.classList.remove('broke'); this.show(); }, 350); this.combo = 0; return; } this.combo = 0; this.show(); },
+  show() { const e = $('#gj-combo'); if (!e || e.classList.contains('broke')) return; const m = this.lv(); e.innerHTML = this.combo >= 3 ? `<b>${this.combo}</b> 연속${m > 1 ? ` <i>×${m}</i>` : ''}` : ''; e.classList.remove('bump'); void e.offsetWidth; e.classList.add('bump'); },
+  banner(text, ms = 1800) { const e = $('#gj-banner'); if (!e) return; e.textContent = text; e.classList.add('on'); clearTimeout(this._bt); this._bt = setTimeout(() => e.classList.remove('on'), ms); },
+  setFever(on) { if (on && !this.fever) { this.fever = true; if (this.stage) this.stage.classList.add('fever'); this.banner('🔥 마지막 10초! 점수 2배', 2200); Snd.done(); } },
+  slow(now) { this.slowUntil = now + 4000; this.banner('❄️ 얼음! 4초 동안 천천히'); },
+  isSlow(now) { return now < this.slowUntil; },
+  score(s) { if (this.best && !this.beat && s > this.best) { this.beat = true; this.banner('🎉 내 최고 기록을 넘었어요!', 2200); confetti(60, 1500); } },
+  kind() { const r = Math.random(); return r < .1 ? 'gold' : r < .16 ? 'ice' : ''; }
+};
 function setHUD(o) {
   if (o.time !== undefined) $('#g-time').textContent = o.time;
   if (o.score !== undefined) $('#g-score').textContent = o.score;
@@ -3368,7 +3400,7 @@ function startGame(n, stageNo) {
   if (g.type === 'race') { L.cpuNow = raceCpu(L); rule = rule.replace(/\(\d+타\/분\)/, `(${L.cpuNow}타/분, 내 기록에 맞춘 속도)`); }
   if (L.n <= 2 && g.type !== 'race' && GStage === 1) rule += ' 처음 레벨이라 천천히 시작해요. 키보드 말고 화면을 보며 쳐요!';
   if (GStage > 1) rule += g.type === 'race' ? ` ${GStage}단계: 상대가 더 빨라요!` : ` ${GStage}단계(${SK().name}): 더 빠르고 더 많이 나와요!`;
-  Modal.show({title: `${g.icon} ${esc(g.name)} · ${GStage}단계 ${SK().name}`, html: `<p>${esc(rule)}</p><p class="muted" style="font-size:13px">Enter를 누르거나 시작 버튼을 눌러요</p>`, primary: {label: '시작!', fn: () => { if (document.activeElement && document.activeElement.blur) document.activeElement.blur(); GStat.begin(); game.start(L); }}, secondary: activityBackAction()});
+  Modal.show({title: `${g.icon} ${esc(g.name)} · ${GStage}단계 ${SK().name}`, html: `<p>${esc(rule)}</p><p style="font-size:14px;background:#fff7dc;border-radius:12px;padding:8px 10px;margin:8px 0">${g.type === 'race' ? '틀리지 않고 12번 연속으로 치면 🚀 부스터! 상대가 잠깐 늦어져요.' : '연속으로 맞히면 점수가 1.5배 → 2배 → 3배! ★ 황금은 점수 3배, ❄ 얼음은 4초 동안 천천히. 마지막 10초는 점수 2배예요.'}</p><p class="muted" style="font-size:13px">Enter를 누르거나 시작 버튼을 눌러요</p>`, primary: {label: '시작!', fn: () => { if (document.activeElement && document.activeElement.blur) document.activeElement.blur(); GStat.begin(); game.start(L); }}, secondary: activityBackAction()});
 }
 function finishGame(L, stars, html, score) {
   GStat.commit();
@@ -3578,7 +3610,7 @@ const MoleGame = {
       h.innerHTML = ART.holeBack() + '<div class="clip"><div class="mole">' + ART.mole() + '<div class="sign"></div></div></div>' + ART.holeFront();
       hs.appendChild(h); this.holes.push({el: h, sign: h.querySelector('.sign'), jamo: null, until: 0});
     }
-    this.fit(); G3.game.attach(st, 'mole');
+    this.fit(); G3.game.attach(st, 'mole'); GJ.begin(L);
     this.score = 0; this.hits = 0; this.spawned = 0; this.errors = 0; this.running = true; this.t0 = performance.now(); this.nextSpawn = this.t0 + 500;
     Input.handler = (c, s) => this.onKey(c, s); setHUD({time: this.dur, score: 0});
     this.raf = requestAnimationFrame(t => this.tick(t));
@@ -3586,15 +3618,15 @@ const MoleGame = {
   tick(now) {
     if (!this.running) return;
     const el = (now - this.t0) / 1000; const prog = Math.min(1, el / this.dur);
-    const easy = this.L.n <= 2 && GStage === 1; const k = SK(); const maxActive = (prog < 0.35 ? 1 : prog < 0.7 || easy ? 2 : 3) + k.act; const stay = ((easy ? 2700 : 2100) - 900 * prog) * k.stay; const gap = ((easy ? 1600 : 1200) - 600 * prog) * k.gap;
-    this.holes.forEach(h => { if (h.jamo && now > h.until) this.hide(h); });
+    const easy = this.L.n <= 2 && GStage === 1; const k = SK(); const maxActive = (prog < 0.35 ? 1 : prog < 0.7 || easy ? 2 : 3) + k.act; const stay = ((easy ? 2700 : 2100) - 900 * prog) * k.stay * (GJ.isSlow(now) ? 1.8 : 1); GJ.setFever(this.dur - el <= 10); const gap = ((easy ? 1600 : 1200) - 600 * prog) * k.gap * (GJ.fever ? .7 : 1);
+    this.holes.forEach(h => { if (h.jamo && now > h.until) { this.hide(h); GJ.miss(); } });
     const act = this.holes.filter(h => h.jamo).length;
     if (now >= this.nextSpawn && act < maxActive && el < this.dur - 1.2) {
       const free = this.holes.filter(h => !h.jamo); const used = new Set(this.holes.filter(h => h.jamo).map(h => h.jamo));
       const pool = this.L.pool.filter(j => !used.has(j));
       if (free.length && pool.length) {
         const h = free[Math.floor(Math.random() * free.length)]; const j = pool[Math.floor(Math.random() * pool.length)];
-        h.jamo = j; h.until = now + stay; h.sign.textContent = j; h.el.classList.add('up'); this.spawned++;
+        h.kind = GJ.kind(); h.jamo = j; h.until = now + stay * (h.kind === 'gold' ? .75 : 1); h.sign.textContent = j; h.el.classList.toggle('gold', h.kind === 'gold'); h.el.classList.toggle('ice', h.kind === 'ice'); h.el.classList.add('up'); this.spawned++;
       }
       this.nextSpawn = now + gap;
     }
@@ -3612,10 +3644,10 @@ const MoleGame = {
     if (!this.running) return; const ch = keyChar(code, shift); if (ch === null || ch === ' ' || ch === '\n' || ch === '\b') return;
     const h = this.holes.find(x => x.jamo === ch);
     if (h) {
-      GStat.ok(ch); this.hits++; this.score += 10; h.el.classList.add('hit'); const el = h.el; setTimeout(() => el.classList.remove('hit'), 250);
+      GStat.ok(ch); this.hits++; const pts = GJ.hit(h.kind === 'gold' ? 30 : 10); this.score += pts; if (h.kind === 'ice') { GJ.slow(performance.now()); this.holes.forEach(x => { if (x.jamo) x.until += 2500; }); } GJ.score(this.score); h.el.classList.add('hit'); const el = h.el; setTimeout(() => el.classList.remove('hit'), 250);
       setTimeout(() => { if (!h.jamo) el.classList.remove('up'); }, 120); h.jamo = null;
-      Snd.pop(); KB.flash(code, true); popText(el, '+10', 50, 30); { const st = $('#g-stage'); const [x, y] = posIn(st, el.querySelector('.mole')); ART.burst(st, x, y, {kind: 'star', n: 8, dist: 50, colors: ['#ffd43b', '#ff922b', '#fff']}); }
-    } else { const up = this.holes.filter(x => x.jamo); if (up.length === 1) GStat.bad(up[0].jamo); this.errors++; Snd.bad(); KB.flash(code, false); }
+      Snd.pop(); KB.flash(code, true); popText(el, '+' + pts, 50, 30); { const st = $('#g-stage'); const [x, y] = posIn(st, el.querySelector('.mole')); ART.burst(st, x, y, {kind: 'star', n: 8, dist: 50, colors: ['#ffd43b', '#ff922b', '#fff']}); }
+    } else { const up = this.holes.filter(x => x.jamo); if (up.length === 1) GStat.bad(up[0].jamo); this.errors++; GJ.miss(); Snd.bad(); KB.flash(code, false); }
     setHUD({score: this.score});
   },
   end() {
@@ -3634,7 +3666,7 @@ const FallGame = {
   L: null, dir: 'down', items: [], lock: null, buf: 0, score: 0, lives: 5, spawned: 0, popped: 0, escaped: 0, errors: 0, running: false, t0: 0, last: 0, dur: 60, nextSpawn: 0, raf: 0, layer: null,
   start(L) {
     this.L = L; this.dir = L.game.dir; const st = $('#g-stage');
-    st.innerHTML = ART.scene(this.dir === 'down' ? 'rain' : this.dir === 'up' ? 'fest' : 'sea') + '<div class="layer"></div>'; this.layer = st.querySelector('.layer'); G3.game.attach(st, this.dir);
+    st.innerHTML = ART.scene(this.dir === 'down' ? 'rain' : this.dir === 'up' ? 'fest' : 'sea') + '<div class="layer"></div>'; this.layer = st.querySelector('.layer'); G3.game.attach(st, this.dir); GJ.begin(L);
     this.items = []; this.lock = null; this.buf = 0; this.score = 0; this.lives = 5; this.spawned = 0; this.popped = 0; this.escaped = 0; this.errors = 0; this.okKeys = 0;
     this.running = true; this.t0 = this.last = performance.now(); this.nextSpawn = this.t0 + 400;
     Input.handler = (c, s) => this.onKey(c, s); setHUD({time: this.dur, score: 0, lives: this.lives}); $('#g-buffer').textContent = '';
@@ -3646,13 +3678,14 @@ const FallGame = {
     const el = (now - this.t0) / 1000; const prog = Math.min(1, el / this.dur); const single = !!this.L.game.single;
     const easy = this.L.n <= 2 && GStage === 1; const k = SK(); const speed = (single ? (easy ? 12 + 8 * prog : 17 + 12 * prog) : 12 + 9 * prog) * k.spd;
     const gap = (single ? (easy ? 1700 : 1300) - 500 * prog : 2000 - 800 * prog) * k.gap;
-    if (now >= this.nextSpawn && this.items.length < 6 && el < this.dur - 2) { this.spawn(speed); this.nextSpawn = now + gap; }
+    if (now >= this.nextSpawn && this.items.length < 6 && el < this.dur - 2) { this.spawn(speed); this.nextSpawn = now + gap * (GJ.fever ? .7 : 1); }
+    const sl = GJ.isSlow(now) ? .4 : 1; GJ.setFever(this.dur - el <= 10);
     for (const it of [...this.items]) {
-      if (this.dir === 'down') it.y += it.speed * dt; else if (this.dir === 'up') it.y -= it.speed * dt; else it.x += it.speed * dt;
+      if (this.dir === 'down') it.y += it.speed * dt * sl; else if (this.dir === 'up') it.y -= it.speed * dt * sl; else it.x += it.speed * dt * sl;
       it.el.style.left = it.x + '%'; it.el.style.top = it.y + '%';
       const out = this.dir === 'down' ? it.y > 93 : this.dir === 'up' ? it.y < -14 : it.x > 108;
       if (out) {
-        this.remove(it); this.escaped++; this.lives--; Snd.miss(); flashStage();
+        this.remove(it); this.escaped++; this.lives--; GJ.miss(); Snd.miss(); flashStage();
         if (this.lock === it) { this.lock = null; this.buf = 0; this.paintBuf(); }
       }
     }
@@ -3666,10 +3699,10 @@ const FallGame = {
     const el = document.createElement('div'); el.className = 'item ' + this.dir;
     const hue = Math.floor(Math.random() * 360);
     el.innerHTML = this.dir === 'right' ? ART.tail(hue) + `<div class="fishb"><span class="tag">${esc(text)}</span></div>` : this.dir === 'up' ? `<div class="bln"><span class="tag">${esc(text)}</span></div><div class="string"></div>` : `<span class="tag">${esc(text)}</span>`;
-    el.style.setProperty('--hue', hue);
+    el.style.setProperty('--hue', hue); const kind = GJ.kind(); if (kind) el.classList.add(kind);
     let x, y;
     if (this.dir === 'down') { x = 10 + Math.random() * 76; y = -8; } else if (this.dir === 'up') { x = 10 + Math.random() * 76; y = 108; } else { x = -14; y = 10 + Math.random() * 70; }
-    const it = {text, units: textUnits(text), el, x, y, speed: speed * (0.85 + Math.random() * 0.3)};
+    const it = {text, kind, units: textUnits(text), el, x, y, speed: speed * (0.85 + Math.random() * 0.3)};
     el.style.left = x + '%'; el.style.top = y + '%';
     this.layer.appendChild(el); this.items.push(it); this.spawned++;
   },
@@ -3681,17 +3714,17 @@ const FallGame = {
     if (target) {
       const u = target.units[this.buf];
       if (u && u.jamo === ch) { GStat.ok(ch); this.buf++; this.okKeys++; KB.flash(code, true); Snd.ok(); }
-      else { if (u) GStat.bad(u.jamo); this.errors++; KB.flash(code, false); Snd.bad(); const el = target.el; el.classList.remove('shake'); void el.offsetWidth; el.classList.add('shake'); return; }
+      else { if (u) GStat.bad(u.jamo); this.errors++; GJ.miss(); KB.flash(code, false); Snd.bad(); const el = target.el; el.classList.remove('shake'); void el.offsetWidth; el.classList.add('shake'); return; }
     } else {
       const cands = this.items.filter(it => it.units[0].jamo === ch);
-      if (!cands.length) { this.errors++; KB.flash(code, false); Snd.bad(); return; }
+      if (!cands.length) { this.errors++; GJ.miss(); KB.flash(code, false); Snd.bad(); return; }
       cands.sort((a, b) => this.dir === 'down' ? b.y - a.y : this.dir === 'up' ? a.y - b.y : b.x - a.x);
       target = cands[0]; GStat.ok(ch); this.lock = target; this.buf = 1; this.okKeys++; target.el.classList.add('lock'); KB.flash(code, true); Snd.ok();
     }
     if (this.buf >= target.units.length) this.pop(target); else this.paintBuf();
   },
   pop(it) {
-    this.popped++; const pts = 10 * it.units.length; this.score += pts;
+    this.popped++; const pts = GJ.hit(10 * it.units.length * (it.kind === 'gold' ? 3 : 1)); this.score += pts; if (it.kind === 'gold' && this.lives < 5) { this.lives++; popText(this.layer, '❤️+1', it.x, Math.max(4, it.y - 10)); } if (it.kind === 'ice') GJ.slow(performance.now()); GJ.score(this.score);
     it.el.classList.add('pop'); const el = it.el; setTimeout(() => el.remove(), 300); this.items = this.items.filter(i => i !== it);
     this.lock = null; this.buf = 0; this.paintBuf(); Snd.pop(); popText(this.layer, '+' + pts, it.x, it.y); ART.burst(this.layer, it.x, it.y, this.dir === 'right' ? {kind: 'bubble', n: 10} : this.dir === 'down' ? {n: 10, colors: ['#e7f5ff', '#a5d8ff', '#74c0fc', '#fff']} : {n: 14}); setHUD({score: this.score});
   },
@@ -3717,17 +3750,17 @@ const FallGame = {
 const RaceGame = {
   L: null, text: '', units: [], pos: 0, errors: 0, correct: 0, startAt: null, cpuDone: false, running: false, raf: 0, spans: [],
   start(L) {
-    this.L = L; this.text = L.game.build(); this.units = textUnits(this.text); this.pos = 0; this.errors = 0; this.correct = 0; this.startAt = null; this.cpuDone = false;
+    this.L = L; this.text = L.game.build(); this.units = textUnits(this.text); this.pos = 0; this.errors = 0; this.correct = 0; this.startAt = null; this.cpuDone = false; this.lag = 0;
     const st = $('#g-stage');
     st.innerHTML = `<div class="track">${ART.scene(L.game.theme || 'road')}<div class="lane me"><span class="sprite running">${ART.sprite(L.game.me)}</span></div><div class="lane cpu"><span class="sprite running">${ART.sprite(L.game.rival)}</span></div><div class="finish">${L.game.theme === 'space' ? ART.moon() : ART.flag()}</div></div><div class="racetext" id="race-text"></div>`;
-    this.spans = buildTextDOM($('#race-text'), this.text); this.running = true; G3.game.attach(st.querySelector('.track'), 'race', {theme: L.game.theme || 'road'});
+    this.spans = buildTextDOM($('#race-text'), this.text); this.running = true; G3.game.attach(st.querySelector('.track'), 'race', {theme: L.game.theme || 'road'}); GJ.begin(L);
     Input.handler = (c, s) => this.onKey(c, s); this.paint(); setHUD({time: 0, score: 0});
     this.raf = requestAnimationFrame(t => this.tick(t));
   },
   tick(now) {
     if (!this.running) return;
     const total = totalWeight(this.units); const min = this.startAt ? (now - this.startAt) / 60000 : 0;
-    const cpu = Math.min(1, min * (this.L.cpuNow || this.L.game.cpu) / total); const me = this.units.slice(0, this.pos).reduce((a, u) => a + u.w, 0) / total;
+    const cpu = Math.min(1, Math.max(0, min - (this.lag || 0) / 60000) * (this.L.cpuNow || this.L.game.cpu) / total); const me = this.units.slice(0, this.pos).reduce((a, u) => a + u.w, 0) / total;
     const sm = $('.lane.me .sprite'), sc = $('.lane.cpu .sprite');
     if (sm) sm.style.left = (me * 86) + '%'; if (sc) sc.style.left = (cpu * 86) + '%';
     if (cpu >= 1 && !this.cpuDone) { this.cpuDone = true; toast('상대가 먼저 도착했어요! 끝까지 완주해요'); }
@@ -3740,8 +3773,8 @@ const RaceGame = {
     if (!this.running) return; const u = this.units[this.pos]; if (!u) return;
     const ch = keyChar(code, shift); if (ch === null || ch === '\n' || ch === '\b') return;
     if (!this.startAt) this.startAt = performance.now();
-    if (ch === u.jamo) { GStat.ok(ch); this.correct++; this.pos++; KB.flash(code, true); Snd.ok(); this.paint(); if (this.pos >= this.units.length) this.end(); }
-    else { GStat.bad(u.jamo); this.errors++; KB.flash(code, false); Snd.bad(); const s = this.spans[u.ci]; s.classList.remove('shake'); void s.offsetWidth; s.classList.add('shake'); }
+    if (ch === u.jamo) { GStat.ok(ch); this.correct++; this.pos++; GJ.hit(1, true); if (GJ.combo % 12 === 0 && !this.cpuDone) { this.lag += 500; GJ.banner('🚀 부스터! 상대가 늦어져요', 1100); Snd.pop(); } KB.flash(code, true); Snd.ok(); this.paint(); if (this.pos >= this.units.length) this.end(); }
+    else { GStat.bad(u.jamo); this.errors++; GJ.miss(); KB.flash(code, false); Snd.bad(); const s = this.spans[u.ci]; s.classList.remove('shake'); void s.offsetWidth; s.classList.add('shake'); }
   },
   end() {
     this.running = false; cancelAnimationFrame(this.raf); Input.handler = null;
