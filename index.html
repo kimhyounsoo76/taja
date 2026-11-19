@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<!-- 타자 모험 v3.5 우리반용 (2026-11-03) · 한글 두벌식 10레벨 + 영어 자판 8레벨 · 제작 kingkongssam -->
+<!-- 타자 모험 v3.6 우리반용 (2026-11-19) · 한글 두벌식 10레벨 + 영어 자판 8레벨 · 제작 kingkongssam -->
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#ff7a2f">
-<title>타자 모험 v3.5 — 기본 자리부터 차근차근 레벨 업</title>
+<title>타자 모험 v3.6 — 기본 자리부터 차근차근 레벨 업</title>
 <style>
 :root{
   --bg:#eef4fb; --card:#ffffff; --ink:#1f2a3d; --muted:#556178; --btn:#c2410c; --btn-dark:#8f2f08;
@@ -518,47 +518,67 @@ svg.face{width:1.2em;height:1.2em;display:inline-block;vertical-align:middle;ove
 .cheer .lmup{width:64px;height:64px;border-radius:50%;background:radial-gradient(circle at 50% 35%,#fff3bf,#ffd43b 70%,#fab005);display:grid;place-items:center;border:3px solid #fff;box-shadow:0 4px 0 #e67700}
 .cheer .lmup .lm-svg{width:76%;height:76%}
 @keyframes jump{from{transform:translateY(0) rotate(-4deg)}to{transform:translateY(-12px) rotate(4deg)}}
-/* 보스전 */
-.bossarena{position:relative;height:clamp(240px,42vh,440px);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);user-select:none}
-.b-mon{position:absolute;left:50%;bottom:4%;width:min(44%,300px);height:72%;transform:translateX(-50%);z-index:1}
-.b-mon .boss-svg{width:100%;height:100%;display:block;animation:bossidle 1.4s ease-in-out infinite alternate}
-@keyframes bossidle{from{transform:translateY(0) scale(1)}to{transform:translateY(-6px) scale(1.02)}}
-.b-mon.hit .boss-svg{animation:bosshit .25s}
-@keyframes bosshit{0%{transform:translateX(0);filter:brightness(1.8) saturate(.4)}30%{transform:translateX(-8px) rotate(-3deg)}60%{transform:translateX(8px) rotate(3deg)}100%{transform:none;filter:none}}
-.b-arm{transform-box:fill-box;transform-origin:center;animation:arm 1s ease-in-out infinite alternate}
-.b-arm.r{animation-delay:.5s}
-@keyframes arm{from{transform:rotate(-10deg)}to{transform:rotate(10deg)}}
-.b-hpwrap{position:absolute;left:4%;right:4%;top:4%;z-index:2}
-.b-hp{height:22px;border-radius:99px;background:rgba(0,0,0,.35);border:3px solid #fff;overflow:hidden}
-.b-hp i{display:block;height:100%;width:100%;background:linear-gradient(90deg,#ff6b6b,#fa5252 60%,#ff922b);transition:width .3s}
-.b-hptxt{color:#fff;font-weight:900;font-size:14px;text-shadow:0 1px 2px rgba(0,0,0,.5);margin-top:4px}
-.b-time{position:absolute;right:4%;top:calc(4% + 30px);z-index:2;color:#fff;font-weight:900;font-size:20px;background:rgba(0,0,0,.35);border-radius:12px;padding:2px 10px}
-.b-top{position:absolute;left:3%;bottom:4%;z-index:2;background:rgba(255,255,255,.88);border-radius:14px;padding:8px 10px;font-size:13px;font-weight:800;min-width:150px;max-width:44%}
-.b-top:empty{display:none}
-.b-top div{display:flex;align-items:center;gap:4px;white-space:nowrap;overflow:hidden}
-.b-top div b{margin-left:auto;color:#7048e8}
-.b-top svg.face{width:20px;height:20px}
-.b-top small{display:block;color:var(--muted);margin-top:2px}
-.b-over{position:absolute;inset:0;z-index:3;display:none;flex-direction:column;align-items:center;justify-content:center;color:#fff;text-align:center;font-weight:900;background:rgba(20,10,60,.55)}
+/* 줄다리기 청백전 */
+.bossarena{position:relative;height:clamp(250px,44vh,460px);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);user-select:none}
+.t-score{position:absolute;left:50%;top:3%;transform:translateX(-50%);z-index:3;display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.92);border-radius:999px;padding:4px 14px;font-weight:900;font-size:15px;box-shadow:0 3px 0 rgba(0,0,0,.12);white-space:nowrap}
+.t-score .tb{color:#1c7ed6}.t-score .tw{color:#495057}
+.t-score .wins{display:flex;gap:3px}.t-score .wins i{width:12px;height:12px;border-radius:50%;border:2px solid currentColor;display:block}.t-score .wins i.on{background:currentColor}
+.t-score .rd{font-size:13px;color:#7048e8;padding:0 4px}
+.t-time{position:absolute;right:3%;top:3%;z-index:3;color:#fff;font-weight:900;font-size:20px;background:rgba(0,0,0,.4);border-radius:12px;padding:2px 10px}
+.t-time:empty{display:none}
+.t-zone{position:absolute;top:22%;bottom:8%;width:5px;z-index:1;border-radius:3px}
+.t-zone.c{left:50%;margin-left:-2px;background:repeating-linear-gradient(#fff 0 10px,transparent 10px 18px)}
+.t-zone.b{left:25%;background:#4dabf7;box-shadow:0 0 0 2px #fff}.t-zone.w{left:75%;background:#f8f9fa;box-shadow:0 0 0 2px #868e96}
+.t-pull{position:absolute;left:0;right:0;top:46%;height:36%;z-index:2;transition:transform .45s cubic-bezier(.3,1.4,.5,1)}
+.t-rope{position:absolute;left:-10%;right:-10%;top:30%;height:12px;margin-top:-6px;border-radius:6px;background:repeating-linear-gradient(60deg,#c8964f 0 8px,#a87532 8px 14px);box-shadow:0 3px 0 rgba(0,0,0,.18)}
+.t-flag{position:absolute;left:50%;top:30%;width:22px;height:46px;margin-left:-11px;background:linear-gradient(#ff6b6b,#e03131);clip-path:polygon(0 0,100% 0,100% 70%,50% 100%,0 70%);transform-origin:top;animation:flagsw .5s ease-in-out infinite alternate}
+@keyframes flagsw{from{transform:rotate(-8deg)}to{transform:rotate(8deg)}}
+.t-team{position:absolute;top:0;bottom:0;display:flex;align-items:flex-start;gap:clamp(2px,1vw,10px)}
+.t-team.b{right:56%;flex-direction:row-reverse}.t-team.w{left:56%}
+.t-kid{position:relative;display:flex;flex-direction:column;align-items:center;transform-origin:50% 100%;animation:lean .5s ease-in-out infinite alternate}
+.t-team.b .t-kid{--lean:-14deg}.t-team.w .t-kid{--lean:14deg}
+.t-kid:nth-child(2n){animation-delay:.2s}
+@keyframes lean{from{transform:rotate(var(--lean))}to{transform:rotate(calc(var(--lean) * .6)) translateY(-2px)}}
+.t-kid svg.face{width:clamp(30px,6vw,56px);height:clamp(30px,6vw,56px);border-radius:50%;box-shadow:0 0 0 3px #fff}
+.t-team.b .t-kid svg.face{box-shadow:0 0 0 3px #1c7ed6}.t-team.w .t-kid svg.face{box-shadow:0 0 0 3px #fff,0 0 0 5px #adb5bd}
+.t-kid .bd{width:clamp(16px,3vw,28px);height:clamp(18px,3.6vw,34px);margin-top:-4px;border-radius:8px 8px 4px 4px}
+.t-team.b .bd{background:#339af0}.t-team.w .bd{background:#f8f9fa;border:2px solid #adb5bd}
+.t-kid.more{animation:none;font-weight:900;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.5);align-self:center;font-size:14px}
+.t-kid.me svg.face{box-shadow:0 0 0 3px #ffd43b,0 0 0 6px #ff922b}
+.t-pull.stop .t-kid,.t-pull.stop .t-flag{animation:none}
+.t-tag{position:absolute;bottom:3%;z-index:3;font-weight:900;font-size:14px;border-radius:12px;padding:3px 10px;background:rgba(255,255,255,.9)}
+.t-tag.b{left:3%;color:#1c7ed6}.t-tag.w{right:3%;color:#495057}
+.b-over{position:absolute;inset:0;z-index:4;display:none;flex-direction:column;align-items:center;justify-content:center;color:#fff;text-align:center;font-weight:900;background:rgba(20,30,60,.5);padding:10px}
 .b-over.on{display:flex}
-.b-over div{font-size:clamp(30px,6vw,56px);text-shadow:0 3px 6px rgba(0,0,0,.4)}
-.b-over small{font-size:16px;margin-top:6px}
-.b-over.win{background:rgba(255,190,40,.45)}
+.b-over div{font-size:clamp(30px,6vw,60px);text-shadow:0 3px 6px rgba(0,0,0,.4)}
+.b-over small{font-size:16px;margin-top:6px;line-height:1.5}
+.b-over.count div{font-size:clamp(70px,14vw,150px)}
+.b-over.blue{background:rgba(28,126,214,.55)}.b-over.white{background:rgba(134,142,150,.6)}
+.b-over .mvp{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin-top:10px;font-size:15px}
+.b-over .mvp span{background:rgba(255,255,255,.92);color:#1f2a3d;border-radius:14px;padding:6px 10px;display:flex;align-items:center;gap:6px}
+.b-over .mvp svg.face{width:26px;height:26px}
 .bossmsg{text-align:center;font-weight:800;color:#475569;margin:10px 0 6px;font-size:15px}
+.t-lists{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.t-list{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);padding:8px 12px;font-size:13px;font-weight:800}
+.t-list.b{border-top:5px solid #339af0}.t-list.w{border-top:5px solid #adb5bd}
+.t-list h4{margin:0 0 4px;font-size:14px}.t-list.b h4{color:#1c7ed6}.t-list.w h4{color:#495057}
+.t-list div{display:flex;align-items:center;gap:4px;white-space:nowrap;overflow:hidden}
+.t-list div b{margin-left:auto;color:#7048e8}
+.t-list svg.face{width:18px;height:18px}
+.t-list .avg{color:var(--muted);font-size:12px;margin-top:2px}
 .bosstype{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);padding:12px 16px;margin-bottom:10px}
 .bosstype.off{opacity:.5}
 .b-mine{font-size:14px;font-weight:800;color:#475569;margin-bottom:6px}
 .b-mine b{color:#7048e8;font-size:18px}
+.b-mine .myteam{border-radius:99px;padding:1px 10px;color:#fff;margin-right:6px}
+.b-mine .myteam.b{background:#1c7ed6}.b-mine .myteam.w{background:#868e96}
 .b-text{font-size:clamp(20px,3.6vw,30px);line-height:1.7;word-break:keep-all;overflow-wrap:anywhere;min-height:1.7em}
-.b-mon.down .boss-svg{animation:none;transform:translateY(14%) rotate(-10deg);filter:grayscale(.5) brightness(.9)}
-@media (max-width:480px){.b-top{font-size:11px;min-width:0;padding:6px 8px}.b-top svg.face{width:16px;height:16px}.b-time{font-size:16px}}
+@media (max-width:480px){.t-score{font-size:12px;gap:6px;padding:3px 10px}.t-time{font-size:15px;top:auto;bottom:3%;right:auto;left:50%;transform:translateX(-50%)}.t-list{font-size:12px;padding:6px 8px}.t-tag{font-size:12px}}
 #scr-boss.tv .bosstype,#scr-boss.tv #boss-kb{display:none}
-#scr-boss.tv .bossarena{height:clamp(320px,72vh,820px)}
-#scr-boss.tv .b-top{font-size:18px;min-width:240px}
-#scr-boss.tv .b-top svg.face{width:28px;height:28px}
-#scr-boss.tv .b-hp{height:34px}
-#scr-boss.tv .b-hptxt{font-size:22px}
-#scr-boss.tv .b-time{font-size:32px;top:calc(4% + 44px)}
+#scr-boss.tv .bossarena{height:clamp(330px,64vh,800px)}
+#scr-boss.tv .t-score{font-size:24px;padding:6px 22px}#scr-boss.tv .t-score .wins i{width:18px;height:18px}
+#scr-boss.tv .t-time{font-size:34px}
+#scr-boss.tv .t-list{font-size:17px}#scr-boss.tv .t-list svg.face{width:26px;height:26px}#scr-boss.tv .t-list h4{font-size:20px}
 /* ---------- responsive ---------- */
 @media (max-width:480px){#uc-stars{display:none} #uc-name{display:none} #topbar{gap:4px!important;padding:6px 8px!important} #topbar .iconbtn{width:30px!important;height:30px!important;font-size:14px!important} #topbar .userchip{padding:3px 6px!important}}
 @media (max-width:400px){#topbar .logo{display:none}}
@@ -656,7 +676,7 @@ body.show-hands .typing-finger-caption{display:block}
       <div class="card master" id="master-card" style="display:none"></div>
       <div class="card gamecard" id="test-card" style="margin-top:14px"><div class="icon">⏱</div><div class="body"><div class="name">1분 속도 재기</div><div class="desc" id="test-card-desc">1분 동안 친 타수를 재요(이 앱의 계산 방식). 틀리면 ⌫로 고치고 계속!</div></div><button class="btn" id="test-card-btn">시작</button></div>
       <div class="card gamecard" id="class-card" style="display:none;margin-top:14px"><div class="icon">👥</div><div class="body"><div class="name">우리 반 지도</div><div class="desc" id="class-card-desc">친구들이 어느 레벨에 있는지 보고, 게임 기록도 확인해요.</div></div><button class="btn" id="class-card-btn">보기</button></div>
-      <div class="card gamecard" id="boss-card" style="display:none;margin-top:14px"><div class="icon">⚔️</div><div class="body"><div class="name">반 협동 보스전</div><div class="desc">선생님이 열면 반 친구들과 함께 타자로 보스를 쓰러뜨려요. 내 레벨에 맞는 글이 나와요.</div></div><button class="btn" id="boss-card-btn">들어가기</button></div>
+      <div class="card gamecard" id="boss-card" style="display:none;margin-top:14px"><div class="icon">🪢</div><div class="body"><div class="name">타자 줄다리기 청백전</div><div class="desc">선생님이 열면 청팀·백팀으로 나눠 타자로 줄을 당겨요. 3판 2선승, 내 레벨에 맞는 글이 나와요.</div></div><button class="btn" id="boss-card-btn">들어가기</button></div>
     </section>
 
     <!-- 레벨 허브 -->
@@ -708,21 +728,21 @@ body.show-hands .typing-finger-caption{display:block}
       <div class="card lines" id="cls-rank"></div>
     </section>
 
-    <!-- 보스전 -->
+    <!-- 줄다리기 청백전 -->
     <section id="scr-boss" class="screen">
       <div class="hubhead">
         <button class="btn ghost" id="boss-back">← 지도</button>
-        <h2>⚔️ 반 협동 보스전</h2>
+        <h2>🪢 타자 줄다리기 청백전</h2>
         <button class="btn sec sm" id="boss-teacher" style="margin-left:auto" title="선생님 관리">👩‍🏫</button>
       </div>
       <div id="boss-admin" class="classbar" style="display:none"><b style="color:#7c3aed">👩‍🏫</b>
-        <label>난이도 <select id="boss-hp"><option value="800">쉬움 (체력 800)</option><option value="2000" selected>보통 (체력 2000)</option><option value="4000">어려움 (체력 4000)</option><option value="8000">전설 (체력 8000)</option></select></label>
-        <label>시간 <select id="boss-dur"><option value="120">2분</option><option value="180" selected>3분</option><option value="300">5분</option></select></label>
-        <button class="btn sm" id="boss-start">보스전 시작</button><button class="btn sec sm" id="boss-stop">끝내기</button><button class="btn sec sm" id="boss-tv">📺 TV 화면</button>
+        <label>한 판 <select id="boss-dur"><option value="30">30초</option><option value="40" selected>40초</option><option value="60">60초</option></select></label>
+        <button class="btn sm" id="boss-start">새 경기 (팀 나누기)</button><button class="btn sec sm" id="boss-stop">끝내기</button><button class="btn sec sm" id="boss-tv">📺 TV 화면</button>
       </div>
       <div class="bossarena" id="boss-arena"></div>
       <div class="bossmsg" id="boss-msg"></div>
-      <div class="bosstype" id="boss-type"><div class="b-mine">⚔️ 내 공격 <b id="boss-mydmg">0</b> · 🔥 연속 <b id="boss-combo">0</b></div><div class="b-text" id="boss-text"></div></div>
+      <div class="bosstype" id="boss-type"><div class="b-mine"><span class="myteam" id="boss-myteam"></span>💪 이번 판 <b id="boss-mydmg">0</b>점 · 🔥 연속 <b id="boss-combo">0</b></div><div class="b-text" id="boss-text"></div></div>
+      <div class="t-lists" id="t-lists"><div class="t-list b" id="t-list-b"></div><div class="t-list w" id="t-list-w"></div></div>
       <div id="boss-kb"></div>
     </section>
 
@@ -1209,7 +1229,7 @@ function validateContent() {
 <script>
 /* ================= 저장 ================= */
 const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
-const APP_VERSION = '3.5', APP_DATE = '2026-11-19';
+const APP_VERSION = '3.6', APP_DATE = '2026-11-19';
 /* ===== 우리 반 공유(선택) : Firebase 설정 =====
    Firebase 콘솔 → 프로젝트 설정 → 내 앱(웹) → SDK 설정의 firebaseConfig 값을 아래에 그대로 붙여 넣으세요.
    Realtime Database를 만들고 databaseURL까지 넣어야 켜집니다. 비워 두면 혼자 쓰는 앱으로 돌아갑니다. */
@@ -2129,28 +2149,47 @@ ART_EXTRA.sc_castle = function () {
     <rect y="430" width="800" height="20" fill="#3b3f74"/>`);
 };
 var Boss = {
-  state: null, hits: {}, offset: 0, admin: false, tv: false, myDmg: 0, sentDmg: 0, combo: 0, text: '', units: [], spans: [], pos: 0, timer: 0, pushT: 0, unsubs: [], ended: '',
+  state: null, hits: {}, offset: 0, admin: false, tv: false, my: 0, sent: 0, sum: 0, bc: 0, combo: 0, myRound: 0, text: '', units: [], spans: [], pos: 0, timer: 0, pushT: 0, unsubs: [], shown: '', resT: 0,
+  CNT: 3000, win() { return Math.max(60, ((this.state && this.state.dur) || 40) * 2.5); }, TEAM: {b: '청팀', w: '백팀'},
   key() { return Cloud.key((user() || {}).name || ''); },
-  liveId() { return this.state && this.state.on ? String(this.state.id) : ''; },
-  total() { const id = this.liveId(); let t = 0; Object.values(this.hits || {}).forEach(h => { if (h && String(h.id) === id) t += Math.max(0, Math.min(100000, Number(h.dmg) || 0)); }); return t; },
-  timeLeft() { const s = this.state; if (!s || !s.on || typeof s.start !== 'number') return 0; return Math.max(0, Math.ceil(s.dur - (Date.now() + this.offset - s.start) / 1000)); },
+  matchId() { return this.state && this.state.on ? String(this.state.id || '') : ''; },
+  cur() { const c = (this.state && this.state.cur) || {}; return {round: Number(c.round) || 0, start: typeof c.start === 'number' ? c.start : 0}; },
+  now() { return Date.now() + this.offset; },
+  members() { const id = this.matchId(); const out = []; Object.entries(this.hits || {}).forEach(([k, h]) => { if (h && String(h.id) === id && (h.team === 'b' || h.team === 'w')) out.push(Object.assign({k}, h)); }); return out; },
+  myTeam() { const k = this.key(); const t = this.state && this.state.teams && this.state.teams[k]; if (t === 'b' || t === 'w') return t; const h = this.hits[k]; if (h && String(h.id) === this.matchId() && (h.team === 'b' || h.team === 'w')) return h.team; return ''; },
+  pickTeam() { const n = {b: 0, w: 0}; this.members().forEach(m => n[m.team]++); Object.values((this.state && this.state.teams) || {}).forEach(t => { if (n[t] !== undefined) n[t] += .01; }); return n.b <= n.w ? 'b' : 'w'; },
+  roundDmg(m) { const r = this.cur().round; if (m.k === this.key()) return this.myRound === r ? this.my : 0; return Number(m.r) === r ? Math.max(0, Math.min(100000, Number(m.dmg) || 0)) : 0; },
+  teamStat() { const s = {b: {sum: 0, n: 0, list: []}, w: {sum: 0, n: 0, list: []}}; this.members().forEach(m => { const d = this.roundDmg(m); const t = s[m.team]; t.sum += d; t.n++; t.list.push(Object.assign(m, {d, tot: m.k === this.key() ? Math.max(this.sum, Number(m.sum) || 0) : Number(m.sum) || 0})); });
+    ['b', 'w'].forEach(t => { s[t].avg = s[t].n ? s[t].sum / s[t].n : 0; s[t].list.sort((a, b) => b.d - a.d || b.tot - a.tot); }); s.diff = s.w.avg - s.b.avg; s.pos = Math.max(-1, Math.min(1, s.diff / this.win())); return s; },
+  wins() { const w = {b: 0, w: 0}; Object.values((this.state && this.state.res) || {}).forEach(r => { if (w[r] !== undefined) w[r]++; }); return w; },
+  champ() { const w = this.wins(); return w.b >= 2 ? 'b' : w.w >= 2 ? 'w' : ''; },
+  phase() {
+    if (!this.matchId()) return 'idle'; const c = this.cur(); if (!c.round || !c.start) return 'ready';
+    if (this.state.res && this.state.res[c.round]) return 'end'; const t = this.now() - c.start;
+    if (t < this.CNT) return 'count'; if (t >= this.CNT + (this.state.dur || 40) * 1000) return 'end'; if (Math.abs(this.teamStat().diff) >= this.win()) return 'end'; return 'play';
+  },
+  left() { const c = this.cur(); return Math.max(0, Math.ceil(((this.state.dur || 40) * 1000 + this.CNT - (this.now() - c.start)) / 1000)); },
+  roundWinner() { const c = this.cur(); const r = this.state.res && this.state.res[c.round]; if (r) return r; const d = this.teamStat().diff; return Math.abs(d) < .5 ? 'd' : d > 0 ? 'w' : 'b'; },
   open() {
     if (!classAvailable()) return; stopAll(); show('scr-boss'); updateChip();
     $('#boss-admin').style.display = this.admin ? '' : 'none'; $('#scr-boss').classList.toggle('tv', this.tv);
-    $('#boss-arena').innerHTML = `${ART.scene('castle')}<div class="b-hpwrap"><div class="b-hp"><i id="boss-hpbar"></i></div><div class="b-hptxt" id="boss-hptxt"></div></div><div class="b-time" id="boss-time"></div><div class="b-mon" id="boss-mon">${ART.boss()}</div><div class="b-top" id="boss-top"></div><div class="b-over" id="boss-over"></div>`;
-    this.myDmg = 0; this.sentDmg = 0; this.combo = 0; this.ended = ''; this.newText(); this.render();
+    $('#boss-arena').innerHTML = `${ART.scene('grass')}<div class="t-zone b"></div><div class="t-zone c"></div><div class="t-zone w"></div><div class="t-pull" id="t-pull"><div class="t-rope"></div><div class="t-flag"></div><div class="t-team b" id="t-team-b"></div><div class="t-team w" id="t-team-w"></div></div><div class="t-score" id="t-score"></div><div class="t-time" id="boss-time"></div><div class="t-tag b">◀ 청팀 쪽</div><div class="t-tag w">백팀 쪽 ▶</div><div class="b-over" id="boss-over"></div>`;
+    this.my = 0; this.sent = 0; this.sum = 0; this.bc = 0; this.combo = 0; this.myRound = 0; this.shown = ''; this._kids = ''; this.newText(); this.render();
     mountKB('#boss-kb', true, this.units);
     Input.handler = (c, s) => this.onKey(c, s);
     Cloud.init().then(ok => {
       if (!ok) { $('#boss-msg').textContent = '인터넷 연결을 확인해 주세요.'; return; }
       this.unwatch(); const f = Cloud.fb, base = `classes/${Cloud.code()}/boss`;
       this.unsubs.push(f.onValue(f.ref(Cloud.db, '.info/serverTimeOffset'), s => { this.offset = Number(s.val()) || 0; }));
-      this.unsubs.push(f.onValue(f.ref(Cloud.db, base), snap => { const v = snap.val() || {}; const prev = this.liveId(); this.hits = v.hits || {}; delete v.hits; this.state = v;
-        if (this.liveId() !== prev) { this.myDmg = (this.hits[this.key()] && String(this.hits[this.key()].id) === this.liveId()) ? Number(this.hits[this.key()].dmg) || 0 : 0; this.sentDmg = this.myDmg; this.combo = 0; this.ended = ''; this.newText(); }
-        this.render(); }, () => { $('#boss-msg').textContent = '보스전을 읽을 수 없어요. 선생님께 Firebase 규칙을 확인해 달라고 해 주세요.'; }));
+      this.unsubs.push(f.onValue(f.ref(Cloud.db, base), snap => { const v = snap.val() || {}; const prevM = this.matchId(), prevR = this.cur().round; this.hits = v.hits || {}; delete v.hits; this.state = v;
+        const mine = this.hits[this.key()];
+        if (this.matchId() !== prevM) { const same = mine && String(mine.id) === this.matchId(); this.sum = same ? Number(mine.sum) || 0 : 0; this.bc = same ? Number(mine.bc) || 0 : 0; this.my = 0; this.sent = 0; this.myRound = 0; this.combo = 0; }
+        if (this.cur().round !== prevR) { this.combo = 0; if (this.myRound !== this.cur().round) { this.my = 0; this.sent = -1; this.myRound = this.cur().round; } this.newText(); }
+        this.join(); this.render(); }, () => { $('#boss-msg').textContent = '청백전을 읽을 수 없어요. 선생님께 Firebase 규칙을 확인해 달라고 해 주세요.'; }));
     });
-    clearInterval(this.timer); this.timer = setInterval(() => { this.render(); this.push(); }, 300);
+    clearInterval(this.timer); this.timer = setInterval(() => { this.render(); this.push(); }, 250);
   },
+  join() { if (this.tv || this.admin || !this.matchId() || !user()) return; const h = this.hits[this.key()]; if (h && String(h.id) === this.matchId() && h.team) return; if (this._joining === this.matchId()) return; this._joining = this.matchId(); this.sent = -1; this.push(true); },
   unwatch() { this.unsubs.forEach(u => { try { u(); } catch (e) {} }); this.unsubs = []; },
   close() { clearInterval(this.timer); this.push(true); this.unwatch(); Input.handler = null; },
   newText() {
@@ -2159,56 +2198,79 @@ var Boss = {
     const box = $('#boss-text'); if (box) { this.spans = buildTextDOM(box, this.text); this.paint(); }
   },
   paint() { if (!this.spans.length) return; paintText(this.spans, this.units, Array.from({length: this.pos}, () => ({ok: true})), $('#boss-text')); KB.setNext(this.live() ? this.units[this.pos] || null : null); },
-  live() { return this.liveId() && this.timeLeft() > 0 && this.total() < (this.state.hp || 1) && !this.tv; },
+  live() { return !this.tv && !this.admin && !!this.myTeam() && this.phase() === 'play'; },
   onKey(code, shift) {
     if (!this.live()) return; const u = this.units[this.pos]; if (!u) return; const ch = keyChar(code, shift); if (ch === null || ch === '\n' || ch === '\b') return;
     if (ch === u.jamo) {
-      this.combo++; const dmg = u.w * (this.combo >= 30 ? 3 : this.combo >= 15 ? 2 : 1); this.myDmg += dmg; this.pos++; KB.flash(code, true); Snd.ok();
-      this.hitFx(dmg); if (this.pos >= this.units.length) { this.newText(); Snd.pop(); } else this.paint();
+      this.combo++; this.bc = Math.max(this.bc, this.combo); const d = u.w * (this.combo >= 30 ? 3 : this.combo >= 15 ? 2 : 1); this.my += d; this.sum += d; this.myRound = this.cur().round; this.pos++; KB.flash(code, true); Snd.ok();
+      this.hitFx(d); if (this.pos >= this.units.length) { this.newText(); Snd.pop(); } else this.paint();
     } else { this.combo = 0; KB.flash(code, false); Snd.bad(); const s = this.spans[u.ci]; if (s) { s.classList.remove('shake'); void s.offsetWidth; s.classList.add('shake'); } }
-    $('#boss-mydmg').textContent = this.myDmg; $('#boss-combo').textContent = this.combo;
+    $('#boss-mydmg').textContent = this.my; $('#boss-combo').textContent = this.combo;
   },
-  hitFx(dmg) {
-    const m = $('#boss-mon'); if (!m) return; m.classList.remove('hit'); void m.offsetWidth; m.classList.add('hit');
-    const ar = $('#boss-arena'); const x = 40 + Math.random() * 20, y = 35 + Math.random() * 25; popText(ar, '-' + dmg, x, y); if (this.combo % 10 === 0) ART.burst(ar, x, y, {kind: 'star', n: 8, colors: ['#ffd43b', '#fff', '#ff922b']});
-  },
+  hitFx(d) { const ar = $('#boss-arena'); const t = this.myTeam(); const x = t === 'b' ? 18 + Math.random() * 14 : 68 + Math.random() * 14; popText(ar, '+' + d, x, 30 + Math.random() * 15); if (this.combo % 15 === 0) ART.burst(ar, x, 40, {kind: 'star', n: 8, colors: ['#ffd43b', '#fff', t === 'b' ? '#339af0' : '#adb5bd']}); },
   push(force) {
-    const id = this.liveId(); if (!id || this.myDmg === this.sentDmg) return; const now = Date.now(); if (!force && now - this.pushT < 700) return; this.pushT = now;
-    const u = user(); const d = this.myDmg; Cloud.fb.set(Cloud.fb.ref(Cloud.db, `classes/${Cloud.code()}/boss/hits/${this.key()}`), {name: u.name, avatar: avatarOf(u), dmg: d, id}).then(() => { this.sentDmg = d; }).catch(() => {});
+    const id = this.matchId(); if (!id || this.tv || this.admin || this.my === this.sent || !user()) return; const now = Date.now(); if (!force && now - this.pushT < 600) return; this.pushT = now;
+    const u = user(); const team = this.myTeam() || this.pickTeam(); const d = this.my, r = this.cur().round;
+    Cloud.fb.set(Cloud.fb.ref(Cloud.db, `classes/${Cloud.code()}/boss/hits/${this.key()}`), {name: u.name, avatar: avatarOf(u), id, team, r, dmg: d, sum: this.sum, bc: this.bc}).then(() => { this.sent = d; }).catch(() => {});
   },
+  kidsHTML(list, t) { const me = this.key(); const max = this.tv ? 8 : 5; return list.slice(0, max).map(m => `<div class="t-kid${m.k === me ? ' me' : ''}">${ART.face(String(m.avatar || '🙂').slice(0, 4))}<div class="bd"></div></div>`).join('') + (list.length > max ? `<div class="t-kid more">+${list.length - max}</div>` : ''); },
+  listHTML(s, t) { const max = this.tv ? 12 : 6; return `<h4>${t === 'b' ? '🔵' : '⚪'} ${this.TEAM[t]} ${s[t].n}명</h4>` + (s[t].list.length ? s[t].list.slice(0, max).map(m => `<div>${ART.face(String(m.avatar || '🙂').slice(0, 4))} ${esc(String(m.name).slice(0, 10))}${m.k === this.key() ? ' (나)' : ''} <b>${Math.round(m.d)}</b></div>`).join('') : '<div class="muted">아직 아무도 없어요</div>') + `<div class="avg">팀 평균 ${Math.round(s[t].avg)}점</div>`; },
   render() {
     if (!$('#scr-boss').classList.contains('on')) return;
-    const s = this.state; const live = !!this.liveId(); const hp = live ? s.hp || 1 : 1; const tot = live ? Math.min(hp, this.total() + Math.max(0, this.myDmg - this.sentDmg)) : 0; const left = this.timeLeft();
-    $('#boss-hpbar').style.width = (live ? (1 - tot / hp) * 100 : 100) + '%'; $('#boss-hptxt').textContent = live ? `보스 체력 ${Math.max(0, hp - tot).toLocaleString()} / ${hp.toLocaleString()}` : '보스가 잠들어 있어요';
-    $('#boss-time').textContent = live ? `⏱ ${Math.floor(left / 60)}:${String(left % 60).padStart(2, '0')}` : '';
-    const ranks = Object.values(this.hits || {}).filter(h => h && String(h.id) === this.liveId()).sort((a, b) => (b.dmg || 0) - (a.dmg || 0));
-    $('#boss-top').innerHTML = live ? `<b>🏅 공격 순위</b>` + ranks.slice(0, this.tv ? 8 : 3).map((h, i) => `<div>${['🥇', '🥈', '🥉'][i] || i + 1 + '.'} ${ART.face(String(h.avatar || '🙂').slice(0, 4))} ${esc(String(h.name).slice(0, 12))} <b>${NUM(h.dmg, 0, 100000)}</b></div>`).join('') + `<small>참여 ${ranks.length}명</small>` : '';
-    const over = $('#boss-over'); let msg = '';
-    if (!live) { over.className = 'b-over'; over.innerHTML = ''; msg = this.admin ? '난이도와 시간을 고르고 [보스전 시작]을 눌러 주세요. TV에는 📺 화면을 띄우면 좋아요.' : '선생님이 보스전을 열면 여기서 함께 싸워요! 화면을 열어 두고 기다려요.'; }
-    else if (tot >= hp) { if (this.ended !== 'win') { this.ended = 'win'; Snd.levelup(); confetti(); } over.className = 'b-over on win'; over.innerHTML = `<div>🎉 우리 반 승리!</div><small>${ranks.length}명이 함께 ${Math.round((s.dur - left))}초 만에 쓰러뜨렸어요</small>`; msg = '보스를 쓰러뜨렸어요! 모두 수고했어요.'; }
-    else if (left <= 0) { if (this.ended !== 'lose') { this.ended = 'lose'; Snd.miss(); } over.className = 'b-over on lose'; over.innerHTML = `<div>⏰ 시간 끝!</div><small>남은 체력 ${(hp - tot).toLocaleString()} · 다음엔 꼭 이겨요!</small>`; msg = '아쉬워요! 정확하게 치면 연속 보너스로 더 세게 공격해요.'; }
-    else { over.className = 'b-over'; over.innerHTML = ''; msg = this.tv ? '모두 자기 화면에서 글을 쳐서 공격해요!' : '글을 맞게 칠 때마다 공격! 연속 15번 ×2, 30번 ×3 공격이에요.'; }
-    $('#boss-mon').classList.toggle('down', live && tot >= hp);
+    const ph = this.phase(), s = this.teamStat(), w = this.wins(), c = this.cur(), champ = this.champ(), my = this.myTeam();
+    const dots = (n, col) => `<span class="wins" style="color:${col}">${[0, 1].map(i => `<i class="${i < n ? 'on' : ''}"></i>`).join('')}</span>`;
+    $('#t-score').innerHTML = ph === 'idle' ? '🪢 줄다리기 청백전' : `<span class="tb">청팀</span>${dots(w.b, '#1c7ed6')}<span class="rd">${c.round ? c.round + '판' : '대기'}</span>${dots(w.w, '#868e96')}<span class="tw">백팀</span>`;
+    $('#boss-time').textContent = ph === 'play' ? `⏱ ${this.left()}` : '';
+    const pull = $('#t-pull'); const pos = ph === 'idle' || ph === 'ready' || ph === 'count' ? 0 : (ph === 'end' && this.state.res && this.state.res[c.round] ? ({b: -1, w: 1, d: 0})[this.state.res[c.round]] : s.pos);
+    pull.style.transform = `translateX(${pos * 25}%)`; pull.classList.toggle('stop', ph !== 'play');
+    const kk = JSON.stringify([s.b.list.map(m => m.k + m.avatar), s.w.list.map(m => m.k + m.avatar), this.tv]); if (kk !== this._kids) { this._kids = kk; $('#t-team-b').innerHTML = this.kidsHTML(s.b.list, 'b'); $('#t-team-w').innerHTML = this.kidsHTML(s.w.list, 'w'); }
+    $('#t-list-b').innerHTML = this.listHTML(s, 'b'); $('#t-list-w').innerHTML = this.listHTML(s, 'w'); $('#t-lists').style.display = ph === 'idle' ? 'none' : '';
+    const over = $('#boss-over'); let cls = '', html = '', msg = '', key = ph + c.round;
+    if (ph === 'idle') msg = this.admin ? '[새 경기]를 누르면 반 학생을 청팀·백팀으로 나눠요. TV에는 📺 화면을 띄우면 좋아요.' : '선생님이 청백전을 열면 여기서 함께 해요! 화면을 열어 두고 기다려요.';
+    else if (champ && ph !== 'play' && ph !== 'count') { key = 'champ'; const tl = s[champ].list.slice().sort((a, b) => b.tot - a.tot); const mvp = tl[0]; const all = s.b.list.concat(s.w.list); const bcm = all.slice().sort((a, b) => (b.k === this.key() ? this.bc : b.bc || 0) - (a.k === this.key() ? this.bc : a.bc || 0))[0];
+      cls = 'on ' + (champ === 'b' ? 'blue' : 'white'); html = `<div>🏆 ${this.TEAM[champ]} 우승!</div><small>${w.b} : ${w.w}</small><div class="mvp">${mvp ? `<span>⭐ 팀 MVP ${ART.face(String(mvp.avatar || '🙂').slice(0, 4))} ${esc(String(mvp.name).slice(0, 10))} ${Math.round(mvp.tot)}점</span>` : ''}${bcm ? `<span>🔥 최다 연속 ${ART.face(String(bcm.avatar || '🙂').slice(0, 4))} ${esc(String(bcm.name).slice(0, 10))} ${bcm.k === this.key() ? this.bc : bcm.bc || 0}번</span>` : ''}</div>`;
+      msg = my ? (my === champ ? '우리 팀 우승! 모두 수고했어요.' : '아쉽지만 멋진 경기였어요!') : '경기가 끝났어요.'; }
+    else if (ph === 'ready') msg = my ? `나는 ${this.TEAM[my]}이에요! 선생님이 판을 시작하면 쳐요.` : this.tv ? '팀이 정해졌어요. 곧 시작해요!' : '팀을 정하는 중이에요…';
+    else if (ph === 'count') { const n = Math.max(1, Math.ceil((this.CNT - (this.now() - c.start)) / 1000)); cls = 'on count'; html = `<div>${n}</div><small>${c.round}판 준비!</small>`; key = 'count' + n + c.round; msg = my ? `${this.TEAM[my]} 준비!` : ''; }
+    else if (ph === 'play') msg = this.tv ? '모두 자기 화면에서 글을 쳐서 줄을 당겨요!' : my ? `맞게 칠수록 ${this.TEAM[my]} 쪽으로 당겨져요! 연속 15번 ×2, 30번 ×3` : '';
+    else { const rw = this.roundWinner(); cls = 'on ' + (rw === 'b' ? 'blue' : rw === 'w' ? 'white' : ''); html = `<div>${rw === 'd' ? '🤝 비겼어요!' : `🎉 ${c.round}판 ${this.TEAM[rw]} 승리!`}</div><small>${this.TEAM.b} 평균 ${Math.round(s.b.avg)} · ${this.TEAM.w} 평균 ${Math.round(s.w.avg)}</small>`; msg = this.admin ? '[다음 판 시작]을 눌러요.' : '다음 판을 기다려요.';
+      if (this.admin && !(this.state.res && this.state.res[c.round]) && Date.now() - this.resT > 1500) { this.resT = Date.now(); Cloud.fb.set(Cloud.fb.ref(Cloud.db, `classes/${Cloud.code()}/boss/res/${c.round}`), rw).catch(() => {}); } }
+    if (key !== this.shown) { this.shown = key; if (ph === 'count') Snd.tone && Snd.tone(660, .12, 'square', .05); if (ph === 'play') Snd.pop(); if (ph === 'end' && !champ) Snd.levelup(); if (key === 'champ') { Snd.levelup(); confetti(); } }
+    over.className = 'b-over ' + cls; over.innerHTML = html;
     $('#boss-msg').textContent = msg; $('#boss-type').classList.toggle('off', !this.live());
+    $('#boss-myteam').className = 'myteam ' + (my || ''); $('#boss-myteam').textContent = my ? this.TEAM[my] : '';
+    const btn = $('#boss-start'); if (btn) btn.textContent = ph === 'idle' || champ ? '새 경기 (팀 나누기)' : ph === 'ready' ? '1판 시작' : ph === 'end' ? `${c.round + 1}판 시작` : '진행 중…'; if (btn) btn.disabled = ph === 'count' || ph === 'play';
     const lv = this.live(); if (lv !== this._lv) { this._lv = lv; this.paint(); }
   },
   teacher() {
-    if (this.admin) { this.admin = false; this.tv = false; $('#boss-admin').style.display = 'none'; $('#scr-boss').classList.remove('tv'); toast('관리를 마쳤어요'); this.render(); return; }
-    Modal.show({title: '👩‍🏫 보스전 관리', html: '<p class="muted" style="margin:0 0 8px;font-size:14px">선생님 비밀번호를 쓰면 보스전을 열고 닫을 수 있어요.</p><input id="boss-pw" type="password" maxlength="30" autocomplete="off" placeholder="선생님 비밀번호" style="width:100%;font:inherit;padding:10px 12px;border:2px solid #e2e8f0;border-radius:12px">',
+    if (this.admin) { this.admin = false; this.tv = false; $('#boss-admin').style.display = 'none'; $('#scr-boss').classList.remove('tv'); this._kids = ''; toast('관리를 마쳤어요'); this.render(); return; }
+    Modal.show({title: '👩‍🏫 청백전 관리', html: '<p class="muted" style="margin:0 0 8px;font-size:14px">선생님 비밀번호를 쓰면 청백전을 열고 닫을 수 있어요.</p><input id="boss-pw" type="password" maxlength="30" autocomplete="off" placeholder="선생님 비밀번호" style="width:100%;font:inherit;padding:10px 12px;border:2px solid #e2e8f0;border-radius:12px">',
       primary: {label: '관리 시작', fn: () => { if ($('#boss-pw').value !== ADMIN_PW) { toast('비밀번호가 맞지 않아요'); return; } this.admin = true; $('#boss-admin').style.display = ''; this.render(); toast('👩‍🏫 관리 모드예요'); }}, secondary: {label: '닫기', fn: () => {}}});
     setTimeout(() => $('#boss-pw') && $('#boss-pw').focus(), 50);
   },
-  start() {
-    const hp = NUM($('#boss-hp').value, 100, 100000), dur = NUM($('#boss-dur').value, 30, 900);
-    Cloud.fb.set(Cloud.fb.ref(Cloud.db, `classes/${Cloud.code()}/boss`), {on: true, id: String(Date.now()), hp, dur, start: Cloud.fb.serverTimestamp()}).then(() => toast('⚔️ 보스전 시작!')).catch(() => toast('시작하지 못했어요. Firebase 규칙을 확인해 주세요'));
+  async start() {
+    const ph = this.phase(), base = `classes/${Cloud.code()}/boss`, f = Cloud.fb;
+    try {
+      if (ph === 'idle' || this.champ()) {
+        const snap = await f.get(f.ref(Cloud.db, `classes/${Cloud.code()}/students`)); const st = (snap.exists() && snap.val()) || {};
+        const sk = r => Math.max(Number(r && r.test && r.test.ko) || 0, Number(r && r.ko && r.ko.best) || 0, Number(r && r.en && r.en.best) || 0);
+        const ks = Object.keys(st).sort((a, b) => sk(st[b]) - sk(st[a]) || (Math.random() - .5)); const teams = {}; ks.forEach((k, i) => { teams[k] = (i % 4 === 0 || i % 4 === 3) ? 'b' : 'w'; });
+        const dur = NUM($('#boss-dur').value, 30, 900);
+        await f.set(f.ref(Cloud.db, base), {on: true, mode: 'tug', id: String(Date.now()), dur, teams, cur: {round: 0, start: 0}});
+        toast(`🪢 팀을 나눴어요 (${ks.length}명)`);
+      } else if (ph === 'ready' || ph === 'end') {
+        const c = this.cur(); if (ph === 'end' && !(this.state.res && this.state.res[c.round])) await f.set(f.ref(Cloud.db, `${base}/res/${c.round}`), this.roundWinner());
+        await f.set(f.ref(Cloud.db, `${base}/cur`), {round: c.round + 1, start: f.serverTimestamp()});
+      }
+    } catch (e) { toast('시작하지 못했어요. Firebase 규칙을 확인해 주세요'); }
   },
-  stop() { Cloud.fb.set(Cloud.fb.ref(Cloud.db, `classes/${Cloud.code()}/boss/on`), false).then(() => toast('보스전을 닫았어요')).catch(() => toast('닫지 못했어요')); }
+  stop() { Cloud.fb.set(Cloud.fb.ref(Cloud.db, `classes/${Cloud.code()}/boss/on`), false).then(() => toast('청백전을 닫았어요')).catch(() => toast('닫지 못했어요')); }
 };
 $('#boss-back').onclick = () => { Boss.close(); renderMap(); };
 $('#boss-teacher').onclick = () => Boss.teacher();
 $('#boss-start').onclick = e => { e.currentTarget.blur(); Boss.start(); };
 $('#boss-stop').onclick = e => { e.currentTarget.blur(); Boss.stop(); };
-$('#boss-tv').onclick = e => { e.currentTarget.blur(); Boss.tv = !Boss.tv; $('#scr-boss').classList.toggle('tv', Boss.tv); $('#boss-tv').textContent = Boss.tv ? '⌨️ 학생 화면' : '📺 TV 화면'; Boss.render(); };
+$('#boss-tv').onclick = e => { e.currentTarget.blur(); Boss.tv = !Boss.tv; $('#scr-boss').classList.toggle('tv', Boss.tv); $('#boss-tv').textContent = Boss.tv ? '⌨️ 학생 화면' : '📺 TV 화면'; Boss._kids = ''; Boss.render(); };
 $('#boss-card-btn').onclick = () => Boss.open();
 
 $('#btn-chat').onclick = () => Chat.openScreen();
