@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<!-- 타자 모험 v3.2 우리반용 (2026-11-03) · 한글 두벌식 10레벨 + 영어 자판 8레벨 · 제작 kingkongssam -->
+<!-- 타자 모험 v3.3 우리반용 (2026-11-03) · 한글 두벌식 10레벨 + 영어 자판 8레벨 · 제작 kingkongssam -->
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#ff7a2f">
-<title>타자 모험 v3.2 — 기본 자리부터 차근차근 레벨 업</title>
+<title>타자 모험 v3.3 — 기본 자리부터 차근차근 레벨 업</title>
 <style>
 :root{
   --bg:#eef4fb; --card:#ffffff; --ink:#1f2a3d; --muted:#556178; --btn:#c2410c; --btn-dark:#8f2f08;
@@ -383,6 +383,94 @@ table.rec td.l{text-align:left;font-weight:800}
 .statgrid span{font-size:12px;color:var(--muted);font-weight:700}
 .newrec{display:inline-block;background:#fff1c2;color:#b45309;font-weight:900;border-radius:99px;padding:3px 10px;font-size:13px}
 #confetti{position:fixed;inset:0;pointer-events:none;z-index:70;display:none}
+
+/* ---------- 그래픽: 장면·캐릭터·효과 ---------- */
+.scene{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.scene>svg{position:absolute;inset:0;width:100%;height:100%;display:block}
+.stage .layer,.stage .holes{z-index:1}
+.drift{animation:drift 60s linear infinite}
+.drift.d2{animation-duration:80s}
+@keyframes drift{0%{transform:translateX(-30px)}50%{transform:translateX(40px)}100%{transform:translateX(-30px)}}
+.spin{transform-origin:640px 300px;animation:spin 40s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.sway{animation:sway 4s ease-in-out infinite alternate}
+.sway.s1{animation-duration:5s}.sway.s2{animation-duration:3.4s}
+@keyframes sway{from{transform:rotate(-5deg)}to{transform:rotate(5deg)}}
+.rainfx{position:absolute;inset:0;background-image:repeating-linear-gradient(105deg,rgba(255,255,255,0) 0 22px,rgba(220,235,255,.45) 22px 23px,rgba(255,255,255,0) 23px 46px);background-size:200px 200px;animation:rainmove .6s linear infinite;opacity:.7}
+@keyframes rainmove{to{background-position:-40px 200px}}
+.bubblefx i{position:absolute;bottom:-20px;width:12px;height:12px;border-radius:50%;border:2px solid rgba(255,255,255,.7);background:rgba(255,255,255,.15);animation:bubup 7s linear infinite}
+.bubblefx i:nth-child(1){left:8%;animation-delay:0s}.bubblefx i:nth-child(2){left:22%;width:8px;height:8px;animation-delay:2.5s}.bubblefx i:nth-child(3){left:47%;animation-delay:1.2s;width:16px;height:16px}
+.bubblefx i:nth-child(4){left:63%;animation-delay:4s}.bubblefx i:nth-child(5){left:81%;width:9px;height:9px;animation-delay:.6s}.bubblefx i:nth-child(6){left:93%;animation-delay:3.3s}
+@keyframes bubup{0%{transform:translate(0,0)}50%{transform:translate(10px,-50vh)}100%{transform:translate(-6px,-110vh)}}
+.twinkle,.tw{animation:tw 2.4s ease-in-out infinite alternate}
+@keyframes tw{from{opacity:.25}to{opacity:1}}
+/* 두더지 */
+.stage.mole{background:#7dd56a}
+.hole{overflow:visible}
+.hole .hole-back{position:absolute;left:4%;right:4%;bottom:6%;height:26%;width:92%}
+.hole .hole-front{position:absolute;left:4%;right:4%;bottom:0;height:20%;width:92%;z-index:3}
+.hole .clip{position:absolute;left:0;right:0;top:-40%;bottom:12%;overflow:hidden;z-index:2;pointer-events:none}
+.hole .mole{background:none;box-shadow:none;border-radius:0;bottom:0;transform:translate(-50%,105%)}
+.hole .mole .mole-svg{position:absolute;inset:0;width:100%;height:100%;filter:drop-shadow(0 3px 2px rgba(0,0,0,.25))}
+.hole .sign{top:66%;z-index:2;border:3px solid #c48b4f;box-shadow:0 2px 0 #8a5a32}
+.hole.up .mole{transform:translate(-50%,0)}
+.hole.hit .mole{transform:translate(-50%,8%) scale(.92) rotate(-8deg);filter:brightness(.85)}
+/* 떨어지기 공통 */
+.item{z-index:2}
+.item.shake{animation:ishake .25s}
+@keyframes ishake{0%,100%{transform:translate(-50%,-50%)}25%{transform:translate(calc(-50% - 6px),-50%)}75%{transform:translate(calc(-50% + 6px),-50%)}}
+.item .tag{position:relative;z-index:1}
+/* 낱말 비 */
+.stage.fall.down{background:#6f8db4}
+.item.down .tag{background:linear-gradient(160deg,rgba(255,255,255,.96),rgba(214,236,255,.92));border:3px solid #fff;border-radius:999px;box-shadow:0 6px 14px rgba(20,40,80,.28),inset 0 -4px 0 rgba(120,170,220,.25)}
+.item.down::before{content:"";position:absolute;left:50%;top:-18px;width:18px;height:22px;transform:translateX(-50%);background:linear-gradient(#e7f5ff,#74c0fc);border-radius:50% 50% 50% 50%/30% 30% 70% 70%;clip-path:polygon(50% 0,100% 62%,92% 88%,50% 100%,8% 88%,0 62%);opacity:.95}
+.item.down.lock .tag{border-color:var(--accent);box-shadow:0 0 0 4px rgba(255,122,47,.35),0 6px 14px rgba(20,40,80,.28)}
+/* 풍선 */
+.stage.fall.up{background:#ffe9f2}
+.item.up{flex-direction:column;gap:0}
+.item.up .bln{position:relative;display:flex;align-items:center;justify-content:center;min-width:2.6em;padding:.55em .7em .75em;border-radius:50% 50% 48% 48%/56% 56% 44% 44%;background:radial-gradient(circle at 32% 28%,hsl(var(--hue,20) 100% 88%) 0 12%,hsl(var(--hue,20) 85% 64%) 40%,hsl(var(--hue,20) 70% 48%) 100%);box-shadow:inset -6px -8px 0 rgba(0,0,0,.08),0 8px 14px rgba(0,0,0,.15);font-size:clamp(18px,3.4vw,30px)}
+.item.up .bln::after{content:"";position:absolute;bottom:-.32em;left:50%;transform:translateX(-50%);border:.22em solid transparent;border-bottom:.3em solid hsl(var(--hue,20) 70% 48%);border-top:0}
+.item.up .bln .tag{background:none;border:0;box-shadow:none;padding:0;font-size:1em;color:#1f2a3d;text-shadow:0 1px 0 rgba(255,255,255,.6);min-width:0;min-height:0;border-radius:0}
+.item.up .tag::after{display:none}
+.item.up .string{width:2px;height:2.2em;background:linear-gradient(#8a97ab,rgba(138,151,171,.3));font-size:clamp(18px,3.4vw,30px);transform-origin:top;animation:strsw 1.6s ease-in-out infinite alternate}
+@keyframes strsw{from{transform:rotate(-8deg)}to{transform:rotate(8deg)}}
+.item.up.lock .bln{box-shadow:0 0 0 4px rgba(255,255,255,.95),0 0 0 7px var(--accent),0 8px 14px rgba(0,0,0,.15)}
+/* 물고기 */
+.stage.fall.right{background:#1c7ed6}
+.item.right{gap:0}
+.item.right .fish-tail{width:1.3em;height:1.9em;margin-right:-.25em;font-size:clamp(18px,3.4vw,30px);animation:tailw .5s ease-in-out infinite alternate;transform-origin:right center}
+@keyframes tailw{from{transform:scaleY(.85) rotate(-8deg)}to{transform:scaleY(1) rotate(8deg)}}
+.item.right .fishb{position:relative;display:flex;align-items:center;padding:.4em 1.6em .4em .8em;border-radius:45% 60% 60% 45%/50%;background:linear-gradient(170deg,hsl(var(--hue,30) 95% 72%),hsl(var(--hue,30) 80% 52%));box-shadow:inset 0 -6px 0 rgba(0,0,0,.08),0 6px 12px rgba(0,30,70,.3);font-size:clamp(18px,3.4vw,30px)}
+.item.right .fishb::before{content:"";position:absolute;right:.55em;top:28%;width:.42em;height:.42em;border-radius:50%;background:#fff;box-shadow:inset .1em .06em 0 .08em #1f1f1f}
+.item.right .fishb::after{content:"";position:absolute;left:38%;top:-.42em;width:1em;height:.6em;background:hsl(var(--hue,30) 80% 56%);border-radius:80% 20% 0 0}
+.item.right .tag{background:rgba(255,255,255,.9);border:0;box-shadow:none;padding:.05em .4em;border-radius:10px;font-size:1em}
+.item.right.lock .fishb{box-shadow:0 0 0 4px #fff,0 0 0 7px var(--accent)}
+/* 경주 */
+.stage.race .track{background:none}
+.stage.race .track .scene{z-index:0}
+.stage.race .lane{z-index:1;border-bottom:0}
+.lanefx{position:absolute;left:0;right:0;top:50%;height:4px;margin-top:-2px;background:repeating-linear-gradient(90deg,#fff 0 34px,transparent 34px 68px);animation:lanemove .5s linear infinite;opacity:.9}
+.lanefx.dirt{background:repeating-linear-gradient(90deg,rgba(255,255,255,.7) 0 10px,transparent 10px 30px);height:3px}
+@keyframes lanemove{to{background-position:-68px 0}}
+.stage.race.space .lanefx{display:none}
+.sprite{width:clamp(56px,11vw,110px);height:clamp(30px,6vw,58px);font-size:clamp(28px,6vw,52px);display:flex;align-items:center;justify-content:center}
+.sprite .spr-svg{width:100%;height:100%;display:block}
+.sprite.running .spr-svg{animation:bob .3s ease-in-out infinite alternate}
+@keyframes bob{from{transform:translateY(0)}to{transform:translateY(-3px)}}
+.flame{animation:flick .12s linear infinite alternate;transform-origin:22px 32px}
+@keyframes flick{from{transform:scaleX(.8)}to{transform:scaleX(1.15)}}
+.blink circle{animation:tw .5s steps(2) infinite}
+.finish{width:clamp(28px,5vw,44px);height:100%;font-size:inherit;z-index:1}
+.finish .spr-svg{width:100%;height:80%}
+.wave{animation:wave 1s ease-in-out infinite alternate;transform-origin:8px 20px}
+@keyframes wave{from{transform:skewY(-4deg)}to{transform:skewY(4deg)}}
+/* 터짐 효과 */
+.burst{position:absolute;width:0;height:0;z-index:4;pointer-events:none}
+.burst i{position:absolute;left:-5px;top:-5px;width:10px;height:10px;border-radius:50%;animation:burst .7s cubic-bezier(.2,.7,.3,1) forwards}
+.burst i.st{width:auto;height:auto;font-size:18px;font-style:normal;line-height:1;left:-9px;top:-9px}
+.burst i.bb{border:2px solid rgba(255,255,255,.9);width:12px;height:12px}
+@keyframes burst{0%{transform:translate(0,0) scale(1);opacity:1}100%{transform:translate(var(--dx),var(--dy)) scale(.3);opacity:0}}
+@media (prefers-reduced-motion:reduce){.drift,.spin,.sway,.rainfx,.bubblefx i,.lanefx,.wave,.flame,.tw,.item.up .string,.item.right .fish-tail{animation:none!important}}
 
 /* ---------- responsive ---------- */
 @media (max-width:480px){#uc-stars{display:none} #uc-name{display:none} #topbar{gap:4px!important;padding:6px 8px!important} #topbar .iconbtn{width:30px!important;height:30px!important;font-size:14px!important} #topbar .userchip{padding:3px 6px!important}}
@@ -1015,7 +1103,7 @@ function validateContent() {
 <script>
 /* ================= 저장 ================= */
 const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
-const APP_VERSION = '3.2', APP_DATE = '2026-11-03';
+const APP_VERSION = '3.3', APP_DATE = '2026-11-19';
 /* ===== 우리 반 공유(선택) : Firebase 설정 =====
    Firebase 콘솔 → 프로젝트 설정 → 내 앱(웹) → SDK 설정의 firebaseConfig 값을 아래에 그대로 붙여 넣으세요.
    Realtime Database를 만들고 databaseURL까지 넣어야 켜집니다. 비워 두면 혼자 쓰는 앱으로 돌아갑니다. */
@@ -2407,13 +2495,146 @@ function finishGame(L, stars, html, score) {
 }
 
 /* ---- 두더지 ---- */
+/* ================= 그래픽 (직접 그린 SVG 장면·캐릭터·효과) ================= */
+const ART = {
+  uid: 0,
+  id(p) { return p + (++this.uid); },
+  svg(vb, body, cls = '', par = 'xMidYMax slice') { return `<svg class="${cls}" viewBox="${vb}" preserveAspectRatio="${par}" aria-hidden="true" focusable="false">${body}</svg>`; },
+  cloud(x, y, s, op = 1) { return `<g transform="translate(${x} ${y}) scale(${s})" opacity="${op}"><ellipse cx="0" cy="0" rx="46" ry="24" fill="#fff"/><ellipse cx="-30" cy="8" rx="30" ry="18" fill="#fff"/><ellipse cx="32" cy="8" rx="34" ry="19" fill="#fff"/><ellipse cx="4" cy="-14" rx="28" ry="22" fill="#fff"/><ellipse cx="0" cy="18" rx="62" ry="10" fill="#e8f2fb"/></g>`; },
+  flower(x, y, c, s = 1) { return `<g transform="translate(${x} ${y}) scale(${s})"><path d="M0 0 V14" stroke="#3f8f33" stroke-width="2"/><circle cx="-5" cy="-2" r="4.5" fill="${c}"/><circle cx="5" cy="-2" r="4.5" fill="${c}"/><circle cx="0" cy="-7" r="4.5" fill="${c}"/><circle cx="0" cy="3" r="4.5" fill="${c}"/><circle cx="0" cy="-2" r="3" fill="#ffd43b"/></g>`; },
+  /* ---- 배경 장면 ---- */
+  scene(kind) {
+    const f = this['sc_' + kind]; return f ? `<div class="scene scene-${kind}">${f.call(this)}</div>` : '';
+  },
+  sc_mole() {
+    const a = this.id('m'); let fl = '';
+    [[60, 400, '#ff6b9a'], [140, 425, '#ffd43b'], [250, 410, '#ffffff'], [380, 432, '#ff8fab'], [520, 415, '#b197fc'], [640, 430, '#ffd43b'], [740, 405, '#ff6b9a'], [95, 350, '#fff'], [705, 360, '#b197fc'], [455, 370, '#ffffff']].forEach(([x, y, c], i) => fl += this.flower(x, y, c, 0.8 + (i % 3) * 0.2));
+    return this.svg('0 0 800 450', `<defs><linearGradient id="${a}s" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5fb6ff"/><stop offset=".75" stop-color="#cdeeff"/></linearGradient><radialGradient id="${a}u"><stop offset="0" stop-color="#fff9c4"/><stop offset=".45" stop-color="#ffe066" stop-opacity=".9"/><stop offset="1" stop-color="#ffd43b" stop-opacity="0"/></radialGradient><linearGradient id="${a}h" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7dd56a"/><stop offset="1" stop-color="#4fa83d"/></linearGradient></defs>
+      <rect width="800" height="450" fill="url(#${a}s)"/><circle cx="690" cy="74" r="110" fill="url(#${a}u)"/><circle cx="690" cy="74" r="40" fill="#ffe066"/>
+      <g class="drift d1">${this.cloud(150, 70, 1)}${this.cloud(470, 110, .7, .9)}</g>
+      <path d="M0 215 Q120 150 260 200 T520 185 T800 175 V450 H0Z" fill="#a8e28f"/>
+      <g fill="#8b5e34"><rect x="560" y="176" width="6" height="34" rx="2"/><rect x="600" y="172" width="6" height="34" rx="2"/><rect x="640" y="170" width="6" height="34" rx="2"/><rect x="680" y="170" width="6" height="34" rx="2"/><rect x="552" y="182" width="142" height="5" rx="2"/><rect x="552" y="196" width="142" height="5" rx="2"/></g>
+      <path d="M0 262 Q190 215 400 255 T800 240 V450 H0Z" fill="#86cf6b"/>
+      <path d="M0 310 Q240 280 480 302 T800 292 V450 H0Z" fill="url(#${a}h)"/>${fl}`);
+  },
+  sc_rain() {
+    const a = this.id('r'); let houses = ''; let x = -10;
+    [[70, 70, '#47648a'], [90, 95, '#3d587c'], [60, 60, '#52709a'], [110, 120, '#3a5376'], [80, 80, '#4a688f'], [100, 105, '#405c82'], [70, 65, '#51709a'], [90, 90, '#3d587c'], [80, 75, '#47648a']].forEach(([w, h, c]) => {
+      const y = 405 - h; houses += `<rect x="${x}" y="${y}" width="${w}" height="${h + 10}" fill="${c}"/><path d="M${x - 6} ${y} L${x + w / 2} ${y - 30} L${x + w + 6} ${y}Z" fill="#2e4566"/>`;
+      for (let r = 0; r < Math.floor(h / 34); r++) for (let k = 0; k < Math.floor(w / 30); k++) houses += `<rect x="${x + 10 + k * 28}" y="${y + 12 + r * 32}" width="12" height="14" rx="2" fill="${(r + k + w) % 3 ? '#ffd86b' : '#2b3f5c'}"/>`;
+      x += w + 6;
+    });
+    return this.svg('0 0 800 450', `<defs><linearGradient id="${a}s" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4d6e98"/><stop offset="1" stop-color="#a7c4e2"/></linearGradient><linearGradient id="${a}g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5d8f4a"/><stop offset="1" stop-color="#3f6b31"/></linearGradient></defs>
+      <rect width="800" height="450" fill="url(#${a}s)"/>
+      <g fill="#8396b0"><ellipse cx="90" cy="20" rx="140" ry="55"/><ellipse cx="330" cy="8" rx="170" ry="52"/><ellipse cx="590" cy="22" rx="160" ry="58"/><ellipse cx="780" cy="10" rx="120" ry="50"/></g>
+      <g fill="#6d819e"><ellipse cx="200" cy="-4" rx="130" ry="40"/><ellipse cx="470" cy="-8" rx="150" ry="40"/><ellipse cx="720" cy="-6" rx="110" ry="36"/></g>
+      ${houses}<rect y="405" width="800" height="45" fill="url(#${a}g)"/><g fill="#7fb0d8" opacity=".75"><ellipse cx="150" cy="430" rx="60" ry="7"/><ellipse cx="470" cy="436" rx="80" ry="8"/><ellipse cx="700" cy="428" rx="50" ry="6"/></g>`) + '<div class="rainfx"></div>';
+  },
+  sc_fest() {
+    const a = this.id('f'); let flags = ''; const cs = ['#ff6b6b', '#ffd43b', '#4dabf7', '#69db7c', '#b197fc'];
+    for (let i = 0; i < 17; i++) { const x = i * 50 + 6; const y = 18 + Math.sin(i / 16 * Math.PI) * 26; flags += `<path d="M${x} ${y} L${x + 40} ${y + 2} L${x + 20} ${y + 34}Z" fill="${cs[i % 5]}"/>`; }
+    let spokes = ''; for (let i = 0; i < 12; i++) { const t = i / 12 * Math.PI * 2; spokes += `<line x1="640" y1="300" x2="${640 + Math.cos(t) * 92}" y2="${300 + Math.sin(t) * 92}" stroke="#fff" stroke-width="3" opacity=".85"/><circle cx="${640 + Math.cos(t) * 92}" cy="${300 + Math.sin(t) * 92}" r="9" fill="${cs[i % 5]}"/>`; }
+    return this.svg('0 0 800 450', `<defs><linearGradient id="${a}s" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8fd3ff"/><stop offset=".7" stop-color="#ffe9f2"/><stop offset="1" stop-color="#fff4d6"/></linearGradient></defs>
+      <rect width="800" height="450" fill="url(#${a}s)"/><circle cx="120" cy="110" r="46" fill="#fff3a8"/>
+      <g class="drift d2">${this.cloud(330, 120, .9)}${this.cloud(600, 80, .7, .9)}</g>
+      <path d="M0 360 Q200 320 400 350 T800 340 V450 H0Z" fill="#9ee08b"/>
+      <g class="spin"><circle cx="640" cy="300" r="92" fill="none" stroke="#fff" stroke-width="6"/>${spokes}</g><path d="M600 410 L640 300 L680 410" stroke="#e9ecef" stroke-width="8" fill="none"/>
+      <path d="M90 410 L170 300 L250 410Z" fill="#ff6b6b"/><path d="M130 410 L170 300 L210 410Z" fill="#fff"/><path d="M160 410 L170 300 L180 410Z" fill="#ff6b6b"/><path d="M170 300 V280" stroke="#495057" stroke-width="3"/><path d="M170 280 L192 287 L170 294Z" fill="#ffd43b"/>
+      <rect y="405" width="800" height="45" fill="#7bcf66"/><path d="M0 0 Q400 70 800 0" fill="none" stroke="#868e96" stroke-width="2"/>${flags}`);
+  },
+  sc_sea() {
+    const a = this.id('w'); let weed = '';
+    [[40, 1], [95, .8], [190, 1.2], [300, .9], [520, 1.1], [610, .8], [700, 1.3], [770, .9]].forEach(([x, s], i) => weed += `<path class="sway s${i % 3}" style="transform-origin:${x}px 450px" d="M${x} 450 C${x - 18} ${450 - 50 * s} ${x + 18} ${450 - 90 * s} ${x} ${450 - 140 * s}" stroke="${i % 2 ? '#2f9e44' : '#37b24d'}" stroke-width="${9 * s}" fill="none" stroke-linecap="round"/>`);
+    return this.svg('0 0 800 450', `<defs><linearGradient id="${a}s" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#74d0ff"/><stop offset=".55" stop-color="#1c7ed6"/><stop offset="1" stop-color="#0b4f8f"/></linearGradient><linearGradient id="${a}r" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".35"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient></defs>
+      <rect width="800" height="450" fill="url(#${a}s)"/><g fill="url(#${a}r)"><path d="M120 0 L180 0 L90 380 L20 380Z"/><path d="M360 0 L400 0 L340 330 L290 330Z"/><path d="M560 0 L630 0 L560 400 L480 400Z"/></g>
+      <path d="M0 8 Q50 0 100 8 T200 8 T300 8 T400 8 T500 8 T600 8 T700 8 T800 8 V0 H0Z" fill="#c5f6fa" opacity=".6"/>
+      <path d="M0 400 Q200 375 400 395 T800 385 V450 H0Z" fill="#f3d9a4"/><path d="M0 425 Q260 410 520 425 T800 420 V450 H0Z" fill="#e9c784"/>
+      ${weed}<g><path d="M420 440 q-6 -40 10 -60 q8 20 4 30 q14 -24 26 -18 q-12 16 -10 48z" fill="#ff8787"/><circle cx="250" cy="438" r="10" fill="#ffa8a8"/><circle cx="262" cy="442" r="7" fill="#ffc9c9"/><path d="M640 445 l10 -28 l10 28z" fill="#ffd43b"/></g>`) + '<div class="bubblefx"><i></i><i></i><i></i><i></i><i></i><i></i></div>';
+  },
+  sc_road() {
+    const a = this.id('d');
+    return this.svg('0 0 800 200', `<defs><linearGradient id="${a}a" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5c636e"/><stop offset="1" stop-color="#3d434c"/></linearGradient></defs>
+      <rect width="800" height="200" fill="url(#${a}a)"/><rect width="800" height="12" fill="#69c25a"/><rect y="12" width="800" height="6" fill="#e9ecef"/><rect y="182" width="800" height="6" fill="#e9ecef"/><rect y="188" width="800" height="12" fill="#69c25a"/>
+      <g fill="#ff6b6b"><rect x="0" y="12" width="20" height="6"/><rect x="40" y="12" width="20" height="6"/><rect x="80" y="12" width="20" height="6"/><rect x="0" y="182" width="20" height="6"/><rect x="40" y="182" width="20" height="6"/><rect x="80" y="182" width="20" height="6"/></g>`, 'scene-svg', 'xMidYMid slice') + '<div class="lanefx"></div>';
+  },
+  sc_grass() {
+    const a = this.id('g'); let fl = ''; for (let i = 0; i < 16; i++) fl += this.flower(25 + i * 50 + (i % 2) * 10, i % 2 ? 190 : 14, ['#ff6b9a', '#ffd43b', '#fff', '#b197fc'][i % 4], .7);
+    return this.svg('0 0 800 200', `<defs><linearGradient id="${a}t" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e3b97a"/><stop offset="1" stop-color="#c9975a"/></linearGradient></defs>
+      <rect width="800" height="200" fill="#7fd06a"/><rect y="24" width="800" height="152" rx="10" fill="url(#${a}t)"/><g fill="#b98549" opacity=".5"><ellipse cx="120" cy="60" rx="18" ry="4"/><ellipse cx="420" cy="140" rx="24" ry="5"/><ellipse cx="660" cy="70" rx="16" ry="4"/></g>${fl}`, 'scene-svg', 'xMidYMid slice') + '<div class="lanefx dirt"></div>';
+  },
+  sc_space() {
+    let st = ''; for (let i = 0; i < 70; i++) { const x = (i * 137) % 800, y = (i * 59) % 200, r = (i % 5 === 0) ? 1.8 : 1; st += `<circle class="${i % 4 ? '' : 'tw'}" cx="${x}" cy="${y}" r="${r}" fill="#fff" opacity="${.5 + (i % 3) * .2}"/>`; }
+    const a = this.id('p');
+    return this.svg('0 0 800 200', `<defs><radialGradient id="${a}b" cx="30%" cy="30%"><stop offset="0" stop-color="#2b3a67"/><stop offset="1" stop-color="#0b1020"/></radialGradient><radialGradient id="${a}p" cx="35%" cy="35%"><stop offset="0" stop-color="#ffa94d"/><stop offset="1" stop-color="#d9480f"/></radialGradient></defs>
+      <rect width="800" height="200" fill="url(#${a}b)"/>${st}<circle cx="560" cy="44" r="26" fill="url(#${a}p)"/><ellipse cx="560" cy="44" rx="44" ry="8" fill="none" stroke="#ffd8a8" stroke-width="3" opacity=".8" transform="rotate(-12 560 44)"/>`, 'scene-svg', 'xMidYMid slice');
+  },
+  /* ---- 캐릭터·물건 ---- */
+  mole() {
+    const a = this.id('mo');
+    return this.svg('0 0 100 112', `<defs><radialGradient id="${a}b" cx="45%" cy="30%" r="75%"><stop offset="0" stop-color="#c8925c"/><stop offset="1" stop-color="#8a5a32"/></radialGradient></defs>
+      <path d="M8 112 V52 C8 18 28 4 50 4 C72 4 92 18 92 52 V112Z" fill="url(#${a}b)"/><ellipse cx="50" cy="80" rx="30" ry="34" fill="#e9c9a1"/>
+      <ellipse cx="34" cy="34" rx="7" ry="8.5" fill="#1f1f1f"/><ellipse cx="66" cy="34" rx="7" ry="8.5" fill="#1f1f1f"/><circle cx="36.5" cy="31" r="2.6" fill="#fff"/><circle cx="68.5" cy="31" r="2.6" fill="#fff"/>
+      <ellipse cx="24" cy="48" rx="7" ry="4" fill="#ff9eb5" opacity=".7"/><ellipse cx="76" cy="48" rx="7" ry="4" fill="#ff9eb5" opacity=".7"/>
+      <ellipse cx="50" cy="45" rx="9" ry="6.5" fill="#f783ac"/><ellipse cx="47" cy="43" rx="3" ry="1.8" fill="#fff" opacity=".7"/>
+      <path d="M45 52 Q50 56 55 52" stroke="#5c3a1e" stroke-width="2" fill="none" stroke-linecap="round"/><rect x="45.5" y="53" width="4" height="6" rx="1" fill="#fff"/><rect x="50.5" y="53" width="4" height="6" rx="1" fill="#fff"/>
+      <g stroke="#5c3a1e" stroke-width="1.4" stroke-linecap="round"><path d="M38 47 L22 44"/><path d="M38 50 L22 52"/><path d="M62 47 L78 44"/><path d="M62 50 L78 52"/></g>
+      <ellipse cx="22" cy="74" rx="9" ry="7" fill="#f3c9a0"/><ellipse cx="78" cy="74" rx="9" ry="7" fill="#f3c9a0"/>`, 'mole-svg', 'xMidYMax meet');
+  },
+  holeBack() { return this.svg('0 0 120 40', '<ellipse cx="60" cy="22" rx="56" ry="17" fill="#3a2614"/><ellipse cx="60" cy="25" rx="44" ry="11" fill="#22160b"/>', 'hole-back', 'none'); },
+  holeFront() { return this.svg('0 0 120 34', '<path d="M2 6 Q60 30 118 6 L118 22 Q60 40 2 22Z" fill="#7a4e2a"/><path d="M2 6 Q60 30 118 6" stroke="#9c6a3c" stroke-width="4" fill="none"/><g fill="#5fb246"><path d="M6 20 l4 -12 l3 12z"/><path d="M106 20 l4 -13 l4 13z"/><path d="M14 22 l3 -8 l3 8z"/></g>', 'hole-front', 'none'); },
+  car(body, dark) {
+    return this.svg('0 0 130 64', `<path d="M8 44 Q6 30 22 28 L38 26 L52 10 Q56 6 64 6 L92 6 Q100 6 104 12 L114 26 Q126 28 126 40 L126 46 Q126 50 120 50 L12 50 Q8 50 8 44Z" fill="${body}"/><path d="M56 12 L66 12 L66 26 L44 26Z" fill="#cfefff"/><path d="M71 12 L92 12 Q97 12 99 16 L106 26 L71 26Z" fill="#cfefff"/><rect x="66" y="12" width="5" height="14" fill="${dark}"/><path d="M8 40 L126 40" stroke="${dark}" stroke-width="3" opacity=".35"/><circle cx="120" cy="34" r="4" fill="#ffe066"/><rect x="8" y="33" width="6" height="5" rx="2" fill="#ff6b6b"/><g><circle cx="34" cy="50" r="12" fill="#212529"/><circle cx="34" cy="50" r="5" fill="#ced4da"/><circle cx="100" cy="50" r="12" fill="#212529"/><circle cx="100" cy="50" r="5" fill="#ced4da"/></g>`, 'spr-svg', 'xMidYMid meet');
+  },
+  rabbit() {
+    return this.svg('0 0 120 90', `<ellipse cx="54" cy="58" rx="34" ry="22" fill="#fff"/><ellipse cx="54" cy="64" rx="22" ry="12" fill="#f1f3f5"/><circle cx="20" cy="54" r="9" fill="#fff"/><ellipse cx="90" cy="44" rx="20" ry="17" fill="#fff"/>
+      <path d="M84 30 Q74 2 82 0 Q92 2 92 30Z" fill="#fff"/><path d="M85 27 Q79 8 83 5 Q88 8 89 27Z" fill="#ffc9de"/><path d="M96 30 Q100 2 110 4 Q114 10 102 32Z" fill="#fff"/><path d="M98 28 Q103 9 108 8 Q109 13 101 29Z" fill="#ffc9de"/>
+      <circle cx="98" cy="42" r="3.4" fill="#212529"/><circle cx="99" cy="41" r="1.1" fill="#fff"/><ellipse cx="109" cy="48" rx="3" ry="2.2" fill="#f783ac"/><ellipse cx="94" cy="50" rx="4" ry="2.4" fill="#ffc9de" opacity=".8"/>
+      <ellipse cx="40" cy="80" rx="12" ry="5" fill="#fff"/><ellipse cx="74" cy="80" rx="10" ry="5" fill="#fff"/><g stroke="#dee2e6" stroke-width="1.2" fill="none"><ellipse cx="54" cy="58" rx="34" ry="22"/><ellipse cx="90" cy="44" rx="20" ry="17"/></g>`, 'spr-svg', 'xMidYMid meet');
+  },
+  turtle() {
+    return this.svg('0 0 120 80', `<ellipse cx="104" cy="50" rx="13" ry="11" fill="#8ce99a"/><circle cx="108" cy="47" r="2.6" fill="#212529"/><path d="M104 55 Q108 57 112 55" stroke="#2b8a3e" stroke-width="1.5" fill="none"/>
+      <ellipse cx="30" cy="66" rx="10" ry="6" fill="#8ce99a"/><ellipse cx="82" cy="66" rx="10" ry="6" fill="#8ce99a"/><path d="M8 54 L0 50 L8 46Z" fill="#8ce99a"/>
+      <path d="M8 58 Q8 14 56 12 Q96 14 96 58Z" fill="#2f9e44"/><path d="M8 58 L96 58" stroke="#e9c46a" stroke-width="6" stroke-linecap="round"/>
+      <g fill="#51cf66" stroke="#2b8a3e" stroke-width="2"><path d="M40 22 L56 18 L70 24 L68 40 L44 40Z"/><path d="M18 46 Q20 32 32 30 L40 42 L36 54 L16 54Z"/><path d="M88 46 Q86 32 76 30 L70 42 L74 54 L92 54Z"/></g>`, 'spr-svg', 'xMidYMid meet');
+  },
+  rocket() {
+    return this.svg('0 0 130 64', `<g class="flame"><path d="M22 32 L0 22 Q8 32 0 42Z" fill="#ffa94d"/><path d="M22 32 L8 26 Q14 32 8 38Z" fill="#ffe066"/></g>
+      <path d="M22 18 L94 18 Q122 22 128 32 Q122 42 94 46 L22 46Z" fill="#f1f3f5"/><path d="M94 18 Q122 22 128 32 Q122 42 94 46Z" fill="#fa5252"/><circle cx="72" cy="32" r="9" fill="#4dabf7" stroke="#adb5bd" stroke-width="3"/><circle cx="69" cy="29" r="3" fill="#fff" opacity=".7"/>
+      <path d="M30 18 L18 2 L44 18Z" fill="#fa5252"/><path d="M30 46 L18 62 L44 46Z" fill="#fa5252"/><rect x="20" y="18" width="6" height="28" fill="#ced4da"/>`, 'spr-svg', 'xMidYMid meet');
+  },
+  ufo() {
+    return this.svg('0 0 130 70', `<ellipse cx="65" cy="30" rx="26" ry="22" fill="#a5d8ff" opacity=".9"/><ellipse cx="58" cy="22" rx="8" ry="6" fill="#fff" opacity=".6"/><circle cx="65" cy="30" r="9" fill="#69db7c"/><circle cx="62" cy="28" r="2" fill="#212529"/><circle cx="69" cy="28" r="2" fill="#212529"/>
+      <ellipse cx="65" cy="42" rx="62" ry="14" fill="#868e96"/><ellipse cx="65" cy="38" rx="56" ry="9" fill="#ced4da"/><g class="blink"><circle cx="22" cy="44" r="4" fill="#ffe066"/><circle cx="46" cy="49" r="4" fill="#ff6b6b"/><circle cx="84" cy="49" r="4" fill="#ffe066"/><circle cx="108" cy="44" r="4" fill="#ff6b6b"/></g>`, 'spr-svg', 'xMidYMid meet');
+  },
+  flag() { let c = ''; for (let r = 0; r < 4; r++) for (let k = 0; k < 4; k++) c += `<rect x="${8 + k * 8}" y="${4 + r * 7}" width="8" height="7" fill="${(r + k) % 2 ? '#fff' : '#212529'}"/>`; return this.svg('0 0 44 90', `<rect x="4" y="2" width="4" height="86" rx="2" fill="#868e96"/><g class="wave">${c}</g>`, 'spr-svg', 'xMidYMid meet'); },
+  moon() { return this.svg('0 0 70 70', '<circle cx="35" cy="35" r="28" fill="#fff3bf"/><circle cx="26" cy="28" r="5" fill="#ffe8a1"/><circle cx="42" cy="44" r="7" fill="#ffe8a1"/><circle cx="44" cy="22" r="3.5" fill="#ffe8a1"/>', 'spr-svg', 'xMidYMid meet'); },
+  sprite(name) {
+    return name === '🚗' ? this.car('#fa5252', '#c92a2a') : name === '🚙' ? this.car('#4dabf7', '#1971c2') : name === '🐰' ? this.rabbit() : name === '🐢' ? this.turtle() : name === '🚀' ? this.rocket() : name === '🛸' ? this.ufo() : `<span class="emo">${name}</span>`;
+  },
+  tail(h) { return this.svg('0 0 40 60', `<path d="M40 30 L4 4 Q12 30 4 56Z" fill="hsl(${h} 85% 58%)"/><path d="M40 30 L14 14 Q18 30 14 46Z" fill="hsl(${h} 90% 68%)"/>`, 'fish-tail', 'none'); },
+  /* ---- 효과 ---- */
+  burst(parent, xPct, yPct, opt = {}) {
+    if (!parent || DB.lowfx) return; const n = opt.n || 12; const colors = opt.colors || ['#ff6b6b', '#ffd43b', '#4dabf7', '#69db7c', '#b197fc', '#ff922b'];
+    const wrap = document.createElement('div'); wrap.className = 'burst'; wrap.style.left = xPct + '%'; wrap.style.top = yPct + '%';
+    for (let i = 0; i < n; i++) {
+      const s = document.createElement('i'); const ang = (i / n) * Math.PI * 2 + Math.random() * .5; const dist = (opt.dist || 60) * (.6 + Math.random() * .6);
+      s.style.setProperty('--dx', Math.cos(ang) * dist + 'px'); s.style.setProperty('--dy', Math.sin(ang) * dist + 'px'); s.style.background = colors[i % colors.length];
+      if (opt.kind === 'star') { s.className = 'st'; s.textContent = '★'; s.style.background = 'none'; s.style.color = colors[i % colors.length]; }
+      if (opt.kind === 'bubble') { s.className = 'bb'; s.style.background = 'none'; }
+      wrap.appendChild(s);
+    }
+    parent.appendChild(wrap); setTimeout(() => wrap.remove(), 750);
+  }
+};
+
+function posIn(stage, el) { const a = stage.getBoundingClientRect(), b = el.getBoundingClientRect(); return [((b.left + b.width / 2) - a.left) / a.width * 100, ((b.top + b.height * .35) - a.top) / a.height * 100]; }
 const MoleGame = {
   L: null, holes: [], running: false, score: 0, hits: 0, spawned: 0, errors: 0, t0: 0, dur: 45, nextSpawn: 0, raf: 0,
   start(L) {
-    this.L = L; const st = $('#g-stage'); st.innerHTML = '<div class="holes"></div>'; const hs = st.querySelector('.holes'); this.holes = [];
+    this.L = L; const st = $('#g-stage'); st.innerHTML = ART.scene('mole') + '<div class="holes"></div>'; const hs = st.querySelector('.holes'); this.holes = [];
     for (let i = 0; i < 9; i++) {
       const h = document.createElement('div'); h.className = 'hole';
-      h.innerHTML = '<div class="dirt"></div><div class="mole"><div class="eyes"><i></i><i></i></div><div class="nose"></div><div class="sign"></div></div><div class="lip"></div>';
+      h.innerHTML = ART.holeBack() + '<div class="clip"><div class="mole">' + ART.mole() + '<div class="sign"></div></div></div>' + ART.holeFront();
       hs.appendChild(h); this.holes.push({el: h, sign: h.querySelector('.sign'), jamo: null, until: 0});
     }
     this.fit();
@@ -2452,7 +2673,7 @@ const MoleGame = {
     if (h) {
       GStat.ok(ch); this.hits++; this.score += 10; h.el.classList.add('hit'); const el = h.el; setTimeout(() => el.classList.remove('hit'), 250);
       setTimeout(() => { if (!h.jamo) el.classList.remove('up'); }, 120); h.jamo = null;
-      Snd.pop(); KB.flash(code, true); popText(el, '+10', 50, 30);
+      Snd.pop(); KB.flash(code, true); popText(el, '+10', 50, 30); { const st = $('#g-stage'); const [x, y] = posIn(st, el.querySelector('.mole')); ART.burst(st, x, y, {kind: 'star', n: 8, dist: 50, colors: ['#ffd43b', '#ff922b', '#fff']}); }
     } else { const up = this.holes.filter(x => x.jamo); if (up.length === 1) GStat.bad(up[0].jamo); this.errors++; Snd.bad(); KB.flash(code, false); }
     setHUD({score: this.score});
   },
@@ -2472,7 +2693,7 @@ const FallGame = {
   L: null, dir: 'down', items: [], lock: null, buf: 0, score: 0, lives: 5, spawned: 0, popped: 0, escaped: 0, errors: 0, running: false, t0: 0, last: 0, dur: 60, nextSpawn: 0, raf: 0, layer: null,
   start(L) {
     this.L = L; this.dir = L.game.dir; const st = $('#g-stage');
-    st.innerHTML = '<div class="layer"></div>' + (this.dir === 'down' ? '<div class="ground"></div>' : ''); this.layer = st.querySelector('.layer');
+    st.innerHTML = ART.scene(this.dir === 'down' ? 'rain' : this.dir === 'up' ? 'fest' : 'sea') + '<div class="layer"></div>'; this.layer = st.querySelector('.layer');
     this.items = []; this.lock = null; this.buf = 0; this.score = 0; this.lives = 5; this.spawned = 0; this.popped = 0; this.escaped = 0; this.errors = 0; this.okKeys = 0;
     this.running = true; this.t0 = this.last = performance.now(); this.nextSpawn = this.t0 + 400;
     Input.handler = (c, s) => this.onKey(c, s); setHUD({time: this.dur, score: 0, lives: this.lives}); $('#g-buffer').textContent = '';
@@ -2502,11 +2723,13 @@ const FallGame = {
     const onscreen = new Set(this.items.map(i => i.text)); let pool = this.L.pool.filter(w => !onscreen.has(w)); if (!pool.length) pool = this.L.pool;
     const text = pool[Math.floor(Math.random() * pool.length)];
     const el = document.createElement('div'); el.className = 'item ' + this.dir;
-    el.innerHTML = this.dir === 'right' ? `<span class="fish">🐟</span><span class="tag">${esc(text)}</span>` : `<span class="tag">${esc(text)}</span>`;
+    const hue = Math.floor(Math.random() * 360);
+    el.innerHTML = this.dir === 'right' ? ART.tail(hue) + `<div class="fishb"><span class="tag">${esc(text)}</span></div>` : this.dir === 'up' ? `<div class="bln"><span class="tag">${esc(text)}</span></div><div class="string"></div>` : `<span class="tag">${esc(text)}</span>`;
+    el.style.setProperty('--hue', hue);
     let x, y;
     if (this.dir === 'down') { x = 10 + Math.random() * 76; y = -8; } else if (this.dir === 'up') { x = 10 + Math.random() * 76; y = 108; } else { x = -14; y = 10 + Math.random() * 70; }
     const it = {text, units: textUnits(text), el, x, y, speed: speed * (0.85 + Math.random() * 0.3)};
-    el.style.left = x + '%'; el.style.top = y + '%'; if (this.dir === 'up') el.style.setProperty('--hue', Math.floor(Math.random() * 360));
+    el.style.left = x + '%'; el.style.top = y + '%';
     this.layer.appendChild(el); this.items.push(it); this.spawned++;
   },
   remove(it) { it.el.remove(); this.items = this.items.filter(i => i !== it); },
@@ -2529,7 +2752,7 @@ const FallGame = {
   pop(it) {
     this.popped++; const pts = 10 * it.units.length; this.score += pts;
     it.el.classList.add('pop'); const el = it.el; setTimeout(() => el.remove(), 300); this.items = this.items.filter(i => i !== it);
-    this.lock = null; this.buf = 0; this.paintBuf(); Snd.pop(); popText(this.layer, '+' + pts, it.x, it.y); setHUD({score: this.score});
+    this.lock = null; this.buf = 0; this.paintBuf(); Snd.pop(); popText(this.layer, '+' + pts, it.x, it.y); ART.burst(this.layer, it.x, it.y, this.dir === 'right' ? {kind: 'bubble', n: 10} : this.dir === 'down' ? {n: 10, colors: ['#e7f5ff', '#a5d8ff', '#74c0fc', '#fff']} : {n: 14}); setHUD({score: this.score});
   },
   paintBuf() {
     const b = $('#g-buffer');
@@ -2555,7 +2778,7 @@ const RaceGame = {
   start(L) {
     this.L = L; this.text = L.game.build(); this.units = textUnits(this.text); this.pos = 0; this.errors = 0; this.correct = 0; this.startAt = null; this.cpuDone = false;
     const st = $('#g-stage');
-    st.innerHTML = `<div class="track"><div class="lane me"><span class="sprite">${L.game.me}</span></div><div class="lane cpu"><span class="sprite">${L.game.rival}</span></div><div class="finish">${L.game.theme === 'space' ? '🌙' : '🏁'}</div></div><div class="racetext" id="race-text"></div>`;
+    st.innerHTML = `<div class="track">${ART.scene(L.game.theme || 'road')}<div class="lane me"><span class="sprite running">${ART.sprite(L.game.me)}</span></div><div class="lane cpu"><span class="sprite running">${ART.sprite(L.game.rival)}</span></div><div class="finish">${L.game.theme === 'space' ? ART.moon() : ART.flag()}</div></div><div class="racetext" id="race-text"></div>`;
     this.spans = buildTextDOM($('#race-text'), this.text); this.running = true;
     Input.handler = (c, s) => this.onKey(c, s); this.paint(); setHUD({time: 0, score: 0});
     this.raf = requestAnimationFrame(t => this.tick(t));
@@ -2584,6 +2807,7 @@ const RaceGame = {
     const total = totalWeight(this.units); const min = (performance.now() - this.startAt) / 60000; const speed = Math.round(total / Math.max(min, 0.01));
     const acc = Math.round(this.correct / (this.correct + this.errors) * 100); const win = !this.cpuDone;
     const k = SK().cpu; let stars = speed >= this.L.game.t3 * k ? 3 : speed >= this.L.game.t2 * k ? 2 : 1; if (acc < 85) stars = Math.max(1, stars - 1);
+    if (win) { const tr = $('#g-stage .track'); if (tr) ART.burst(tr, 92, 30, {n: 18, dist: 80}); }
     const p = prog(); p.best[this.L.n] = Math.max(p.best[this.L.n] || 0, speed);
     finishGame(this.L, stars, `${win ? '🏆 이겼어요!' : '아쉽게 졌지만 완주했어요!'}<br>속도 <b>${speed}</b>타/분 · 정확도 ${acc}%<br><small class="muted">다음 경주 상대는 내 기록에 맞춰 조금씩 빨라져요</small>`, speed);
   },
