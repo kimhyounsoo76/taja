@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<!-- 타자 모험 v4.6 우리반용 (2026-11-19) · 한글 두벌식 10레벨 + 영어 자판 8레벨 · 제작 kingkongssam -->
+<!-- 타자 모험 v5.0 우리반용 (2026-11-19) · 한글 두벌식 10레벨 + 영어 자판 8레벨 · 제작 kingkongssam -->
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#ff7a2f">
-<title>타자 모험 v4.6 — 기본 자리부터 차근차근 레벨 업</title>
+<title>타자 모험 v5.0 — 기본 자리부터 차근차근 레벨 업</title>
 <style>
 :root{
   --bg:#eef4fb; --card:#ffffff; --ink:#1f2a3d; --muted:#556178; --btn:#c2410c; --btn-dark:#8f2f08;
@@ -690,7 +690,7 @@ body.show-hands .typing-finger-caption{display:block}
           <input id="class-code" aria-label="반 코드" placeholder="반 코드 (선생님이 알려 준 6자 이상 코드)" maxlength="20" autocomplete="off">
         </div>
         <div class="muted" id="class-note" style="display:none;font-size:13px;font-weight:700;margin-top:6px">선생님이 알려 준 반 코드를 써야 시작할 수 있어요. 친구들과 지도에서 서로 위치를 보고, 다른 컴퓨터에서도 같은 이름이면 기록이 이어져요.</div>
-        <button class="btn sec sm" id="reg-class" type="button" style="display:none;margin-top:10px">👩‍🏫 선생님: 학급 등록</button> <button class="btn sec sm" id="tch-enter" type="button" style="margin-top:10px">🔧 선생님 점검 모드</button>
+        <button class="btn sec sm" id="reg-class" type="button" style="display:none;margin-top:10px">👩‍🏫 선생님: 학급 등록</button> <button class="btn sec sm" id="tch-enter" type="button" style="margin-top:10px">🔧 선생님 점검 모드</button> <button class="btn sec sm" id="tch-acct" type="button" style="margin-top:10px">🔑 선생님 계정</button>
       </div>
       <div class="card howto">
         🗺️ 지도의 길을 따라 한 레벨씩 올라가요. 한글 10레벨, 영어 8레벨!<br>
@@ -1263,7 +1263,7 @@ function validateContent() {
 <script>
 /* ================= 저장 ================= */
 const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
-const APP_VERSION = '4.6', APP_DATE = '2026-11-20';
+const APP_VERSION = '5.0', APP_DATE = '2026-11-20';
 /* ===== 우리 반 공유(선택) : Firebase 설정 =====
    Firebase 콘솔 → 프로젝트 설정 → 내 앱(웹) → SDK 설정의 firebaseConfig 값을 아래에 그대로 붙여 넣으세요.
    Realtime Database를 만들고 databaseURL까지 넣어야 켜집니다. 비워 두면 혼자 쓰는 앱으로 돌아갑니다. */
@@ -1278,7 +1278,6 @@ const FIREBASE_CONFIG = {
 };
 /* 우리반용: 반 코드를 하나로 고정. 이 코드를 정확히 써야만 시작할 수 있다 (빈칸이면 꺼짐) */
 const FIXED_CLASS = '킹콩반아이들'; // 처음부터 들어 있는 반 (따로 등록하지 않아도 됨)
-const ADMIN_PW = 'kingkong2026'; // 선생님 학급 등록 비밀번호 (바꾸려면 따옴표 안을 고치세요)
 const CLASS_RE = /^[0-9A-Za-z가-힣_-]{6,20}$/;
 const FIREBASE_CDN = 'https://www.gstatic.com/firebasejs/12.11.0/';
 const NEED_STARS = 12, GAME_UNLOCK = 6;
@@ -1451,7 +1450,7 @@ const Cloud = {
     if (!this.enabled()) return Promise.resolve(false);
     if (!this.loading) this.loading = Promise.all([import(FIREBASE_CDN + 'firebase-app.js'), import(FIREBASE_CDN + 'firebase-database.js')]).then(([app, dbm]) => {
       const a = app.getApps && app.getApps().length ? app.getApps()[0] : app.initializeApp(FIREBASE_CONFIG);
-      this.fb = dbm; this.db = dbm.getDatabase(a); this.ready = true; return true;
+      this.fb = dbm; this.db = dbm.getDatabase(a); this.app = a; this.ready = true; return true;
     }).catch(e => { console.warn('Firebase 연결 실패', e); this.loading = null; return false; });
     return this.loading;
   },
@@ -1461,7 +1460,7 @@ const Cloud = {
     return {name: u.name, avatar: avatarOf(u), ko: sum('ko'), en: sum('en'), total: totalStars(u), keys: u.totalKeys || 0, today: {date: dayKey(), lines: td.lines, min: Math.round(td.sec / 60)}, test: {ko: progOf(u, 'ko').testBest || 0, en: progOf(u, 'en').testBest || 0}, ver: APP_VERSION};
   },
   async push() {
-    const u = user(); if (!u || isTeacher() || !this.code() || !(await this.init())) return;
+    const u = user(); if (!u || DB.current === TEACHER || !this.code() || !(await this.init())) return;
     const rec = this.summary(u); const j = JSON.stringify([rec, u]); if (j === this.lastJSON) return;
     rec.updatedAt = this.fb.serverTimestamp(); const k = this.key(u.name);
     await this.fb.set(this.fb.ref(this.db, `classes/${this.code()}/students/${k}`), rec);
@@ -2041,7 +2040,7 @@ async function selectUser(name) {
   if (Cloud.enabled() && DB.classCode && DB.classCode.length < 6) { toast('반 코드는 6자 이상이에요'); DB.classCode = ''; }
   if (!hasUser(DB, name)) DB.users[name] = newUser(name, pickedAvatar);
   DB.current = name; DB.users[name].lastSeen = Date.now(); save(); renderMap();
-  if (classAvailable() && !isTeacher()) restoreFromCloud(name);
+  if (classAvailable() && name !== TEACHER) restoreFromCloud(name);
 }
 async function restoreFromCloud(name) {
   const rec = await Cloud.pull(name); const u = DB.users[name]; if (!u || DB.current !== name) return;
@@ -2068,20 +2067,19 @@ function mergeUser(a, b) {
 $('#user-start').onclick = () => selectUser($('#user-name').value);
 function openRegister() {
   const field = (id, label, ph, type = 'text', max = 20) => `<label style="display:block;font-weight:800;font-size:14px;margin:8px 0 4px">${label}</label><input id="${id}" type="${type}" placeholder="${ph}" maxlength="${max}" autocomplete="off" style="width:100%;font:inherit;padding:10px 12px;border:2px solid #e2e8f0;border-radius:12px">`;
-  Modal.show({title: '👩‍🏫 학급 등록', html: `<p class="muted" style="margin:0 0 4px;font-size:14px">새 반을 등록하면 그 반 학생들이 반 코드로 시작할 수 있어요. 반마다 친구 위치와 게임 기록이 따로 보여요.</p>${field('reg-pw', '선생님 비밀번호', '학급 등록 비밀번호', 'password', 30)}${field('reg-name', '반 이름', '예: 5학년 2반')}${field('reg-code', '반 코드 (6~20자, 한글·영문·숫자)', '예: 용흥5반2026')}<p class="muted" style="font-size:12px;margin:8px 0 0">반 코드는 학생들이 쳐야 하니 기억하기 쉽게, 반 밖에는 알리지 마세요. 등록한 반을 지우려면 Firebase 콘솔에서 지워요.</p>`,
+  Modal.show({title: '👩‍🏫 학급 등록', html: `<p class="muted" style="margin:0 0 4px;font-size:14px">새 반을 등록하면 그 반 학생들이 반 코드로 시작할 수 있어요. 반마다 친구 위치와 게임 기록이 따로 보여요.</p>${field('reg-name', '반 이름', '예: 5학년 2반')}${field('reg-code', '반 코드 (6~20자, 한글·영문·숫자)', '예: 용흥5반2026')}<p class="muted" style="font-size:12px;margin:8px 0 0">반 코드는 학생들이 쳐야 하니 기억하기 쉽게, 반 밖에는 알리지 마세요. 등록한 반을 지우려면 Firebase 콘솔에서 지워요.</p>`,
     primary: {label: '등록하기', fn: async () => {
-      const pw = $('#reg-pw').value, nm = ($('#reg-name').value || '').replace(/[<>"'`]/g, '').trim().slice(0, 20), code = ($('#reg-code').value || '').trim();
+      const nm = ($('#reg-name').value || '').replace(/[<>"'`]/g, '').trim().slice(0, 20), code = ($('#reg-code').value || '').trim();
       const again = msg => { toast(msg); setTimeout(() => { openRegister(); $('#reg-name').value = nm; $('#reg-code').value = code; }, 50); };
-      if (pw !== ADMIN_PW) return again('비밀번호가 맞지 않아요');
       if (!nm) return again('반 이름을 써 주세요');
       if (!CLASS_RE.test(code)) return again('반 코드는 6~20자, 한글·영문·숫자로 써 주세요');
       if (code === FIXED_CLASS) return again('이미 있는 반 코드예요');
       try { await Cloud.registerClass(code, nm); Modal.show({title: '✅ 등록했어요', html: `<p><b>${esc(nm)}</b> 반이 등록됐어요.</p><p>학생들에게 반 코드 <b style="font-size:20px">${esc(code)}</b> 를 알려 주세요. 학생은 이름을 쓰고 반 코드 칸에 이 코드를 쓰면 시작할 수 있어요.</p>`, primary: {label: '확인', fn: () => {}}}); }
       catch (e) { again(e.message || '등록하지 못했어요'); }
     }}, secondary: {label: '닫기', fn: () => {}}});
-  setTimeout(() => $('#reg-pw') && $('#reg-pw').focus(), 50);
+  setTimeout(() => $('#reg-name') && $('#reg-name').focus(), 50);
 }
-$('#reg-class').onclick = openRegister;
+$('#reg-class').onclick = () => teacherGate(openRegister);
 $('#user-name').addEventListener('keydown', e => { if (e.key === 'Enter') selectUser(e.target.value); });
 $('#btn-user').onclick = () => { stopAll(); renderUser(); };
 $('#btn-sound').onclick = () => { DB.sound = !DB.sound; save(); $('#btn-sound').textContent = DB.sound ? '🔊' : '🔇'; if (DB.sound) Snd.ok(); Music.sync(); };
@@ -2463,23 +2461,50 @@ G3.game = {
 };
 G3.cmap = Object.assign({}, G3.map, {scr: 'scr-class', v: null, key: '', st: null, trail: null, world: null, pts: [], anim: []});
 /* ================= 선생님 점검 모드 ================= */
-const TEACHER = '점검 선생님', TEACHER_PW = typeof ADMIN_PW !== 'undefined' ? ADMIN_PW : 'kingkong2026';
-let TEACH_SESSION = false;
-function isTeacher() { return (TEACH_SESSION || (!!DB.teacherOk && !!DB.teacherKeep)) && DB.current === TEACHER; }
+/* ================= 선생님 구글 로그인 (학생은 로그인하지 않음) ================= */
+const Auth = {
+  mod: null, auth: null, user: null, teacher: false, loading: null,
+  init() { if (!this.loading) this.loading = (async () => { if (!(await Cloud.init())) return false; const m = await import(FIREBASE_CDN + 'firebase-auth.js'); this.mod = m; this.auth = m.getAuth(Cloud.app);
+      await new Promise(res => { let first = true; m.onAuthStateChanged(this.auth, async u => { this.user = u; await this.check(); if (first) { first = false; res(); } }); }); return true; })().catch(e => { console.warn('로그인 준비 실패', e); this.loading = null; return false; }); return this.loading; },
+  async check() { this.teacher = false; if (!this.user) return; try { const s = await Cloud.fb.get(Cloud.fb.ref(Cloud.db, 'teachers/' + this.user.uid)); this.teacher = s.val() === true; } catch (e) {} },
+  async signIn() { const m = this.mod; const r = await m.signInWithPopup(this.auth, new m.GoogleAuthProvider()); this.user = r.user; await this.check(); },
+  async signOut() { if (this.mod && this.auth) await this.mod.signOut(this.auth); this.user = null; this.teacher = false; },
+  me() { const u = this.user || {}; return {email: String(u.email || '').slice(0, 80), name: String(u.displayName || '').slice(0, 40)}; },
+  async claimOrRequest() { const f = Cloud.fb, u = this.user; let any = true; try { any = (await f.get(f.ref(Cloud.db, 'teachers'))).exists(); } catch (e) {}
+    if (!any) { await f.set(f.ref(Cloud.db, 'teachers/' + u.uid), true); await f.set(f.ref(Cloud.db, 'teacherInfo/' + u.uid), this.me()).catch(() => {}); this.teacher = true; return 'claimed'; }
+    await f.set(f.ref(Cloud.db, 'teacherReq/' + u.uid), Object.assign(this.me(), {t: f.serverTimestamp()})); return 'requested'; }
+};
+async function teacherGate(ok) {
+  toast('선생님 계정을 확인하고 있어요…'); if (!(await Auth.init())) { toast('인터넷 연결을 확인해 주세요'); return; }
+  if (Auth.teacher) { ok(); return; }
+  const after = async () => { if (Auth.teacher) { toast('👩‍🏫 ' + Auth.me().email + ' 선생님으로 확인됐어요'); ok(); return; }
+    try { const r = await Auth.claimOrRequest(); if (r === 'claimed') { toast('👩‍🏫 첫 선생님으로 등록됐어요'); ok(); } else Modal.show({title: '승인 요청을 보냈어요', html: `<p><b>${esc(Auth.me().email)}</b> 계정으로 요청했어요.</p><p>이미 등록된 선생님이 시작 화면의 <b>🔑 선생님 계정</b>에서 승인하면 쓸 수 있어요.</p>`, primary: {label: '확인', fn: () => {}}}); }
+    catch (e) { toast('요청하지 못했어요. Firebase 규칙을 확인해 주세요'); } };
+  if (Auth.user) { after(); return; }
+  Modal.show({title: '👩‍🏫 선생님 로그인', html: '<p style="margin:0">선생님 기능은 구글 계정으로 로그인해야 쓸 수 있어요. 학생은 로그인하지 않아요.</p>',
+    primary: {label: '구글로 로그인', fn: () => { Auth.signIn().then(after).catch(e => toast(e && e.code === 'auth/popup-blocked' ? '팝업이 막혔어요. 팝업을 허용하고 다시 눌러 주세요' : e && e.code === 'auth/unauthorized-domain' ? 'Firebase에 이 주소가 허용 도메인으로 등록되지 않았어요' : e && e.code === 'auth/operation-not-allowed' ? 'Firebase에서 구글 로그인을 켜 주세요' : '로그인하지 못했어요')); }}, secondary: {label: '닫기', fn: () => {}}});
+}
+async function openTeacherAccount() {
+  toast('선생님 계정을 확인하고 있어요…'); if (!(await Auth.init())) { toast('인터넷 연결을 확인해 주세요'); return; }
+  if (!Auth.user) { teacherGate(openTeacherAccount); return; }
+  let reqs = {}; if (Auth.teacher) { try { reqs = (await Cloud.fb.get(Cloud.fb.ref(Cloud.db, 'teacherReq'))).val() || {}; } catch (e) {} }
+  const rows = Object.entries(reqs).map(([uid, r]) => `<div style="display:flex;align-items:center;gap:8px;margin:6px 0"><span style="flex:1;overflow:hidden;text-overflow:ellipsis">${esc(String((r && r.name) || '').slice(0, 40))} <small class="muted">${esc(String((r && r.email) || '').slice(0, 80))}</small></span><button class="btn sm" data-ok="${esc(uid)}">승인</button><button class="btn sec sm" data-no="${esc(uid)}">거절</button></div>`).join('');
+  Modal.show({title: '🔑 선생님 계정', html: `<p style="margin:0 0 6px"><b>${esc(Auth.me().email)}</b><br>${Auth.teacher ? '✅ 등록된 선생님이에요.' : '⏳ 아직 승인되지 않았어요. 등록된 선생님이 승인해야 해요.'}</p>${Auth.teacher ? `<div class="sect" style="margin:10px 0 4px;font-size:15px">승인 요청</div><div id="tch-reqs">${rows || '<span class="muted">요청이 없어요.</span>'}</div>` : ''}`,
+    primary: {label: '닫기', fn: () => {}}, secondary: {label: '로그아웃', fn: () => { Auth.signOut().then(() => { Boss.admin = false; Chat.admin = false; if (DB.current === TEACHER) { DB.current = ''; save(); renderUser(); } toast('로그아웃했어요'); }); }}});
+  $$('#tch-reqs button').forEach(b => b.onclick = async () => { const uid = b.dataset.ok || b.dataset.no, f = Cloud.fb; try { if (b.dataset.ok) await f.set(f.ref(Cloud.db, 'teachers/' + uid), true); await f.remove(f.ref(Cloud.db, 'teacherReq/' + uid)); toast(b.dataset.ok ? '승인했어요' : '거절했어요'); Modal.hide(); openTeacherAccount(); } catch (e) { toast('처리하지 못했어요'); } });
+}
+const TEACHER = '점검 선생님';
+function isTeacher() { return Auth.teacher && DB.current === TEACHER; }
 function fillTeacher(u) { Object.entries(COURSES).forEach(([c, C]) => { const p = progOf(u, c); p.unlocked = C.levels.length; p.master = true; p.gst = p.gst || {}; C.levels.forEach(L => { p.passed[L.n] = true; for (let i = 0; i < L.lines.length; i++) p.lines[L.n + '-' + i] = Math.max(3, p.lines[L.n + '-' + i] || 0); p.lines[L.n + '-mix'] = 3; p.games[L.n] = 3; [1, 2, 3].forEach(s => { p.gst[L.n + '-' + s] = 3; }); }); }); }
 function teacherEnter() {
   const go = async () => {
-    DB.teacherOk = true;
     if (typeof FIXED_CLASS !== 'undefined' && FIXED_CLASS) { const typed = ($('#class-code').value || '').trim(); let code = DB.classCode || FIXED_CLASS;
       if (typed && (typed === FIXED_CLASS || typed === DB.classOk)) code = typed; else if (typed && CLASS_RE.test(typed)) { const info = await Cloud.classInfo(typed); if (info && !info.offline) { code = typed; DB.classOk = typed; DB.className = info.name; } else toast('등록되지 않은 반 코드라서 원래 반으로 들어가요'); }
       if (code === FIXED_CLASS && DB.classOk !== code) { DB.classOk = code; DB.className = '킹콩반'; } DB.classCode = code; }
     if (!hasUser(DB, TEACHER)) DB.users[TEACHER] = newUser(TEACHER, '🦁'); fillTeacher(DB.users[TEACHER]); DB.current = TEACHER; DB.users[TEACHER].lastSeen = Date.now(); DB.users[TEACHER].sawPosture = true; save(); renderMap();
     toast('👩‍🏫 선생님 점검 모드: 모든 레벨·게임·단계가 열려 있어요');
   };
-  if (TEACH_SESSION || (DB.teacherOk && DB.teacherKeep)) { go(); return; }
-  Modal.show({title: '👩‍🏫 선생님 점검 모드', html: '<p class="muted" style="margin:0 0 8px;font-size:14px">모든 레벨·게임·단계가 열린 점검용 계정으로 들어가요. 반 기록에는 남지 않아요.</p><input id="tch-pw" type="password" maxlength="30" autocomplete="off" placeholder="선생님 비밀번호" style="width:100%;font:inherit;padding:10px 12px;border:2px solid #e2e8f0;border-radius:12px"><label style="display:flex;gap:6px;align-items:center;margin-top:10px;font-size:14px;font-weight:700"><input type="checkbox" id="tch-keep"> 이 기기에서 비밀번호 기억하기 (내 컴퓨터에서만 켜세요)</label>',
-    primary: {label: '들어가기', fn: () => { if ($('#tch-pw').value !== TEACHER_PW) { toast('비밀번호가 맞지 않아요'); return; } TEACH_SESSION = true; DB.teacherKeep = $('#tch-keep').checked; go(); }}, secondary: {label: '닫기', fn: () => {}}});
-  setTimeout(() => $('#tch-pw') && $('#tch-pw').focus(), 50);
+  teacherGate(go);
 }
 function renderMap(course) {
   stopAll(); show('scr-map'); updateChip();
@@ -2676,9 +2701,7 @@ var Boss = {
   },
   teacher() {
     if (this.admin) { this.admin = false; this.tv = false; $('#boss-admin').style.display = 'none'; $('#scr-boss').classList.remove('tv'); this._kids = ''; toast('관리를 마쳤어요'); this.render(); return; }
-    Modal.show({title: '👩‍🏫 청백전 관리', html: '<p class="muted" style="margin:0 0 8px;font-size:14px">선생님 비밀번호를 쓰면 청백전을 열고 닫을 수 있어요.</p><input id="boss-pw" type="password" maxlength="30" autocomplete="off" placeholder="선생님 비밀번호" style="width:100%;font:inherit;padding:10px 12px;border:2px solid #e2e8f0;border-radius:12px">',
-      primary: {label: '관리 시작', fn: () => { if ($('#boss-pw').value !== ADMIN_PW) { toast('비밀번호가 맞지 않아요'); return; } this.admin = true; $('#boss-admin').style.display = ''; this.render(); toast('👩‍🏫 관리 모드예요'); }}, secondary: {label: '닫기', fn: () => {}}});
-    setTimeout(() => $('#boss-pw') && $('#boss-pw').focus(), 50);
+    teacherGate(() => { this.admin = true; $('#boss-admin').style.display = ''; this.render(); toast('👩‍🏫 관리 모드예요'); });
   },
   async start() {
     const ph = this.phase(), base = `classes/${Cloud.code()}/boss`, f = Cloud.fb;
@@ -2705,6 +2728,7 @@ $('#boss-stop').onclick = e => { e.currentTarget.blur(); Boss.stop(); };
 $('#boss-tv').onclick = e => { e.currentTarget.blur(); Boss.tv = !Boss.tv; $('#scr-boss').classList.toggle('tv', Boss.tv); $('#boss-tv').textContent = Boss.tv ? '⌨️ 학생 화면' : '📺 TV 화면'; Boss._kids = ''; Boss.render(); };
 $('#boss-card-btn').onclick = () => Boss.open();
 $('#tch-enter').onclick = () => teacherEnter();
+$('#tch-acct').onclick = () => openTeacherAccount();
 $('#boss-play').onchange = e => { Boss.play = e.target.checked; e.target.blur(); if (Boss.play) { Boss._joining = ''; Boss.join(); } Boss.render(); };
 
 $('#btn-chat').onclick = () => Chat.openScreen();
@@ -2714,9 +2738,7 @@ $('#chat-input').addEventListener('keydown', e => { if (e.key === 'Enter' && !e.
 $('#chat-input').addEventListener('input', e => { if (!Chat.startT && e.target.value) Chat.startT = Date.now(); if (!e.target.value) Chat.startT = 0; });
 $('#chat-teacher').onclick = () => {
   if (Chat.admin) { Chat.admin = false; $('#chat-admin').style.display = 'none'; Chat.render(); toast('관리를 마쳤어요'); return; }
-  Modal.show({title: '👩‍🏫 채팅 관리', html: '<p class="muted" style="margin:0 0 8px;font-size:14px">선생님 비밀번호를 쓰면 채팅을 끄고 켜거나 메시지를 지울 수 있어요.</p><input id="chat-pw" type="password" maxlength="30" autocomplete="off" placeholder="선생님 비밀번호" style="width:100%;font:inherit;padding:10px 12px;border:2px solid #e2e8f0;border-radius:12px">',
-    primary: {label: '관리 시작', fn: () => { if ($('#chat-pw').value !== ADMIN_PW) { toast('비밀번호가 맞지 않아요'); return; } Chat.admin = true; $('#chat-admin').style.display = ''; Chat.render(); toast('👩‍🏫 관리 모드예요'); }}, secondary: {label: '닫기', fn: () => {}}});
-  setTimeout(() => $('#chat-pw') && $('#chat-pw').focus(), 50);
+  teacherGate(() => { Chat.admin = true; $('#chat-admin').style.display = ''; Chat.render(); toast('👩‍🏫 관리 모드예요'); });
 };
 $('#chat-toggle').onclick = () => { const v = !Chat.off; Cloud.chatSetOff(v).then(() => toast(v ? '채팅을 껐어요' : '채팅을 켰어요')).catch(() => toast('바꾸지 못했어요. Firebase 규칙을 확인해 주세요')); };
 $('#chat-clear').onclick = () => Modal.show({title: '채팅을 모두 지울까요?', html: '<p>이 반의 채팅 메시지가 모두 지워지고 되돌릴 수 없어요.</p>', primary: {label: '모두 지우기', fn: () => Cloud.chatClear().then(() => toast('모두 지웠어요')).catch(() => toast('지우지 못했어요'))}, secondary: {label: '취소', fn: () => {}}});
@@ -3593,6 +3615,7 @@ $('#btn-sound').textContent = DB.sound ? '🔊' : '🔇';
 applyHands();
 (function init() {
   if (/[?#&]teacher\b/.test(location.search + location.hash)) setTimeout(teacherEnter, 300);
+  if (DB.current === TEACHER) Auth.init().then(() => { if (!Auth.teacher && DB.current === TEACHER) { DB.current = ''; save(); stopAll(); renderUser(); toast('선생님 로그인이 필요해요'); } });
   const bad = validateContent(); if (bad.length) console.warn('콘텐츠 검사:', bad);
   if (Cloud.enabled() && Cloud.code()) Cloud.init().then(ok => { if (ok && user()) Cloud.push().catch(() => {}); });
   if (FIXED_CLASS && (!DB.classCode || (DB.classCode !== FIXED_CLASS && DB.classCode !== DB.classOk))) { DB.classCode = ''; renderUser(); }
