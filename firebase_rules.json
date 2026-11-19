@@ -50,7 +50,8 @@
             }
           }
         }
-      }
+      },
+      ".read": "auth != null && root.child('teachers/'+auth.uid).val() === true"
     },
     "teachers": {
       ".read": "auth != null",

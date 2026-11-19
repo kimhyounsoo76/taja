@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<!-- 타자 모험 v5.1 우리반용 (2026-11-19) · 한글 두벌식 10레벨 + 영어 자판 8레벨 · 제작 kingkongssam -->
+<!-- 타자 모험 v5.2 우리반용 (2026-11-19) · 한글 두벌식 10레벨 + 영어 자판 8레벨 · 제작 kingkongssam -->
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#ff7a2f">
-<title>타자 모험 v5.1 — 기본 자리부터 차근차근 레벨 업</title>
+<title>타자 모험 v5.2 — 기본 자리부터 차근차근 레벨 업</title>
 <style>
 :root{
   --bg:#eef4fb; --card:#ffffff; --ink:#1f2a3d; --muted:#556178; --btn:#c2410c; --btn-dark:#8f2f08;
@@ -613,6 +613,13 @@ svg.face{width:1.2em;height:1.2em;display:inline-block;vertical-align:middle;ove
 .stage.g3 .item.right.lock .fishb{box-shadow:none}.stage.g3 .item.right.lock .tag{box-shadow:0 0 0 3px var(--accent)}
 .stage.g3 .item.down::before{display:none}
 .track.g3 .lane,.track.g3 .finish{visibility:hidden}
+.ts-wrap{overflow-x:auto;margin-top:8px;-webkit-overflow-scrolling:touch}
+.ts-table{border-collapse:collapse;width:100%;font-size:14px;white-space:nowrap}
+.ts-table th,.ts-table td{padding:6px 10px;border-bottom:1px solid #e9eef5;text-align:right}
+.ts-table th{background:#f4f7fb;font-weight:900;position:sticky;top:0}
+.ts-table th:first-child,.ts-table td:first-child{text-align:left;position:sticky;left:0;background:#fff;font-weight:800}
+.ts-table th:first-child{background:#f4f7fb}
+.ts-table svg.face{width:20px;height:20px;vertical-align:-4px;margin-right:4px}
 /* ---------- responsive ---------- */
 @media (max-width:480px){#uc-stars{display:none} #uc-name{display:none} #topbar{gap:4px!important;padding:6px 8px!important} #topbar .iconbtn{width:30px!important;height:30px!important;font-size:14px!important} #topbar .userchip{padding:3px 6px!important}}
 @media (max-width:400px){#topbar .logo{display:none}}
@@ -746,6 +753,18 @@ body.show-hands .typing-finger-caption{display:block}
         <input type="file" id="rec-file" accept=".json,application/json" hidden>
       </div>
       <div id="rec-body"></div>
+    </section>
+
+    <!-- 선생님 설정 -->
+    <section id="scr-teacher" class="screen">
+      <div class="hubhead"><button class="btn ghost" id="ts-back">← 처음</button><h2>👩‍🏫 선생님 설정</h2></div>
+      <div class="card" style="margin-bottom:12px"><div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><b id="ts-email" style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis"></b><button class="btn sec sm" id="ts-logout">로그아웃</button></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px"><button class="btn" id="ts-check">🔧 점검 모드로 들어가기</button><button class="btn sec" id="ts-reg">🏫 학급 등록</button></div></div>
+      <div id="ts-reqbox" class="card" style="margin-bottom:12px;display:none"><div class="sect" style="margin:0 0 6px">🙋 선생님 승인 요청</div><div id="tch-reqs"></div></div>
+      <div class="card"><div class="sect" style="margin:0 0 8px">📊 학생 자료 <span class="sub">반을 고르면 학생들의 연습 기록이 나와요</span></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center"><select id="ts-class" aria-label="반 고르기" style="font:inherit;font-weight:800;padding:8px 10px;border:2px solid #e2e8f0;border-radius:12px;max-width:100%"></select><button class="btn sec sm" id="ts-reload">새로 읽기</button><button class="btn sec sm" id="ts-copy">표 복사</button><button class="btn sec sm" id="ts-csv">엑셀용 파일 받기</button><button class="btn sec sm" id="ts-json">전체 자료 받기</button></div>
+        <div id="ts-msg" class="muted" style="margin:10px 0 0;font-size:14px"></div>
+        <div class="ts-wrap"><table class="ts-table" id="ts-table"></table></div></div>
     </section>
 
     <!-- 우리 반 -->
@@ -1263,7 +1282,7 @@ function validateContent() {
 <script>
 /* ================= 저장 ================= */
 const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
-const APP_VERSION = '5.1', APP_DATE = '2026-11-20';
+const APP_VERSION = '5.2', APP_DATE = '2026-11-20';
 /* ===== 우리 반 공유(선택) : Firebase 설정 =====
    Firebase 콘솔 → 프로젝트 설정 → 내 앱(웹) → SDK 설정의 firebaseConfig 값을 아래에 그대로 붙여 넣으세요.
    Realtime Database를 만들고 databaseURL까지 넣어야 켜집니다. 비워 두면 혼자 쓰는 앱으로 돌아갑니다. */
@@ -2478,22 +2497,13 @@ async function teacherGate(ok) {
   toast('선생님 계정을 확인하고 있어요…'); if (!(await Auth.init())) { toast('인터넷 연결을 확인해 주세요'); return; }
   if (Auth.teacher) { ok(); return; }
   const after = async () => { if (Auth.teacher) { toast('👩‍🏫 ' + Auth.me().email + ' 선생님으로 확인됐어요'); ok(); return; }
-    try { const r = await Auth.claimOrRequest(); if (r === 'claimed') { toast('👩‍🏫 첫 선생님으로 등록됐어요'); ok(); } else Modal.show({title: '승인 요청을 보냈어요', html: `<p><b>${esc(Auth.me().email)}</b> 계정으로 요청했어요.</p><p>이미 등록된 선생님이 시작 화면의 <b>👩‍🏫 선생님</b>에서 승인하면 쓸 수 있어요.</p>`, primary: {label: '확인', fn: () => {}}}); }
+    try { const r = await Auth.claimOrRequest(); if (r === 'claimed') { toast('👩‍🏫 첫 선생님으로 등록됐어요'); ok(); } else Modal.show({title: '승인 요청을 보냈어요', html: `<p><b>${esc(Auth.me().email)}</b> 계정으로 요청했어요.</p><p>이미 등록된 선생님이 <b>👩‍🏫 선생님 설정</b>에서 승인하면 쓸 수 있어요.</p>`, primary: {label: '확인', fn: () => {}}}); }
     catch (e) { toast('요청하지 못했어요. Firebase 규칙을 확인해 주세요'); } };
   if (Auth.user) { after(); return; }
   Modal.show({title: '👩‍🏫 선생님 로그인', html: '<p style="margin:0">선생님 기능은 구글 계정으로 로그인해야 쓸 수 있어요. 학생은 로그인하지 않아요.</p>',
     primary: {label: '구글로 로그인', fn: () => { Auth.signIn().then(after).catch(e => toast(e && e.code === 'auth/popup-blocked' ? '팝업이 막혔어요. 팝업을 허용하고 다시 눌러 주세요' : e && e.code === 'auth/unauthorized-domain' ? 'Firebase에 이 주소가 허용 도메인으로 등록되지 않았어요' : e && e.code === 'auth/operation-not-allowed' ? 'Firebase에서 구글 로그인을 켜 주세요' : '로그인하지 못했어요')); }}, secondary: {label: '닫기', fn: () => {}}});
 }
-async function openTeacherAccount() {
-  toast('선생님 계정을 확인하고 있어요…'); if (!(await Auth.init())) { toast('인터넷 연결을 확인해 주세요'); return; }
-  if (!Auth.user || !Auth.teacher) { if (!Auth.user) { teacherGate(openTeacherAccount); return; } }
-  let reqs = {}; if (Auth.teacher) { try { reqs = (await Cloud.fb.get(Cloud.fb.ref(Cloud.db, 'teacherReq'))).val() || {}; } catch (e) {} }
-  const rows = Object.entries(reqs).map(([uid, r]) => `<div style="display:flex;align-items:center;gap:8px;margin:6px 0"><span style="flex:1;overflow:hidden;text-overflow:ellipsis">${esc(String((r && r.name) || '').slice(0, 40))} <small class="muted">${esc(String((r && r.email) || '').slice(0, 80))}</small></span><button class="btn sm" data-ok="${esc(uid)}">승인</button><button class="btn sec sm" data-no="${esc(uid)}">거절</button></div>`).join('');
-  Modal.show({title: '👩‍🏫 선생님', html: `<p style="margin:0 0 6px"><b>${esc(Auth.me().email)}</b><br>${Auth.teacher ? '✅ 등록된 선생님이에요.' : '⏳ 아직 승인되지 않았어요. 등록된 선생님이 승인해야 해요.'}</p>${Auth.teacher ? `<div style="display:grid;gap:8px;margin:10px 0"><button class="btn" id="tm-check">🔧 점검 모드로 들어가기</button><button class="btn sec" id="tm-reg">🏫 학급 등록</button></div><div class="sect" style="margin:10px 0 4px;font-size:15px">승인 요청</div><div id="tch-reqs">${rows || '<span class="muted">요청이 없어요.</span>'}</div>` : ''}`,
-    primary: {label: '닫기', fn: () => {}}, secondary: {label: '로그아웃', fn: () => { Auth.signOut().then(() => { Boss.admin = false; Chat.admin = false; if (DB.current === TEACHER) { DB.current = ''; save(); renderUser(); } toast('로그아웃했어요'); }); }}});
-  if ($('#tm-check')) { $('#tm-check').onclick = () => { Modal.hide(); teacherEnter(); }; $('#tm-reg').onclick = () => { Modal.hide(); openRegister(); }; }
-  $$('#tch-reqs button').forEach(b => b.onclick = async () => { const uid = b.dataset.ok || b.dataset.no, f = Cloud.fb; try { if (b.dataset.ok) await f.set(f.ref(Cloud.db, 'teachers/' + uid), true); await f.remove(f.ref(Cloud.db, 'teacherReq/' + uid)); toast(b.dataset.ok ? '승인했어요' : '거절했어요'); Modal.hide(); openTeacherAccount(); } catch (e) { toast('처리하지 못했어요'); } });
-}
+function openTeacherAccount() { teacherGate(() => TeacherScr.open()); }
 const TEACHER = '점검 선생님';
 function isTeacher() { return Auth.teacher && DB.current === TEACHER; }
 function fillTeacher(u) { Object.entries(COURSES).forEach(([c, C]) => { const p = progOf(u, c); p.unlocked = C.levels.length; p.master = true; p.gst = p.gst || {}; C.levels.forEach(L => { p.passed[L.n] = true; for (let i = 0; i < L.lines.length; i++) p.lines[L.n + '-' + i] = Math.max(3, p.lines[L.n + '-' + i] || 0); p.lines[L.n + '-mix'] = 3; p.games[L.n] = 3; [1, 2, 3].forEach(s => { p.gst[L.n + '-' + s] = 3; }); }); }); }
@@ -2729,6 +2739,40 @@ $('#boss-stop').onclick = e => { e.currentTarget.blur(); Boss.stop(); };
 $('#boss-tv').onclick = e => { e.currentTarget.blur(); Boss.tv = !Boss.tv; $('#scr-boss').classList.toggle('tv', Boss.tv); $('#boss-tv').textContent = Boss.tv ? '⌨️ 학생 화면' : '📺 TV 화면'; Boss._kids = ''; Boss.render(); };
 $('#boss-card-btn').onclick = () => Boss.open();
 $('#tch-menu').onclick = () => openTeacherAccount();
+const TeacherScr = {
+  data: {}, code: '',
+  COLS: ['이름', '한글 레벨', '영어 레벨', '별', '친 글자', '한글 최고 타수', '영어 최고 타수', '1분 기록(한글)', '1분 기록(영어)', '오늘 줄', '오늘 분', '마지막 연습'],
+  async open() { stopAll(); show('scr-teacher'); updateChip(); $('#ts-email').textContent = Auth.me().email + (Auth.teacher ? ' · ✅ 등록된 선생님' : ''); await this.load(); },
+  async load() {
+    const f = Cloud.fb; $('#ts-msg').textContent = '자료를 읽고 있어요…';
+    try { this.data = (await f.get(f.ref(Cloud.db, 'classes'))).val() || {}; $('#ts-msg').textContent = ''; } catch (e) { this.data = {}; $('#ts-msg').textContent = '자료를 읽지 못했어요. Firebase 규칙을 새 파일로 게시했는지 확인해 주세요.'; }
+    let reqs = {}; try { reqs = (await f.get(f.ref(Cloud.db, 'teacherReq'))).val() || {}; } catch (e) {}
+    const rows = Object.entries(reqs).map(([uid, r]) => `<div style="display:flex;align-items:center;gap:8px;margin:6px 0;flex-wrap:wrap"><span style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis">${esc(String((r && r.name) || '').slice(0, 40))} <small class="muted">${esc(String((r && r.email) || '').slice(0, 80))}</small></span><button class="btn sm" data-ok="${esc(uid)}">승인</button><button class="btn sec sm" data-no="${esc(uid)}">거절</button></div>`).join('');
+    $('#ts-reqbox').style.display = rows ? '' : 'none'; $('#tch-reqs').innerHTML = rows;
+    $$('#tch-reqs button').forEach(b => b.onclick = async () => { const uid = b.dataset.ok || b.dataset.no; try { if (b.dataset.ok) await f.set(f.ref(Cloud.db, 'teachers/' + uid), true); await f.remove(f.ref(Cloud.db, 'teacherReq/' + uid)); toast(b.dataset.ok ? '승인했어요' : '거절했어요'); this.load(); } catch (e) { toast('처리하지 못했어요'); } });
+    const codes = Object.keys(this.data).sort(); if (FIXED_CLASS && !codes.includes(FIXED_CLASS)) codes.unshift(FIXED_CLASS);
+    if (!codes.includes(this.code)) this.code = codes.includes(DB.classCode) ? DB.classCode : FIXED_CLASS || codes[0] || '';
+    $('#ts-class').innerHTML = codes.map(c => { const d = this.data[c] || {}; const nm = c === FIXED_CLASS ? '킹콩반' : String((d.info && d.info.name) || '').slice(0, 20); return `<option value="${esc(c)}"${c === this.code ? ' selected' : ''}>${esc(nm || '(이름 없음)')} · ${esc(c)} · ${Object.keys(d.students || {}).length}명</option>`; }).join('');
+    this.render();
+  },
+  list() { const d = this.data[this.code] || {}; return Object.values(d.students || {}).map(r => { const c = cleanRec(r); if (!c) return null; c.test = {ko: NUM(r.test && r.test.ko, 0, 2000), en: NUM(r.test && r.test.en, 0, 2000)}; c.min = NUM(r.today && r.today.min, 0, 999); return c; }).filter(Boolean).sort((a, b) => a.name.localeCompare(b.name, 'ko', {numeric: true})); },
+  row(r) { const t = r.updatedAt ? new Date(r.updatedAt) : null; const day = t ? `${t.getFullYear()}-${String(t.getMonth() + 1).padStart(2, '0')}-${String(t.getDate()).padStart(2, '0')}` : '-'; const today = r.today.date === dayKey();
+    return [r.name, r.ko.master ? '마스터' : r.ko.lv, r.en.master ? '마스터' : r.en.lv, r.total, r.keys, r.ko.best || '-', r.en.best || '-', r.test.ko || '-', r.test.en || '-', today ? r.today.lines : 0, today ? r.min : 0, day]; },
+  render() { const L = this.list(); $('#ts-table').innerHTML = L.length ? `<thead><tr>${this.COLS.map(c => `<th>${c}</th>`).join('')}</tr></thead><tbody>${L.map(r => { const v = this.row(r); return `<tr><td>${ART.face(r.avatar)}${esc(v[0])}</td>${v.slice(1).map(x => `<td>${esc(String(x))}</td>`).join('')}</tr>`; }).join('')}</tbody>` : '';
+    if (!$('#ts-msg').textContent || /아직/.test($('#ts-msg').textContent)) $('#ts-msg').textContent = L.length ? '' : (this.code ? '아직 이 반에 학생 기록이 없어요.' : '등록된 반이 없어요.'); },
+  text(sep) { const q = x => { x = String(x); return sep === ',' && /[",\n]/.test(x) ? '"' + x.replace(/"/g, '""') + '"' : x; }; return [this.COLS].concat(this.list().map(r => this.row(r))).map(a => a.map(q).join(sep)).join('\n'); },
+  save(name, text, type) { const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([text], {type})); a.download = name; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500); }
+};
+$('#ts-back').onclick = () => renderUser();
+$('#ts-logout').onclick = () => Auth.signOut().then(() => { Boss.admin = false; Chat.admin = false; if (DB.current === TEACHER) { DB.current = ''; save(); } renderUser(); toast('로그아웃했어요'); });
+$('#ts-check').onclick = () => teacherEnter();
+$('#ts-reg').onclick = () => openRegister();
+$('#ts-class').onchange = e => { TeacherScr.code = e.target.value; $('#ts-msg').textContent = ''; TeacherScr.render(); };
+$('#ts-reload').onclick = () => TeacherScr.load();
+$('#ts-copy').onclick = async () => { try { await navigator.clipboard.writeText(TeacherScr.text('\t')); toast('표를 복사했어요. 엑셀에 붙여 넣어요'); } catch (e) { toast('복사가 안 돼요. [엑셀용 파일 받기]를 써 주세요'); } };
+$('#ts-csv').onclick = () => TeacherScr.save(`타자모험_${TeacherScr.code}_${dayKey()}.csv`, '﻿' + TeacherScr.text(','), 'text/csv;charset=utf-8');
+$('#ts-json').onclick = () => TeacherScr.save(`타자모험_${TeacherScr.code}_전체_${dayKey()}.json`, JSON.stringify(TeacherScr.data[TeacherScr.code] || {}, null, 1), 'application/json');
+
 $('#boss-play').onchange = e => { Boss.play = e.target.checked; e.target.blur(); if (Boss.play) { Boss._joining = ''; Boss.join(); } Boss.render(); };
 
 $('#btn-chat').onclick = () => Chat.openScreen();
