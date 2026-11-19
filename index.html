@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<!-- 타자 모험 v5.2 우리반용 (2026-11-19) · 한글 두벌식 10레벨 + 영어 자판 8레벨 · 제작 kingkongssam -->
+<!-- 타자 모험 v5.3 우리반용 (2026-11-19) · 한글 두벌식 10레벨 + 영어 자판 8레벨 · 제작 kingkongssam -->
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#ff7a2f">
-<title>타자 모험 v5.2 — 기본 자리부터 차근차근 레벨 업</title>
+<title>타자 모험 v5.3 — 기본 자리부터 차근차근 레벨 업</title>
 <style>
 :root{
   --bg:#eef4fb; --card:#ffffff; --ink:#1f2a3d; --muted:#556178; --btn:#c2410c; --btn-dark:#8f2f08;
@@ -620,6 +620,11 @@ svg.face{width:1.2em;height:1.2em;display:inline-block;vertical-align:middle;ove
 .ts-table th:first-child,.ts-table td:first-child{text-align:left;position:sticky;left:0;background:#fff;font-weight:800}
 .ts-table th:first-child{background:#f4f7fb}
 .ts-table svg.face{width:20px;height:20px;vertical-align:-4px;margin-right:4px}
+/* 게임에서는 자판을 숨기고 무대를 크게 */
+#scr-game #g-kb{display:none}
+#scr-game .stage.race .track{height:58%}
+#scr-game .stage.race .racetext{top:58%}
+#scr-game .stage{height:clamp(300px,calc(100vh - 210px),820px);height:clamp(300px,calc(100dvh - 210px),820px)}
 /* ---------- responsive ---------- */
 @media (max-width:480px){#uc-stars{display:none} #uc-name{display:none} #topbar{gap:4px!important;padding:6px 8px!important} #topbar .iconbtn{width:30px!important;height:30px!important;font-size:14px!important} #topbar .userchip{padding:3px 6px!important}}
 @media (max-width:400px){#topbar .logo{display:none}}
@@ -1282,7 +1287,7 @@ function validateContent() {
 <script>
 /* ================= 저장 ================= */
 const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
-const APP_VERSION = '5.2', APP_DATE = '2026-11-20';
+const APP_VERSION = '5.3', APP_DATE = '2026-11-20';
 /* ===== 우리 반 공유(선택) : Firebase 설정 =====
    Firebase 콘솔 → 프로젝트 설정 → 내 앱(웹) → SDK 설정의 firebaseConfig 값을 아래에 그대로 붙여 넣으세요.
    Realtime Database를 만들고 databaseURL까지 넣어야 켜집니다. 비워 두면 혼자 쓰는 앱으로 돌아갑니다. */
