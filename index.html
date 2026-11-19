@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<!-- 타자 모험 v4.4 우리반용 (2026-11-19) · 한글 두벌식 10레벨 + 영어 자판 8레벨 · 제작 kingkongssam -->
+<!-- 타자 모험 v4.5 우리반용 (2026-11-19) · 한글 두벌식 10레벨 + 영어 자판 8레벨 · 제작 kingkongssam -->
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#ff7a2f">
-<title>타자 모험 v4.4 — 기본 자리부터 차근차근 레벨 업</title>
+<title>타자 모험 v4.5 — 기본 자리부터 차근차근 레벨 업</title>
 <style>
 :root{
   --bg:#eef4fb; --card:#ffffff; --ink:#1f2a3d; --muted:#556178; --btn:#c2410c; --btn-dark:#8f2f08;
@@ -603,6 +603,16 @@ svg.face{width:1.2em;height:1.2em;display:inline-block;vertical-align:middle;ove
 .trail.g3 .node.cls .who{display:none}
 .trail.g3 .node.cls .ttl{background:rgba(255,255,255,.92);border-radius:99px;padding:1px 9px;font-size:13px;white-space:nowrap;max-width:none;box-shadow:0 2px 0 rgba(0,60,110,.15)}
 .node .cnt{display:none}.trail.g3 .node .cnt{display:inline;color:#7048e8}
+.stage.g3>.scene,.track.g3>.scene{display:none}
+.stage.g3 .layer,.stage.g3 .holes{z-index:1}
+.stage.g3 .hole .hole-back,.stage.g3 .hole .hole-front,.stage.g3 .hole .mole-svg{display:none}
+.stage.g3 .hole .sign{top:22%;border-radius:.3em;box-shadow:0 3px 0 #8a5a32,0 6px 10px rgba(0,0,0,.2)}
+.stage.g3 .item.up .bln{background:none;box-shadow:none}.stage.g3 .item.up .bln::after{display:none}.stage.g3 .item.up .string{visibility:hidden}
+.stage.g3 .item.up.lock .bln{box-shadow:none}.stage.g3 .item.up.lock .tag{background:rgba(255,255,255,.92);border-radius:12px;padding:0 .35em;box-shadow:0 0 0 3px var(--accent)}
+.stage.g3 .item.right .fish-tail{visibility:hidden}.stage.g3 .item.right .fishb{background:none;box-shadow:none}.stage.g3 .item.right .fishb::before,.stage.g3 .item.right .fishb::after{display:none}
+.stage.g3 .item.right.lock .fishb{box-shadow:none}.stage.g3 .item.right.lock .tag{box-shadow:0 0 0 3px var(--accent)}
+.stage.g3 .item.down::before{display:none}
+.track.g3 .lane,.track.g3 .finish{visibility:hidden}
 /* ---------- responsive ---------- */
 @media (max-width:480px){#uc-stars{display:none} #uc-name{display:none} #topbar{gap:4px!important;padding:6px 8px!important} #topbar .iconbtn{width:30px!important;height:30px!important;font-size:14px!important} #topbar .userchip{padding:3px 6px!important}}
 @media (max-width:400px){#topbar .logo{display:none}}
@@ -1253,7 +1263,7 @@ function validateContent() {
 <script>
 /* ================= 저장 ================= */
 const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
-const APP_VERSION = '4.4', APP_DATE = '2026-11-19';
+const APP_VERSION = '4.5', APP_DATE = '2026-11-20';
 /* ===== 우리 반 공유(선택) : Firebase 설정 =====
    Firebase 콘솔 → 프로젝트 설정 → 내 앱(웹) → SDK 설정의 firebaseConfig 값을 아래에 그대로 붙여 넣으세요.
    Realtime Database를 만들고 databaseURL까지 넣어야 켜집니다. 비워 두면 혼자 쓰는 앱으로 돌아갑니다. */
@@ -2338,6 +2348,117 @@ G3.tug = {
     const d = this.d || 10, cx = this.x * .55; v.cam.position.set(cx, 2.4 + d * .27, d); v.cam.lookAt(cx, 1.15, 0); v.sun.target.position.set(cx, 0, 0);
   }
 };
+/* ---------- 3D 게임 무대 (두더지·낱말 비·풍선·물고기·경주) ---------- */
+G3.game = {
+  v: null, host: null, A: [],
+  dispose() { if (this.v) { this.v.dispose(); this.v = null; } if (this.host) this.host.classList.remove('g3'); this.host = null; this.A = []; },
+  attach(host, kind, o) { this.dispose(); this.host = host; G3.load().then(T => { if (!T || this.host !== host || !host.isConnected) return; try { this.build(host, kind, o || {}); } catch (e) { console.warn('3D 게임 실패', e); this.dispose(); } }); },
+  build(host, kind, o) {
+    const G = G3; const wrap = document.createElement('div'); wrap.className = 'g3-host'; host.prepend(wrap); host.classList.add('g3');
+    const v = this.v = G.view(wrap, {fov: kind === 'race' ? 24 : 30, shadow: 16}); const A = this.A = []; v.ticks.push((dt, t) => A.forEach(f => f(t, dt)));
+    this[kind === 'mole' ? 'mole' : kind === 'race' ? 'race' : 'fall'](v, A, kind, o, host); v.size(); v.start();
+  },
+  cloud(c = '#ffffff', s = 1) { const G = G3, o = {emissive: c, emissiveIntensity: .45}; const g = G.grp([G.m(G.sph(.8, 12), c, 0, 0, 0, o), G.m(G.sph(.6, 12), c, .8, -.1, 0, o), G.m(G.sph(.55, 12), c, -.75, -.15, 0, o), G.m(G.sph(.5, 12), c, .2, .35, 0, o)]); g.traverse(x => { x.castShadow = false; x.receiveShadow = false; }); g.scale.setScalar(s); return g; },
+  /* 떨어지기 3종: 화면 좌표와 똑같은 자리에 3D 물체를 놓는다 */
+  fall(v, A, dir, o, host) {
+    const G = G3, T = G.T, S = v.scene, cam = v.cam; cam.position.set(0, 0, 20); cam.lookAt(0, 0, 0); const HH = 2 * 20 * Math.tan(15 * Math.PI / 180), hb = 24 * Math.tan(15 * Math.PI / 180); v.sun.position.set(5, 9, 14);
+    const add = (o2, x, y, z) => { o2.position.set(x, y, z); S.add(o2); return o2; }; const rnd = (() => { let s = 11; return () => (s = (s * 16807) % 2147483647) / 2147483647; })();
+    if (dir === 'down') {
+      S.background = new T.Color('#7d9ac2'); S.fog = new T.Fog('#7d9ac2', 22, 46);
+      for (let i = 0; i < 8; i++) { const c = add(this.cloud(i % 2 ? '#dbe4f0' : '#c3cfe0', 1.5 + rnd()), -15 + i * 4.3, hb - 1 - rnd() * .8, -4 - rnd() * 2); A.push((t, dt) => { c.position.x += dt * .3; if (c.position.x > 18) c.position.x = -18; }); }
+      add(G.m(G.box(60, 2, 6), '#5c8a55'), 0, -hb + .2, -4);
+      for (let i = 0; i < 11; i++) { const w = 1.6 + rnd() * .8, h = 1.4 + rnd() * 1.6, x = -15 + i * 3 + rnd(), c = ['#ffd8a8', '#ffc9c9', '#d0ebff', '#e5dbff', '#fff3bf'][i % 5]; const hs = add(G.grp([G.m(G.box(w, h, 1.6), c, 0, h / 2, 0), G.m(G.cone(w * .82, .9, 4), ['#e03131', '#5f3dc4', '#1971c2'][i % 3], 0, h + .45, 0, {flatShading: true}), G.m(G.box(.4, .45, .05), '#ffe066', -.35, h * .55, .82, {emissive: '#ffd43b', emissiveIntensity: 1.1}), G.m(G.box(.4, .45, .05), '#ffe066', .35, h * .55, .82, {emissive: '#ffd43b', emissiveIntensity: 1.1})]), x, -hb + 1.2, -4); hs.children[1].rotation.y = Math.PI / 4; }
+      for (let i = 0; i < 5; i++) add(G.tree(1.3 + rnd() * .5, '#2f9e44'), -13 + i * 6.5 + rnd() * 2, -hb + 1.2, -2.6);
+      const sm = G.mat('#e7f5ff', {transparent: true, opacity: .55}); for (let i = 0; i < 70; i++) { const d = G.m(G.box(.025, .55, .025), sm, (rnd() - .5) * 34, (rnd() - .5) * 14, -3 + rnd() * 5); d.castShadow = false; d.rotation.z = .12; S.add(d); const sp = 13 + rnd() * 6; A.push((t, dt) => { d.position.y -= sp * dt; d.position.x -= sp * dt * .12; if (d.position.y < -7) { d.position.y = 7; d.position.x = (Math.random() - .5) * 34; } }); }
+    } else if (dir === 'up') {
+      S.background = new T.Color('#bfe6ff');
+      add(G.m(G.sph(1.3, 20), '#fff3bf', 0, 0, 0, {emissive: '#ffd43b', emissiveIntensity: .9}), 9, hb - 2, -8).castShadow = false;
+      for (let i = 0; i < 6; i++) { const c = add(this.cloud('#ffffff', 1.2 + rnd()), -14 + i * 5.6, 1 + rnd() * 4, -5 - rnd() * 3); A.push((t, dt) => { c.position.x += dt * .22; if (c.position.x > 18) c.position.x = -18; }); }
+      [[-12, 9, '#8fd162'], [0, 12, '#7cc955'], [13, 10, '#8fd162']].forEach(([x, r, c]) => { const h = add(G.m(G.sph(r, 16), c, 0, 0, 0, {flatShading: true}), x, -hb - r * .62, -8); h.scale.z = .25; h.castShadow = false; });
+      [[-9, '#ff6b6b'], [-3.5, '#4dabf7'], [5, '#ffd43b'], [10.5, '#b197fc']].forEach(([x, c], i) => { const t = add(G.grp([G.m(G.cyl(1.1, 1.1, 1.1, 10), '#ffffff', 0, .55, 0), G.m(G.cone(1.45, 1.1, 10), c, 0, 1.65, 0, {flatShading: true}), G.m(G.sph(.12, 8), '#ffd43b', 0, 2.25, 0)]), x, -hb + 1.9 + (i % 2) * .6, -4.5); });
+      const wheel = new T.Group(); wheel.add(G.m(G.tor(2.2, .07), '#ff8787', 0, 0, 0)); for (let i = 0; i < 8; i++) { const a = i / 8 * Math.PI * 2; const sp = G.m(G.cyl(.03, .03, 2.2, 5), '#ffa8a8', Math.cos(a) * 1.1, Math.sin(a) * 1.1, 0); sp.rotation.z = a + Math.PI / 2; wheel.add(sp); const cb = G.m(G.box(.42, .42, .3), ['#4dabf7', '#ffd43b', '#69db7c', '#b197fc'][i % 4], Math.cos(a) * 2.2, Math.sin(a) * 2.2, 0); wheel.add(cb); A.push(t => { cb.rotation.z = -wheel.rotation.z; }); }
+      add(wheel, 1, -hb + 6.2, -5.5); add(G.m(G.cone(.9, 3, 4), '#adb5bd', 0, 0, 0, {flatShading: true}), 1, -hb + 4.6, -5.6); A.push((t, dt) => { wheel.rotation.z += dt * .25; });
+      for (let i = 0; i < 25; i++) { const b = add(G.m(G.cone(.2, .4, 3), ['#ff6b6b', '#ffd43b', '#4dabf7', '#69db7c', '#b197fc'][i % 5], 0, 0, 0, {flatShading: true, side: 2}), -14.4 + i * 1.2, hb - 1 - Math.sin(i / 24 * Math.PI) * 1.1, -3.5); b.rotation.x = Math.PI; b.castShadow = false; A.push(t => { b.rotation.z = Math.sin(t * 3 + i) * .25; }); }
+    } else {
+      S.background = new T.Color('#1a78cf'); S.fog = new T.Fog('#1a78cf', 21, 40);
+      const sand = add(G.m(G.sph(30, 24), '#f2d9a0', 0, 0, 0), 0, -hb - 27.6, -5); sand.scale.set(1.4, 1, .5);
+      for (let i = 0; i < 4; i++) { const r = add(G.m(G.box(1.6, 20, .05), '#ffffff', 0, 0, 0, {transparent: true, opacity: .07, depthWrite: false}), -11 + i * 7, 2, -7); r.castShadow = false; r.rotation.z = -.35; A.push(t => { r.material.opacity = .07; r.position.x = -11 + i * 7 + Math.sin(t * .3 + i) * 1.2; }); }
+      for (let i = 0; i < 9; i++) { const x = -14 + i * 3.5 + rnd() * 1.5, n = 4 + Math.floor(rnd() * 3), w = new T.Group(); const segs = []; for (let j = 0; j < n; j++) { const s = G.m(G.sph(.26, 7), j % 2 ? '#37b24d' : '#2f9e44', 0, .22 + j * .42, 0, {flatShading: true}); s.scale.set(1, 1.5, .6); w.add(s); segs.push(s); } add(w, x, -hb + 2.2 + rnd() * .4, -3.5 - rnd() * 2); A.push(t => { segs.forEach((s, j) => { s.position.x = Math.sin(t * 1.4 + i + j * .5) * .1 * j; }); }); }
+      for (let i = 0; i < 7; i++) add(G.m(G.sph(.5 + rnd() * .6, 6), i % 2 ? '#868e96' : '#adb5bd', 0, 0, 0, {flatShading: true}), -15 + i * 5 + rnd() * 2, -hb + 2.3, -4 - rnd() * 2);
+      for (let i = 0; i < 5; i++) { const c = add(G.grp([G.m(G.cone(.2, .9, 6), '#ff8fab', 0, .45, 0, {flatShading: true}), G.m(G.cone(.16, .7, 6), '#f783ac', .3, .35, 0, {flatShading: true}), G.m(G.cone(.16, .6, 6), '#faa2c1', -.28, .3, .1, {flatShading: true})]), -12 + i * 6.3, -hb + 2.3, -3.2); c.children[1].rotation.z = -.4; c.children[2].rotation.z = .4; }
+      const bm = G.mat('#e7f5ff', {transparent: true, opacity: .45}); for (let i = 0; i < 22; i++) { const b = add(G.m(G.sph(.07 + rnd() * .1, 8), bm, 0, 0, 0), (rnd() - .5) * 30, (rnd() - .5) * 13, -4 + rnd() * 5); b.castShadow = false; const sp = .8 + rnd(), ph = rnd() * 6; A.push((t, dt) => { b.position.y += sp * dt; b.position.x += Math.sin(t * 2 + ph) * dt * .3; if (b.position.y > 7) b.position.y = -7; }); }
+      for (let i = 0; i < 9; i++) { const f = add(G.m(G.cone(.12, .42, 5), '#74c0fc', 0, 0, 0, {flatShading: true}), (rnd() - .5) * 30, 1 + rnd() * 3.5, -8 - rnd() * 3); f.rotation.z = Math.PI / 2; f.castShadow = false; A.push((t, dt) => { f.position.x -= dt * (1 + i * .08); if (f.position.x < -19) f.position.x = 19; }); }
+    }
+    const hsl = (el, s, l) => { const h = Math.round((parseFloat(el.style.getPropertyValue('--hue')) || 0) / 20) * 20; return `hsl(${h}, ${s}%, ${l}%)`; };
+    const mk = el => { const g = new T.Group(); let upd = null;
+      if (dir === 'up') { const c = hsl(el, 85, 62); const b = G.m(G.sph(1, 22), c, 0, 0, -.6, {roughness: .35}); b.scale.set(1, 1.1, .5); const hi = G.m(G.sph(.16, 8), '#ffffff', -.38, .48, -.08, {emissive: '#ffffff', emissiveIntensity: .8}); hi.castShadow = false; g.add(b, hi, G.m(G.cone(.14, .2, 8), c, 0, -1.15, -.6), G.m(G.cyl(.012, .012, 1.5, 4), '#868e96', 0, -1.95, -.6)); upd = (t, r) => { g.scale.setScalar(Math.max(r.w * .62, r.h * .95)); g.rotation.z = Math.sin(t * 1.6 + g.id) * .06; }; }
+      else if (dir === 'right') { const c = hsl(el, 85, 60), c2 = hsl(el, 80, 45); const body = G.m(G.sph(1, 20), c, 0, 0, -.5, {roughness: .4}); const tail = G.m(G.cone(.55, .8, 4), c2, -1.25, 0, -.5, {flatShading: true}); tail.rotation.z = -Math.PI / 2; const fin = G.m(G.cone(.3, .5, 4), c2, -.1, .95, -.5, {flatShading: true}); const belly = G.m(G.sph(.8, 14), '#fff4e6', .05, -.3, -.42); belly.scale.set(1, .6, .5);
+        g.add(body, tail, fin, belly, G.m(G.sph(.17, 10), '#ffffff', .68, .3, -.02), G.m(G.sph(.09, 8), '#212529', .74, .3, .1)); upd = (t, r) => { const sy = r.h * .82, sx = Math.max(r.w * .6, sy * 1.3); g.scale.set(sx, sy, sy); tail.rotation.y = Math.sin(t * 9 + g.id) * .5; g.position.y += Math.sin(t * 3 + g.id) * .04; }; }
+      else { const d = G.grp([G.m(G.sph(.42, 14), '#a5d8ff', 0, 0, 0, {roughness: .15}), G.m(G.cone(.36, .7, 12), '#a5d8ff', 0, .52, 0, {roughness: .15}), G.m(G.sph(.1, 8), '#ffffff', -.14, .1, .36)]); g.add(d); upd = (t, r) => { d.position.y = r.h * .5 + .62; d.scale.setScalar(.9 + Math.sin(t * 6 + g.id) * .04); }; }
+      g.traverse(x => { x.castShadow = false; }); return {g, upd}; };
+    const objs = new Map(), dying = [];
+    A.push((t, dt) => { const lay = host.querySelector('.layer'); if (!lay) return; const w = lay.clientWidth, h = lay.clientHeight; if (!w || !h) return; const u = HH / h, seen = new Set();
+      lay.querySelectorAll('.item').forEach(el => { if (el.classList.contains('pop')) return; seen.add(el); let ob = objs.get(el); if (!ob) { ob = mk(el); objs.set(el, ob); S.add(ob.g); }
+        const c = el.querySelector('.bln, .fishb') || el.querySelector('.tag'); const cx = el.offsetLeft - el.offsetWidth / 2 + c.offsetLeft + c.offsetWidth / 2, cy = el.offsetTop - el.offsetHeight / 2 + c.offsetTop + c.offsetHeight / 2;
+        ob.g.position.set((cx / w - .5) * HH * cam.aspect, (.5 - cy / h) * HH, 0); ob.upd(t, {w: c.offsetWidth * u, h: c.offsetHeight * u}); });
+      objs.forEach((ob, el) => { if (!seen.has(el)) { objs.delete(el); dying.push({g: ob.g, t: 0, s: ob.g.scale.clone()}); } });
+      for (let i = dying.length - 1; i >= 0; i--) { const d = dying[i]; d.t += dt; d.g.scale.copy(d.s).multiplyScalar(1 + d.t * 5); if (d.t > .1) { S.remove(d.g); dying.splice(i, 1); } } });
+  },
+  /* 두더지: 화면의 구멍 칸 자리에 맞춰 땅 위에 구멍을 판다 */
+  mole(v, A, kind, o, host) {
+    const G = G3, T = G.T, S = v.scene, cam = v.cam; cam.position.set(0, 9.5, 10.5); cam.lookAt(0, 0, .6); S.background = new T.Color('#8fd162'); v.sun.position.set(5, 12, 6);
+    const gr = G.m(G.g('mground', () => new T.PlaneGeometry(80, 60)), '#8fd162', 0, 0, 0); gr.rotation.x = -Math.PI / 2; gr.castShadow = false; S.add(gr);
+    const rnd = (() => { let s = 5; return () => (s = (s * 16807) % 2147483647) / 2147483647; })();
+    for (let i = 0; i < 14; i++) { const p = G.m(G.cyl(1 + rnd() * 1.4, 1, .02, 16), i % 2 ? '#9cdc6f' : '#84c95a', (rnd() - .5) * 26, .01, (rnd() - .5) * 14); p.castShadow = false; S.add(p); }
+    const fls = []; for (let i = 0; i < 26; i++) { const x = (rnd() - .5) * 28, z = (rnd() - .5) * 15; S.add(fls[fls.length] = G.grp([G.m(G.sph(.1, 6), ['#ff8fab', '#ffd43b', '#fff', '#b197fc'][i % 4], 0, .3, 0), G.m(G.cyl(.02, .02, .3, 4), '#2f9e44', 0, .15, 0)], x, 0, z)); }
+    for (let i = 0; i < 9; i++) { const t = i % 2 ? G.tree(1.7 + rnd() * .5) : G.roundTree(1.8 + rnd() * .5); t.position.set(-16 + i * 4 + rnd(), 0, -8.5 - rnd() * 1.5); S.add(t); }
+    for (let i = 0; i < 17; i++) S.add(G.grp([G.m(G.box(.16, .9, .1), '#f1e2c6', 0, .45, 0), G.m(G.cone(.12, .2, 4), '#f1e2c6', 0, 1.0, 0)], -16 + i * 2, 0, -7));
+    S.add(G.m(G.box(34, .1, .08), '#e3cfa8', 0, .6, -7));
+    const els = [...host.querySelectorAll('.hole')]; const H = els.map(el => { const g = new T.Group(); S.add(g);
+      const dark = G.m(G.cyl(.78, .78, .04, 22), '#3b2414', 0, .03, 0); dark.castShadow = false; const rim = G.m(G.tor(.84, .2), '#a97a4c', 0, .04, 0, {flatShading: true}); rim.rotation.x = Math.PI / 2; rim.scale.z = .7;
+      const m = new T.Group(); m.add(G.m(G.cyl(.6, .62, 1.5, 16), '#9c6b43', 0, .1, 0), G.m(G.sph(.62, 18), '#9c6b43', 0, .86, 0)); const bl = G.m(G.sph(.42, 14), '#f1d9b5', 0, .35, .36); bl.scale.set(1, 1.3, .6); m.add(bl, G.m(G.sph(.2, 12), '#f7c9a8', 0, .82, .55), G.m(G.sph(.085, 8), '#e64980', 0, .92, .72), G.m(G.box(.16, .14, .05), '#ffffff', 0, .66, .66));
+      [-1, 1].forEach(s => { m.add(G.m(G.sph(.075, 8), '#212529', s * .22, 1.06, .5), G.m(G.sph(.13, 8), '#7a5233', s * .48, 1.28, 0), G.m(G.sph(.15, 8), '#7a5233', s * .62, .2, .42)); const ch = G.m(G.sph(.1, 8), '#ff8fab', s * .38, .84, .46); ch.scale.set(1, .7, .4); m.add(ch); });
+      g.add(dark, rim, m); return {el, g, m, k: 0, hit: 0}; });
+    const lay = () => { const hr = host.getBoundingClientRect(); if (!hr.width) return; const pt = (px, py) => { const p = new T.Vector3(px / hr.width * 2 - 1, 1 - py / hr.height * 2, .5).unproject(cam), d = p.sub(cam.position).normalize(); return cam.position.clone().addScaledVector(d, -cam.position.y / d.y); };
+      H.forEach(h => { const r = h.el.getBoundingClientRect(), cx = r.left - hr.left + r.width / 2, cy = r.top - hr.top + r.height * .8; const p = pt(cx, cy), md = h.el.querySelector('.mole'), mw = (md && md.offsetWidth) || r.width * .5; const s = pt(cx + mw / 2, cy).distanceTo(pt(cx - mw / 2, cy)) / 1.65; h.g.position.copy(p); h.g.scale.setScalar(Math.max(.2, s)); }); fls.forEach(f => { f.visible = !H.some(h => h.g.position.distanceTo(f.position) < h.g.scale.x * 1.5); }); };
+    v.onresize = lay; cam.updateMatrixWorld(); setTimeout(lay, 0); setTimeout(lay, 300);
+    A.push((t, dt) => H.forEach((h, i) => { const up = h.el.classList.contains('up'), hit = h.el.classList.contains('hit'); h.k += ((up ? 1 : 0) - h.k) * Math.min(1, dt * 16); h.hit += ((hit ? 1 : 0) - h.hit) * Math.min(1, dt * 22);
+      h.m.position.y = -1.75 + h.k * 1.75 + (up ? Math.sin(t * 5 + i) * .04 : 0); h.m.scale.set(1 + h.hit * .25, 1 - h.hit * .4, 1 + h.hit * .25); h.m.rotation.z = h.hit * -.25 + (up ? Math.sin(t * 3 + i) * .05 : 0); h.m.visible = h.k > .02; }));
+  },
+  /* 경주 3종 */
+  race(v, A, kind, o, host) {
+    const G = G3, T = G.T, S = v.scene, cam = v.cam, th = o.theme || 'road'; cam.position.set(0, 3.6, 13); cam.lookAt(0, .7, 0); v.sun.position.set(4, 12, 9);
+    const rnd = (() => { let s = 3; return () => (s = (s * 16807) % 2147483647) / 2147483647; })(); const flat = (w, d, c, x, z, y = .01) => { const p = G.m(G.box(w, .02, d), c, x, y, z); p.castShadow = false; S.add(p); return p; };
+    const wheel = (x, z) => { const w = G.m(G.cyl(.2, .2, .14, 12), '#343a40', x, .2, z); w.rotation.x = Math.PI / 2; return w; };
+    const car = (c, c2) => { const g = new T.Group(), b = new T.Group(); b.add(G.m(G.box(1.7, .42, .82), c, 0, .46, 0), G.m(G.box(.9, .36, .72), c2, -.1, .84, 0), G.m(G.box(.3, .28, .74), '#d0ebff', .37, .82, 0, {roughness: .2}), G.m(G.box(.08, .14, .6), '#fff3bf', .86, .5, 0, {emissive: '#ffd43b', emissiveIntensity: 1})); const ws = [wheel(.55, .43), wheel(-.55, .43), wheel(.55, -.43), wheel(-.55, -.43)]; g.add(b, ...ws); return {g, tick: (t, dt, sp) => { ws.forEach(w => { w.rotation.z -= dt * (4 + sp * 30); }); b.position.y = Math.sin(t * 18) * .012; }}; };
+    const turtle = () => { const g = new T.Group(); const sh = G.m(G.sph(.6, 12), '#2f9e44', 0, .42, 0, {flatShading: true}); sh.scale.set(1.15, .62, 1); const hd = G.m(G.sph(.24, 12), '#8ce99a', .78, .5, 0); const legs = [[.42, .34], [-.42, .34], [.42, -.34], [-.42, -.34]].map(([x, z]) => G.m(G.sph(.15, 8), '#8ce99a', x, .14, z)); g.add(sh, G.m(G.sph(.5, 10), '#d8f5a2', 0, .3, 0), hd, G.m(G.sph(.045, 6), '#212529', .93, .58, .12), G.m(G.sph(.045, 6), '#212529', .93, .58, -.12), ...legs); g.children[1].scale.set(1.1, .4, .95); return {g, tick: t => { legs.forEach((l, i) => { l.position.y = .14 + Math.max(0, Math.sin(t * 5 + i * 1.6)) * .08; }); hd.position.y = .5 + Math.sin(t * 2.5) * .03; g.rotation.z = Math.sin(t * 5) * .03; }}; };
+    const rabbit = () => { const g = new T.Group(), a = G.animal('🐰'); a.rotation.y = Math.PI / 2; a.scale.setScalar(.85); g.add(a); return {g, tick: t => { const h = Math.abs(Math.sin(t * 6)); a.position.y = h * .45; a.rotation.z = -.15 - h * .12; a.scale.set(.85, .85 * (.9 + h * .14), .85); }}; };
+    const rocket = () => { const g = new T.Group(), r = new T.Group(); r.add(G.m(G.cyl(.3, .3, 1.2, 14), '#f1f3f5', 0, 0, 0), G.m(G.cone(.3, .55, 14), '#fa5252', 0, .87, 0), G.m(G.sph(.14, 10), '#74c0fc', 0, .25, .26, {roughness: .2}), G.m(G.cyl(.32, .32, .12, 14), '#fa5252', 0, -.45, 0)); [0, 1, 2].forEach(i => { const f = G.m(G.box(.06, .45, .34), '#e03131', 0, -.5, .42); const h = new T.Group(); h.add(f); h.rotation.y = i * Math.PI * 2 / 3; r.add(h); }); const fl = G.m(G.cone(.22, .8, 10), '#ffd43b', 0, -1.0, 0, {emissive: '#ff922b', emissiveIntensity: 1.6}); fl.rotation.x = Math.PI; fl.castShadow = false; r.add(fl); r.rotation.z = -Math.PI / 2; r.position.y = .9; g.add(r); return {g, tick: t => { fl.scale.set(1, .8 + Math.sin(t * 40) * .25, 1); r.position.y = .9 + Math.sin(t * 3) * .08; r.rotation.x = Math.sin(t * 2) * .1; }}; };
+    const ufo = () => { const g = new T.Group(), u = new T.Group(); const d = G.m(G.sph(.7, 18), '#adb5bd', 0, 0, 0, {metalness: .5, roughness: .35}); d.scale.set(1, .28, 1); u.add(d, G.m(G.sph(.34, 14), '#96f2d7', 0, .16, 0, {transparent: true, opacity: .8, roughness: .1})); for (let i = 0; i < 8; i++) { const a = i / 8 * Math.PI * 2; u.add(G.m(G.sph(.06, 6), i % 2 ? '#ffd43b' : '#ff6b6b', Math.cos(a) * .58, -.04, Math.sin(a) * .58, {emissive: i % 2 ? '#ffd43b' : '#ff6b6b', emissiveIntensity: 1.5})); } u.position.y = .9; g.add(u); return {g, tick: t => { u.rotation.y = t * 3; u.position.y = .9 + Math.sin(t * 4) * .1; u.rotation.z = Math.sin(t * 2.2) * .12; }}; };
+    let me, cpu, fin = new T.Group(); S.add(fin);
+    if (th === 'space') {
+      S.background = new T.Color('#0b1020'); const pos = []; for (let i = 0; i < 500; i++) pos.push((rnd() - .5) * 90, (rnd() - .3) * 30, -6 - rnd() * 30); const sg = new T.BufferGeometry(); sg.setAttribute('position', new T.Float32BufferAttribute(pos, 3)); const stars = new T.Points(sg, new T.PointsMaterial({color: 0xffffff, size: .12, transparent: true, opacity: .9})); S.add(stars); A.push(t => { stars.material.opacity = .7 + Math.sin(t * 2) * .2; });
+      const pl = G.grp([G.m(G.sph(1.6, 20), '#ff922b', 0, 0, 0, {flatShading: true})], -7, 3.4, -12); const ring = G.m(G.tor(2.3, .12), '#ffd8a8', 0, 0, 0); ring.rotation.x = 1.25; pl.add(ring); S.add(pl); S.add(G.m(G.sph(.9, 14), '#74c0fc', 9, 4.2, -14, {flatShading: true})); A.push(t => { pl.rotation.y = t * .1; });
+      for (let i = 0; i < 9; i++) { const r = G.m(G.sph(.16 + rnd() * .22, 5), '#868e96', (rnd() - .5) * 40, -1.2 + rnd() * 4.5, -3 - rnd() * 4, {flatShading: true}); S.add(r); A.push((t, dt) => { r.position.x -= dt * (.4 + i * .05); r.rotation.x += dt; if (r.position.x < -22) r.position.x = 22; }); }
+      const moon = G.m(G.sph(1.5, 22), '#fff3bf', 0, 1, 0, {emissive: '#ffe8a1', emissiveIntensity: .25}); fin.add(moon, G.m(G.sph(.3, 8), '#ffe8a1', -.5, 1.5, 1.2), G.m(G.sph(.22, 8), '#ffe8a1', .4, .7, 1.35), G.m(G.sph(.18, 8), '#ffe8a1', .2, 1.8, 1.1)); const f = G.flag('#fa5252', .9); f.g.position.set(0, 2.45, 0); fin.add(f.g);
+      me = rocket(); cpu = ufo();
+    } else {
+      const road = th === 'road'; S.background = new T.Color('#aee3ff'); S.fog = new T.Fog('#aee3ff', 26, 60);
+      const gr = G.m(G.cyl(70, 70, .2, 40), road ? '#8fd162' : '#95d86a', 0, -.1, 0); gr.castShadow = false; S.add(gr);
+      flat(90, 3.6, road ? '#5c636e' : '#d9b27c', 0, 0, .012); if (road) { flat(90, .12, '#ffffff', 0, 1.75, .02); flat(90, .12, '#ffffff', 0, -1.75, .02); for (let i = -30; i <= 30; i++) flat(.7, .1, '#ffe066', i * 1.5, 0, .02); } else for (let i = 0; i < 40; i++) flat(.25 + rnd() * .3, .2, '#c79a63', (rnd() - .5) * 60, (rnd() - .5) * 3.2, .02);
+      for (let i = 0; i < 22; i++) { const x = -32 + i * 3 + rnd() * 1.2; if (road && i % 3 === 0) { const h = 1.8 + rnd() * 2.2, b = G.grp([G.m(G.box(1.9, h, 1.6), ['#ffe8cc', '#d0ebff', '#ffc9c9', '#e5dbff'][i % 4], 0, h / 2, 0), G.m(G.box(2.05, .16, 1.75), '#868e96', 0, h + .08, 0)], x, 0, -4.2 - rnd()); for (let k = 0; k < Math.floor(h / .8); k++) [-.45, .45].forEach(wx => b.add(G.m(G.box(.4, .4, .05), '#74c0fc', wx, .6 + k * .8, .82, {roughness: .3}))); S.add(b); } else { const t = i % 2 ? G.tree(1.3 + rnd() * .6) : G.roundTree(1.3 + rnd() * .6); t.position.set(x, 0, -3.6 - rnd() * 2.5); S.add(t); } }
+      for (let i = 0; i < 30; i++) S.add(G.grp([G.m(G.sph(.08, 6), ['#ff8fab', '#ffd43b', '#fff', '#b197fc'][i % 4], 0, .26, 0), G.m(G.cyl(.015, .015, .26, 4), '#2f9e44', 0, .13, 0)], (rnd() - .5) * 60, 0, 2.3 + rnd() * 2.2));
+      for (let i = 0; i < 4; i++) { const c = this.cloud('#ffffff', 1.3); c.position.set(-18 + i * 11, 6.5 + (i % 2), -14); S.add(c); A.push((t, dt) => { c.position.x += dt * .3; if (c.position.x > 26) c.position.x = -26; }); }
+      [[-1, 1]].forEach(() => { fin.add(G.m(G.cyl(.07, .07, 2.6, 8), '#f1f3f5', 0, 1.3, 2.0), G.m(G.cyl(.07, .07, 2.6, 8), '#f1f3f5', 0, 1.3, -2.0)); for (let i = 0; i < 10; i++) for (let j = 0; j < 2; j++) fin.add(G.m(G.box(.06, .2, .4), (i + j) % 2 ? '#212529' : '#ffffff', 0, 2.3 + j * .2, -1.8 + i * .4)); for (let i = 0; i < 9; i++) { const q = flat(.22, .4, i % 2 ? '#212529' : '#ffffff', 0, -1.6 + i * .4, .03); S.remove(q); fin.add(q); } });
+      if (road) { me = car('#fa5252', '#e03131'); cpu = car('#4dabf7', '#1c7ed6'); } else { me = rabbit(); cpu = turtle(); }
+    }
+    S.add(me.g, cpu.g); me.g.position.z = .9; cpu.g.position.z = -.9; if (th === 'space') { me.g.position.set(0, -.3, .9); cpu.g.position.set(0, .5, -.9); }
+    const fr = sel => { const e = host.querySelector(sel); return e ? Math.max(0, Math.min(1, (parseFloat(e.style.left) || 0) / 86)) : 0; }; let pm = 0, pc = 0;
+    A.push((t, dt) => { const Wv = 2 * Math.hypot(13, 2.9) * Math.tan(12 * Math.PI / 180) * cam.aspect, X = f => (-.44 + f * .8) * Wv; const fm = fr('.lane.me .sprite'), fc = fr('.lane.cpu .sprite');
+      me.g.position.x += (X(fm) - me.g.position.x) * Math.min(1, dt * 10); cpu.g.position.x += (X(fc) - cpu.g.position.x) * Math.min(1, dt * 10); fin.position.x = X(1) + (th === 'space' ? 2.0 : 1.0);
+      me.tick(t, dt, Math.abs(fm - pm) / Math.max(dt, .001)); cpu.tick(t, dt, Math.abs(fc - pc) / Math.max(dt, .001)); pm = fm; pc = fc; v.sun.target.position.set(0, 0, 0); });
+  }
+};
 G3.cmap = Object.assign({}, G3.map, {scr: 'scr-class', v: null, key: '', st: null, trail: null, world: null, pts: [], anim: []});
 /* ================= 선생님 점검 모드 ================= */
 const TEACHER = '점검 선생님', TEACHER_PW = typeof ADMIN_PW !== 'undefined' ? ADMIN_PW : 'kingkong2026';
@@ -2824,7 +2945,7 @@ function checkUnlocks(n, b, a) {
   if (b.total < NEED_STARS && a.total >= NEED_STARS && !prog().passed[n]) msgs.push('⭐ 별 12개! 자리 익히기 줄을 모두 마치면 레벨 업 도전이 열려요');
   msgs.forEach((m, i) => setTimeout(() => toast(m), 500 + i * 1500));
 }
-function stopAll() { if (typeof Boss !== 'undefined' && Boss.timer) { Boss.close(); Boss.timer = 0; } Practice.stop(); if (CurrentGame) { if (CurrentGame.running && GStat.keys > 0) { GStat.commit(); save(); } GStat.reset(); CurrentGame.stop(); CurrentGame = null; } Input.handler = null; if (KB.el) KB.setNext(null); if (typeof Cloud !== 'undefined') Cloud.unwatch(); }
+function stopAll() { if (typeof G3 !== 'undefined' && G3.game) G3.game.dispose(); if (typeof Boss !== 'undefined' && Boss.timer) { Boss.close(); Boss.timer = 0; } Practice.stop(); if (CurrentGame) { if (CurrentGame.running && GStat.keys > 0) { GStat.commit(); save(); } GStat.reset(); CurrentGame.stop(); CurrentGame = null; } Input.handler = null; if (KB.el) KB.setNext(null); if (typeof Cloud !== 'undefined') Cloud.unwatch(); }
 
 /* ================= 연습 ================= */
 const WRIST_KEYS = new Set(['Enter', 'Backspace', 'Quote', 'BracketLeft', 'BracketRight', 'Minus', 'Equal', 'Digit0', 'Backquote', 'Digit1', 'Slash']);
@@ -3272,7 +3393,7 @@ const MoleGame = {
       h.innerHTML = ART.holeBack() + '<div class="clip"><div class="mole">' + ART.mole() + '<div class="sign"></div></div></div>' + ART.holeFront();
       hs.appendChild(h); this.holes.push({el: h, sign: h.querySelector('.sign'), jamo: null, until: 0});
     }
-    this.fit();
+    this.fit(); G3.game.attach(st, 'mole');
     this.score = 0; this.hits = 0; this.spawned = 0; this.errors = 0; this.running = true; this.t0 = performance.now(); this.nextSpawn = this.t0 + 500;
     Input.handler = (c, s) => this.onKey(c, s); setHUD({time: this.dur, score: 0});
     this.raf = requestAnimationFrame(t => this.tick(t));
@@ -3328,7 +3449,7 @@ const FallGame = {
   L: null, dir: 'down', items: [], lock: null, buf: 0, score: 0, lives: 5, spawned: 0, popped: 0, escaped: 0, errors: 0, running: false, t0: 0, last: 0, dur: 60, nextSpawn: 0, raf: 0, layer: null,
   start(L) {
     this.L = L; this.dir = L.game.dir; const st = $('#g-stage');
-    st.innerHTML = ART.scene(this.dir === 'down' ? 'rain' : this.dir === 'up' ? 'fest' : 'sea') + '<div class="layer"></div>'; this.layer = st.querySelector('.layer');
+    st.innerHTML = ART.scene(this.dir === 'down' ? 'rain' : this.dir === 'up' ? 'fest' : 'sea') + '<div class="layer"></div>'; this.layer = st.querySelector('.layer'); G3.game.attach(st, this.dir);
     this.items = []; this.lock = null; this.buf = 0; this.score = 0; this.lives = 5; this.spawned = 0; this.popped = 0; this.escaped = 0; this.errors = 0; this.okKeys = 0;
     this.running = true; this.t0 = this.last = performance.now(); this.nextSpawn = this.t0 + 400;
     Input.handler = (c, s) => this.onKey(c, s); setHUD({time: this.dur, score: 0, lives: this.lives}); $('#g-buffer').textContent = '';
@@ -3414,7 +3535,7 @@ const RaceGame = {
     this.L = L; this.text = L.game.build(); this.units = textUnits(this.text); this.pos = 0; this.errors = 0; this.correct = 0; this.startAt = null; this.cpuDone = false;
     const st = $('#g-stage');
     st.innerHTML = `<div class="track">${ART.scene(L.game.theme || 'road')}<div class="lane me"><span class="sprite running">${ART.sprite(L.game.me)}</span></div><div class="lane cpu"><span class="sprite running">${ART.sprite(L.game.rival)}</span></div><div class="finish">${L.game.theme === 'space' ? ART.moon() : ART.flag()}</div></div><div class="racetext" id="race-text"></div>`;
-    this.spans = buildTextDOM($('#race-text'), this.text); this.running = true;
+    this.spans = buildTextDOM($('#race-text'), this.text); this.running = true; G3.game.attach(st.querySelector('.track'), 'race', {theme: L.game.theme || 'road'});
     Input.handler = (c, s) => this.onKey(c, s); this.paint(); setHUD({time: 0, score: 0});
     this.raf = requestAnimationFrame(t => this.tick(t));
   },
