@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<!-- 타자 모험 v4.1 우리반용 (2026-11-19) · 한글 두벌식 10레벨 + 영어 자판 8레벨 · 제작 kingkongssam -->
+<!-- 타자 모험 v4.2 우리반용 (2026-11-19) · 한글 두벌식 10레벨 + 영어 자판 8레벨 · 제작 kingkongssam -->
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#ff7a2f">
-<title>타자 모험 v4.1 — 기본 자리부터 차근차근 레벨 업</title>
+<title>타자 모험 v4.2 — 기본 자리부터 차근차근 레벨 업</title>
 <style>
 :root{
   --bg:#eef4fb; --card:#ffffff; --ink:#1f2a3d; --muted:#556178; --btn:#c2410c; --btn-dark:#8f2f08;
@@ -1253,7 +1253,7 @@ function validateContent() {
 <script>
 /* ================= 저장 ================= */
 const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
-const APP_VERSION = '4.1', APP_DATE = '2026-11-19';
+const APP_VERSION = '4.2', APP_DATE = '2026-11-19';
 /* ===== 우리 반 공유(선택) : Firebase 설정 =====
    Firebase 콘솔 → 프로젝트 설정 → 내 앱(웹) → SDK 설정의 firebaseConfig 값을 아래에 그대로 붙여 넣으세요.
    Realtime Database를 만들고 databaseURL까지 넣어야 켜집니다. 비워 두면 혼자 쓰는 앱으로 돌아갑니다. */
@@ -2153,7 +2153,7 @@ var G3 = {
   flag(c = '#fa5252', h = 1.3) { const f = this.m(this.box(.5, .32, .03), c, .27, h - .18, 0); return {g: this.grp([this.m(this.cyl(.03, .03, h, 6), '#868e96', 0, h / 2, 0), this.m(this.sph(.06, 8), '#ffd43b', 0, h, 0), f]), f}; },
   /* ---------- 지도 ---------- */
   map: {
-    v: null, key: '', st: null, trail: null, world: null, pts: [], anim: [], cols: 0, scr: 'scr-map',
+    v: null, key: '', st: null, trail: null, world: null, pts: [], anim: [], cols: 0, seen: {}, scr: 'scr-map',
     show(trail, st) { this.st = st; this.trail = trail; G3.load().then(T => { if (!T || !$('#' + this.scr).classList.contains('on')) return; try { this._show(); } catch (e) { console.warn('3D 지도 실패', e); G3.failed = true; [G3.map, G3.cmap].forEach(m => { if (m.trail) { m.trail.classList.remove('g3'); m.trail.style.height = ''; } if (m.v) { m.v.dispose(); m.v = null; } }); layoutTrail(prog()); if (typeof CLS_IDS !== 'undefined' && $('#scr-class').classList.contains('on')) layoutTrail(prog(), CLS_IDS); } }); },
     relayout() { if (this.v && this.trail && this.st && this.trail.classList.contains('g3')) { try { this._show(); } catch (e) {} } },
     _show() {
@@ -2213,9 +2213,14 @@ var G3 = {
           A.push(t0 => { kid.position.y = .15 + Math.abs(Math.sin(t0 * 2.6 + i + j * 1.3)) * (me ? .26 : .12); kid.rotation.y = Math.sin(t0 * .9 + j) * .4; }); });
         if (i + 1 === st.cur) {
           const ring = G.m(G.tor(1.72, .07), '#ff922b', 0, .2, 0, {emissive: '#ff7a2f', emissiveIntensity: 1}); ring.rotation.x = Math.PI / 2; ring.castShadow = false; isl.add(ring);
-          const me = G.animal(st.av); me.position.set(.75, .15, .95); me.scale.setScalar(.82); isl.add(me);
-          const arrow = G.m(G.cone(.16, .3, 4), '#ffd43b', .75, 1.9, .95, {emissive: '#ffd43b', emissiveIntensity: .8}); arrow.rotation.x = Math.PI; isl.add(arrow);
-          A.push(t0 => { const h = Math.abs(Math.sin(t0 * 3.2)); me.position.y = .15 + h * .32; me.scale.set(.82 * (1 + (1 - h) * .06), .82 * (1 - (1 - h) * .08), .82); me.rotation.y = Math.sin(t0 * 1.1) * .5; ring.scale.setScalar(1 + Math.sin(t0 * 3) * .04); arrow.position.y = 1.95 + Math.sin(t0 * 4) * .1; arrow.rotation.y = t0 * 2; });
+          const me = this.me = G.animal(st.av); me.scale.setScalar(.82); W.add(me); const spot = q => new T.Vector3(q.x + .75, .15, q.z + .95), home = spot(p);
+          const arrow = G.m(G.cone(.16, .3, 4), '#ffd43b', 0, 0, 0, {emissive: '#ffd43b', emissiveIntensity: .8}); arrow.rotation.x = Math.PI; W.add(arrow);
+          const sk = st.id + '|' + st.course, from = this.seen[sk]; this.seen[sk] = st.cur; let path = null, t1 = -1, len = 0;
+          if (from && from < st.cur && this.pts[from - 1]) { path = [spot(this.pts[from - 1])]; for (let k = from - 1; k < i; k++) { const a = this.pts[k], b = this.pts[k + 1], d = new T.Vector3(b.x - a.x, 0, b.z - a.z).normalize(); path.push(new T.Vector3(a.x + d.x * 1.35, .15, a.z + d.z * 1.35), new T.Vector3(b.x - d.x * 1.35, .15, b.z - d.z * 1.35)); } path.push(home); for (let k = 1; k < path.length; k++) len += path[k].distanceTo(path[k - 1]); }
+          A.push(t0 => { const h = Math.abs(Math.sin(t0 * 3.2)); let walking = false;
+            if (path) { if (t1 < 0) t1 = t0 + .6; let d = Math.max(0, t0 - t1) * 3.2; if (d >= len) { path = null; if (typeof Snd !== 'undefined') Snd.pop(); } else { walking = true; let k = 1; while (k < path.length - 1 && d > path[k].distanceTo(path[k - 1])) { d -= path[k].distanceTo(path[k - 1]); k++; } const a = path[k - 1], b = path[k]; me.position.lerpVectors(a, b, Math.min(1, d / Math.max(.001, a.distanceTo(b)))); me.rotation.y = Math.atan2(b.x - a.x, b.z - a.z); me.position.y = .15 + Math.abs(Math.sin(t0 * 9)) * .16; } }
+            if (!walking) { me.position.set(home.x, .15 + h * .32, home.z); me.rotation.y = Math.sin(t0 * 1.1) * .5; }
+            me.scale.set(.82 * (1 + (1 - h) * .06), .82 * (1 - (1 - h) * .08), .82); ring.scale.setScalar(1 + Math.sin(t0 * 3) * .04); arrow.position.set(me.position.x, me.position.y + 1.75 + Math.sin(t0 * 4) * .1, me.position.z); arrow.rotation.y = t0 * 2; });
         }
         if (i < n - 1) { const q = this.pts[i + 1], dx = q.x - p.x, dz = q.z - p.z, len = Math.hypot(dx, dz), done = i + 1 < st.cur; const br = new T.Group(); br.position.set(p.x + dx / 2, .02, p.z + dz / 2); br.rotation.y = Math.atan2(-dz, dx); const L = len - 2.7, k = Math.max(3, Math.round(L / .3));
           for (let j = 0; j < k; j++) { const x = -L / 2 + (j + .5) * L / k; br.add(G.m(G.box(L / k * .78, .07, .62), done ? (j % 2 ? '#e0a96d' : '#d39a5c') : '#c2c9d0', x, -Math.sin((j + .5) / k * Math.PI) * .1, 0)); }
@@ -2330,7 +2335,7 @@ function renderMap(course) {
   });
   $('#trail').classList.add('mapbg'); $('#trail').style.setProperty('--tile', ART.mapTile());
   layoutTrail(p);
-  G3.map.show($('#trail'), {course: curCourse, av: avatarOf(u), cur: Math.min(C.levels.length, p.unlocked), lv: C.levels.map(L => (L.n > p.unlocked ? 0 : p.passed[L.n] ? 2 : 1))});
+  G3.map.show($('#trail'), {id: u.name, course: curCourse, av: avatarOf(u), cur: Math.min(C.levels.length, p.unlocked), lv: C.levels.map(L => (L.n > p.unlocked ? 0 : p.passed[L.n] ? 2 : 1))});
   $('#class-card').style.display = classAvailable() ? 'flex' : 'none'; $('#boss-card').style.display = classAvailable() ? 'flex' : 'none';
   const mc = $('#master-card'); mc.style.display = p.master ? 'block' : 'none';
   mc.textContent = `🏆 ${C.name} 타자 마스터! ${C.name} 코스의 모든 레벨을 통과했어요. 원하는 레벨을 자유롭게 연습해요.`;
