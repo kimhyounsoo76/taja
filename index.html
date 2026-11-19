@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<!-- 타자 모험 v3.4 우리반용 (2026-11-03) · 한글 두벌식 10레벨 + 영어 자판 8레벨 · 제작 kingkongssam -->
+<!-- 타자 모험 v3.5 우리반용 (2026-11-03) · 한글 두벌식 10레벨 + 영어 자판 8레벨 · 제작 kingkongssam -->
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#ff7a2f">
-<title>타자 모험 v3.4 — 기본 자리부터 차근차근 레벨 업</title>
+<title>타자 모험 v3.5 — 기본 자리부터 차근차근 레벨 업</title>
 <style>
 :root{
   --bg:#eef4fb; --card:#ffffff; --ink:#1f2a3d; --muted:#556178; --btn:#c2410c; --btn-dark:#8f2f08;
@@ -518,6 +518,47 @@ svg.face{width:1.2em;height:1.2em;display:inline-block;vertical-align:middle;ove
 .cheer .lmup{width:64px;height:64px;border-radius:50%;background:radial-gradient(circle at 50% 35%,#fff3bf,#ffd43b 70%,#fab005);display:grid;place-items:center;border:3px solid #fff;box-shadow:0 4px 0 #e67700}
 .cheer .lmup .lm-svg{width:76%;height:76%}
 @keyframes jump{from{transform:translateY(0) rotate(-4deg)}to{transform:translateY(-12px) rotate(4deg)}}
+/* 보스전 */
+.bossarena{position:relative;height:clamp(240px,42vh,440px);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);user-select:none}
+.b-mon{position:absolute;left:50%;bottom:4%;width:min(44%,300px);height:72%;transform:translateX(-50%);z-index:1}
+.b-mon .boss-svg{width:100%;height:100%;display:block;animation:bossidle 1.4s ease-in-out infinite alternate}
+@keyframes bossidle{from{transform:translateY(0) scale(1)}to{transform:translateY(-6px) scale(1.02)}}
+.b-mon.hit .boss-svg{animation:bosshit .25s}
+@keyframes bosshit{0%{transform:translateX(0);filter:brightness(1.8) saturate(.4)}30%{transform:translateX(-8px) rotate(-3deg)}60%{transform:translateX(8px) rotate(3deg)}100%{transform:none;filter:none}}
+.b-arm{transform-box:fill-box;transform-origin:center;animation:arm 1s ease-in-out infinite alternate}
+.b-arm.r{animation-delay:.5s}
+@keyframes arm{from{transform:rotate(-10deg)}to{transform:rotate(10deg)}}
+.b-hpwrap{position:absolute;left:4%;right:4%;top:4%;z-index:2}
+.b-hp{height:22px;border-radius:99px;background:rgba(0,0,0,.35);border:3px solid #fff;overflow:hidden}
+.b-hp i{display:block;height:100%;width:100%;background:linear-gradient(90deg,#ff6b6b,#fa5252 60%,#ff922b);transition:width .3s}
+.b-hptxt{color:#fff;font-weight:900;font-size:14px;text-shadow:0 1px 2px rgba(0,0,0,.5);margin-top:4px}
+.b-time{position:absolute;right:4%;top:calc(4% + 30px);z-index:2;color:#fff;font-weight:900;font-size:20px;background:rgba(0,0,0,.35);border-radius:12px;padding:2px 10px}
+.b-top{position:absolute;left:3%;bottom:4%;z-index:2;background:rgba(255,255,255,.88);border-radius:14px;padding:8px 10px;font-size:13px;font-weight:800;min-width:150px;max-width:44%}
+.b-top:empty{display:none}
+.b-top div{display:flex;align-items:center;gap:4px;white-space:nowrap;overflow:hidden}
+.b-top div b{margin-left:auto;color:#7048e8}
+.b-top svg.face{width:20px;height:20px}
+.b-top small{display:block;color:var(--muted);margin-top:2px}
+.b-over{position:absolute;inset:0;z-index:3;display:none;flex-direction:column;align-items:center;justify-content:center;color:#fff;text-align:center;font-weight:900;background:rgba(20,10,60,.55)}
+.b-over.on{display:flex}
+.b-over div{font-size:clamp(30px,6vw,56px);text-shadow:0 3px 6px rgba(0,0,0,.4)}
+.b-over small{font-size:16px;margin-top:6px}
+.b-over.win{background:rgba(255,190,40,.45)}
+.bossmsg{text-align:center;font-weight:800;color:#475569;margin:10px 0 6px;font-size:15px}
+.bosstype{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);padding:12px 16px;margin-bottom:10px}
+.bosstype.off{opacity:.5}
+.b-mine{font-size:14px;font-weight:800;color:#475569;margin-bottom:6px}
+.b-mine b{color:#7048e8;font-size:18px}
+.b-text{font-size:clamp(20px,3.6vw,30px);line-height:1.7;word-break:keep-all;overflow-wrap:anywhere;min-height:1.7em}
+.b-mon.down .boss-svg{animation:none;transform:translateY(14%) rotate(-10deg);filter:grayscale(.5) brightness(.9)}
+@media (max-width:480px){.b-top{font-size:11px;min-width:0;padding:6px 8px}.b-top svg.face{width:16px;height:16px}.b-time{font-size:16px}}
+#scr-boss.tv .bosstype,#scr-boss.tv #boss-kb{display:none}
+#scr-boss.tv .bossarena{height:clamp(320px,72vh,820px)}
+#scr-boss.tv .b-top{font-size:18px;min-width:240px}
+#scr-boss.tv .b-top svg.face{width:28px;height:28px}
+#scr-boss.tv .b-hp{height:34px}
+#scr-boss.tv .b-hptxt{font-size:22px}
+#scr-boss.tv .b-time{font-size:32px;top:calc(4% + 44px)}
 /* ---------- responsive ---------- */
 @media (max-width:480px){#uc-stars{display:none} #uc-name{display:none} #topbar{gap:4px!important;padding:6px 8px!important} #topbar .iconbtn{width:30px!important;height:30px!important;font-size:14px!important} #topbar .userchip{padding:3px 6px!important}}
 @media (max-width:400px){#topbar .logo{display:none}}
@@ -615,6 +656,7 @@ body.show-hands .typing-finger-caption{display:block}
       <div class="card master" id="master-card" style="display:none"></div>
       <div class="card gamecard" id="test-card" style="margin-top:14px"><div class="icon">⏱</div><div class="body"><div class="name">1분 속도 재기</div><div class="desc" id="test-card-desc">1분 동안 친 타수를 재요(이 앱의 계산 방식). 틀리면 ⌫로 고치고 계속!</div></div><button class="btn" id="test-card-btn">시작</button></div>
       <div class="card gamecard" id="class-card" style="display:none;margin-top:14px"><div class="icon">👥</div><div class="body"><div class="name">우리 반 지도</div><div class="desc" id="class-card-desc">친구들이 어느 레벨에 있는지 보고, 게임 기록도 확인해요.</div></div><button class="btn" id="class-card-btn">보기</button></div>
+      <div class="card gamecard" id="boss-card" style="display:none;margin-top:14px"><div class="icon">⚔️</div><div class="body"><div class="name">반 협동 보스전</div><div class="desc">선생님이 열면 반 친구들과 함께 타자로 보스를 쓰러뜨려요. 내 레벨에 맞는 글이 나와요.</div></div><button class="btn" id="boss-card-btn">들어가기</button></div>
     </section>
 
     <!-- 레벨 허브 -->
@@ -664,6 +706,24 @@ body.show-hands .typing-finger-caption{display:block}
       <div class="trail" id="ctrail"><svg class="trail-svg" id="ctrail-svg" aria-hidden="true"></svg><div class="trail-grid" id="ctrail-grid"></div></div>
       <div class="sect">🎮 게임 기록 <span class="sub">게임마다 반에서 가장 높은 점수</span></div>
       <div class="card lines" id="cls-rank"></div>
+    </section>
+
+    <!-- 보스전 -->
+    <section id="scr-boss" class="screen">
+      <div class="hubhead">
+        <button class="btn ghost" id="boss-back">← 지도</button>
+        <h2>⚔️ 반 협동 보스전</h2>
+        <button class="btn sec sm" id="boss-teacher" style="margin-left:auto" title="선생님 관리">👩‍🏫</button>
+      </div>
+      <div id="boss-admin" class="classbar" style="display:none"><b style="color:#7c3aed">👩‍🏫</b>
+        <label>난이도 <select id="boss-hp"><option value="800">쉬움 (체력 800)</option><option value="2000" selected>보통 (체력 2000)</option><option value="4000">어려움 (체력 4000)</option><option value="8000">전설 (체력 8000)</option></select></label>
+        <label>시간 <select id="boss-dur"><option value="120">2분</option><option value="180" selected>3분</option><option value="300">5분</option></select></label>
+        <button class="btn sm" id="boss-start">보스전 시작</button><button class="btn sec sm" id="boss-stop">끝내기</button><button class="btn sec sm" id="boss-tv">📺 TV 화면</button>
+      </div>
+      <div class="bossarena" id="boss-arena"></div>
+      <div class="bossmsg" id="boss-msg"></div>
+      <div class="bosstype" id="boss-type"><div class="b-mine">⚔️ 내 공격 <b id="boss-mydmg">0</b> · 🔥 연속 <b id="boss-combo">0</b></div><div class="b-text" id="boss-text"></div></div>
+      <div id="boss-kb"></div>
     </section>
 
     <!-- 채팅 -->
@@ -1149,7 +1209,7 @@ function validateContent() {
 <script>
 /* ================= 저장 ================= */
 const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
-const APP_VERSION = '3.4', APP_DATE = '2026-11-19';
+const APP_VERSION = '3.5', APP_DATE = '2026-11-19';
 /* ===== 우리 반 공유(선택) : Firebase 설정 =====
    Firebase 콘솔 → 프로젝트 설정 → 내 앱(웹) → SDK 설정의 firebaseConfig 값을 아래에 그대로 붙여 넣으세요.
    Realtime Database를 만들고 databaseURL까지 넣어야 켜집니다. 비워 두면 혼자 쓰는 앱으로 돌아갑니다. */
@@ -1995,7 +2055,7 @@ function renderMap(course) {
   });
   $('#trail').classList.add('mapbg'); $('#trail').style.setProperty('--tile', ART.mapTile());
   layoutTrail(p);
-  $('#class-card').style.display = classAvailable() ? 'flex' : 'none';
+  $('#class-card').style.display = classAvailable() ? 'flex' : 'none'; $('#boss-card').style.display = classAvailable() ? 'flex' : 'none';
   const mc = $('#master-card'); mc.style.display = p.master ? 'block' : 'none';
   mc.textContent = `🏆 ${C.name} 타자 마스터! ${C.name} 코스의 모든 레벨을 통과했어요. 원하는 레벨을 자유롭게 연습해요.`;
 }
@@ -2046,6 +2106,111 @@ const Chat = {
     const s = this.stat(); s.msgs++; s.keys += keys; if (kpm > (s.best || 0)) { s.best = kpm; if (s.msgs > 1) toast(`⚡ 채팅 최고 속도 ${kpm}타/분!`); } save(); this.renderStat(); inp.focus();
   }
 };
+/* ================= 반 협동 보스전 ================= */
+var ART_EXTRA = {}; ART_EXTRA.boss = function () {
+  return this.svg('0 0 220 200', `<defs><radialGradient id="bossb" cx="40%" cy="30%" r="80%"><stop offset="0" stop-color="#b197fc"/><stop offset=".6" stop-color="#7048e8"/><stop offset="1" stop-color="#4c2bb8"/></radialGradient><linearGradient id="bossh" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff3bf"/><stop offset="1" stop-color="#fab005"/></linearGradient></defs>
+    <ellipse cx="110" cy="190" rx="80" ry="10" fill="#000" opacity=".18"/>
+    <path d="M58 52 L40 6 L82 38Z" fill="url(#bossh)" stroke="#e67700" stroke-width="3" stroke-linejoin="round"/><path d="M162 52 L180 6 L138 38Z" fill="url(#bossh)" stroke="#e67700" stroke-width="3" stroke-linejoin="round"/>
+    <g class="b-arm l"><ellipse cx="26" cy="120" rx="18" ry="26" fill="#7048e8"/><circle cx="18" cy="140" r="11" fill="#9775fa"/></g><g class="b-arm r"><ellipse cx="194" cy="120" rx="18" ry="26" fill="#7048e8"/><circle cx="202" cy="140" r="11" fill="#9775fa"/></g>
+    <path d="M30 120 C30 50 70 28 110 28 C150 28 190 50 190 120 C190 168 160 188 110 188 C60 188 30 168 30 120Z" fill="url(#bossb)"/>
+    <ellipse cx="80" cy="60" rx="26" ry="12" fill="#fff" opacity=".18" transform="rotate(-20 80 60)"/>
+    <g class="b-eye"><ellipse cx="80" cy="92" rx="20" ry="22" fill="#fff"/><ellipse cx="140" cy="92" rx="20" ry="22" fill="#fff"/><circle class="pupil" cx="84" cy="96" r="9" fill="#212529"/><circle class="pupil" cx="136" cy="96" r="9" fill="#212529"/><circle cx="87" cy="92" r="3" fill="#fff"/><circle cx="139" cy="92" r="3" fill="#fff"/></g>
+    <path d="M56 66 L100 80" stroke="#2b1a66" stroke-width="7" stroke-linecap="round"/><path d="M164 66 L120 80" stroke="#2b1a66" stroke-width="7" stroke-linecap="round"/>
+    <path d="M60 128 Q110 176 160 128Z" fill="#2b1a66"/>
+    <g fill="#fff" stroke="#ced4da" stroke-width="1.5"><rect x="68" y="128" width="16" height="15" rx="3"/><rect x="88" y="128" width="16" height="17" rx="3"/><rect x="108" y="128" width="16" height="17" rx="3"/><rect x="128" y="128" width="16" height="15" rx="3"/></g>
+    <g font-family="sans-serif" font-size="10" font-weight="900" fill="#495057" text-anchor="middle"><text x="76" y="139">ㅁ</text><text x="96" y="140">ㄴ</text><text x="116" y="140">ㅇ</text><text x="136" y="139">ㄹ</text></g>
+    <ellipse cx="54" cy="122" rx="9" ry="5" fill="#f783ac" opacity=".5"/><ellipse cx="166" cy="122" rx="9" ry="5" fill="#f783ac" opacity=".5"/>`, 'boss-svg', 'xMidYMax meet');
+};
+ART_EXTRA.sc_castle = function () {
+  const a = this.id('c'); let st = ''; for (let i = 0; i < 40; i++) st += `<circle cx="${(i * 97) % 800}" cy="${(i * 37) % 160}" r="${i % 6 ? 1 : 1.8}" fill="#fff" opacity="${.4 + (i % 3) * .2}"/>`;
+  return this.svg('0 0 800 450', `<defs><linearGradient id="${a}s" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1b1f4b"/><stop offset=".6" stop-color="#5f3dc4"/><stop offset="1" stop-color="#e599f7"/></linearGradient></defs><rect width="800" height="450" fill="url(#${a}s)"/>${st}<circle cx="660" cy="80" r="34" fill="#fff3bf"/>
+    <g fill="#2b2f5a"><rect x="0" y="300" width="120" height="150"/><path d="M0 300 L60 240 L120 300Z"/><rect x="680" y="290" width="120" height="160"/><path d="M680 290 L740 226 L800 290Z"/><rect x="130" y="340" width="540" height="110"/><g>${Array.from({length: 14}, (_, i) => `<rect x="${134 + i * 39}" y="326" width="22" height="16"/>`).join('')}</g></g>
+    <g fill="#ffd43b" opacity=".85"><rect x="40" y="330" width="14" height="20" rx="7"/><rect x="740" y="320" width="14" height="20" rx="7"/><rect x="300" y="380" width="12" height="16" rx="6"/><rect x="500" y="380" width="12" height="16" rx="6"/></g>
+    <rect y="430" width="800" height="20" fill="#3b3f74"/>`);
+};
+var Boss = {
+  state: null, hits: {}, offset: 0, admin: false, tv: false, myDmg: 0, sentDmg: 0, combo: 0, text: '', units: [], spans: [], pos: 0, timer: 0, pushT: 0, unsubs: [], ended: '',
+  key() { return Cloud.key((user() || {}).name || ''); },
+  liveId() { return this.state && this.state.on ? String(this.state.id) : ''; },
+  total() { const id = this.liveId(); let t = 0; Object.values(this.hits || {}).forEach(h => { if (h && String(h.id) === id) t += Math.max(0, Math.min(100000, Number(h.dmg) || 0)); }); return t; },
+  timeLeft() { const s = this.state; if (!s || !s.on || typeof s.start !== 'number') return 0; return Math.max(0, Math.ceil(s.dur - (Date.now() + this.offset - s.start) / 1000)); },
+  open() {
+    if (!classAvailable()) return; stopAll(); show('scr-boss'); updateChip();
+    $('#boss-admin').style.display = this.admin ? '' : 'none'; $('#scr-boss').classList.toggle('tv', this.tv);
+    $('#boss-arena').innerHTML = `${ART.scene('castle')}<div class="b-hpwrap"><div class="b-hp"><i id="boss-hpbar"></i></div><div class="b-hptxt" id="boss-hptxt"></div></div><div class="b-time" id="boss-time"></div><div class="b-mon" id="boss-mon">${ART.boss()}</div><div class="b-top" id="boss-top"></div><div class="b-over" id="boss-over"></div>`;
+    this.myDmg = 0; this.sentDmg = 0; this.combo = 0; this.ended = ''; this.newText(); this.render();
+    mountKB('#boss-kb', true, this.units);
+    Input.handler = (c, s) => this.onKey(c, s);
+    Cloud.init().then(ok => {
+      if (!ok) { $('#boss-msg').textContent = '인터넷 연결을 확인해 주세요.'; return; }
+      this.unwatch(); const f = Cloud.fb, base = `classes/${Cloud.code()}/boss`;
+      this.unsubs.push(f.onValue(f.ref(Cloud.db, '.info/serverTimeOffset'), s => { this.offset = Number(s.val()) || 0; }));
+      this.unsubs.push(f.onValue(f.ref(Cloud.db, base), snap => { const v = snap.val() || {}; const prev = this.liveId(); this.hits = v.hits || {}; delete v.hits; this.state = v;
+        if (this.liveId() !== prev) { this.myDmg = (this.hits[this.key()] && String(this.hits[this.key()].id) === this.liveId()) ? Number(this.hits[this.key()].dmg) || 0 : 0; this.sentDmg = this.myDmg; this.combo = 0; this.ended = ''; this.newText(); }
+        this.render(); }, () => { $('#boss-msg').textContent = '보스전을 읽을 수 없어요. 선생님께 Firebase 규칙을 확인해 달라고 해 주세요.'; }));
+    });
+    clearInterval(this.timer); this.timer = setInterval(() => { this.render(); this.push(); }, 300);
+  },
+  unwatch() { this.unsubs.forEach(u => { try { u(); } catch (e) {} }); this.unsubs = []; },
+  close() { clearInterval(this.timer); this.push(true); this.unwatch(); Input.handler = null; },
+  newText() {
+    const c = curCourse; const p = progOf(user(), c); const L = COURSES[c].levels[Math.min(COURSES[c].levels.length, p.unlocked) - 1]; setLang(c);
+    this.text = genMixText(L).split('\n')[0]; this.units = textUnits(this.text); this.pos = 0;
+    const box = $('#boss-text'); if (box) { this.spans = buildTextDOM(box, this.text); this.paint(); }
+  },
+  paint() { if (!this.spans.length) return; paintText(this.spans, this.units, Array.from({length: this.pos}, () => ({ok: true})), $('#boss-text')); KB.setNext(this.live() ? this.units[this.pos] || null : null); },
+  live() { return this.liveId() && this.timeLeft() > 0 && this.total() < (this.state.hp || 1) && !this.tv; },
+  onKey(code, shift) {
+    if (!this.live()) return; const u = this.units[this.pos]; if (!u) return; const ch = keyChar(code, shift); if (ch === null || ch === '\n' || ch === '\b') return;
+    if (ch === u.jamo) {
+      this.combo++; const dmg = u.w * (this.combo >= 30 ? 3 : this.combo >= 15 ? 2 : 1); this.myDmg += dmg; this.pos++; KB.flash(code, true); Snd.ok();
+      this.hitFx(dmg); if (this.pos >= this.units.length) { this.newText(); Snd.pop(); } else this.paint();
+    } else { this.combo = 0; KB.flash(code, false); Snd.bad(); const s = this.spans[u.ci]; if (s) { s.classList.remove('shake'); void s.offsetWidth; s.classList.add('shake'); } }
+    $('#boss-mydmg').textContent = this.myDmg; $('#boss-combo').textContent = this.combo;
+  },
+  hitFx(dmg) {
+    const m = $('#boss-mon'); if (!m) return; m.classList.remove('hit'); void m.offsetWidth; m.classList.add('hit');
+    const ar = $('#boss-arena'); const x = 40 + Math.random() * 20, y = 35 + Math.random() * 25; popText(ar, '-' + dmg, x, y); if (this.combo % 10 === 0) ART.burst(ar, x, y, {kind: 'star', n: 8, colors: ['#ffd43b', '#fff', '#ff922b']});
+  },
+  push(force) {
+    const id = this.liveId(); if (!id || this.myDmg === this.sentDmg) return; const now = Date.now(); if (!force && now - this.pushT < 700) return; this.pushT = now;
+    const u = user(); const d = this.myDmg; Cloud.fb.set(Cloud.fb.ref(Cloud.db, `classes/${Cloud.code()}/boss/hits/${this.key()}`), {name: u.name, avatar: avatarOf(u), dmg: d, id}).then(() => { this.sentDmg = d; }).catch(() => {});
+  },
+  render() {
+    if (!$('#scr-boss').classList.contains('on')) return;
+    const s = this.state; const live = !!this.liveId(); const hp = live ? s.hp || 1 : 1; const tot = live ? Math.min(hp, this.total() + Math.max(0, this.myDmg - this.sentDmg)) : 0; const left = this.timeLeft();
+    $('#boss-hpbar').style.width = (live ? (1 - tot / hp) * 100 : 100) + '%'; $('#boss-hptxt').textContent = live ? `보스 체력 ${Math.max(0, hp - tot).toLocaleString()} / ${hp.toLocaleString()}` : '보스가 잠들어 있어요';
+    $('#boss-time').textContent = live ? `⏱ ${Math.floor(left / 60)}:${String(left % 60).padStart(2, '0')}` : '';
+    const ranks = Object.values(this.hits || {}).filter(h => h && String(h.id) === this.liveId()).sort((a, b) => (b.dmg || 0) - (a.dmg || 0));
+    $('#boss-top').innerHTML = live ? `<b>🏅 공격 순위</b>` + ranks.slice(0, this.tv ? 8 : 3).map((h, i) => `<div>${['🥇', '🥈', '🥉'][i] || i + 1 + '.'} ${ART.face(String(h.avatar || '🙂').slice(0, 4))} ${esc(String(h.name).slice(0, 12))} <b>${NUM(h.dmg, 0, 100000)}</b></div>`).join('') + `<small>참여 ${ranks.length}명</small>` : '';
+    const over = $('#boss-over'); let msg = '';
+    if (!live) { over.className = 'b-over'; over.innerHTML = ''; msg = this.admin ? '난이도와 시간을 고르고 [보스전 시작]을 눌러 주세요. TV에는 📺 화면을 띄우면 좋아요.' : '선생님이 보스전을 열면 여기서 함께 싸워요! 화면을 열어 두고 기다려요.'; }
+    else if (tot >= hp) { if (this.ended !== 'win') { this.ended = 'win'; Snd.levelup(); confetti(); } over.className = 'b-over on win'; over.innerHTML = `<div>🎉 우리 반 승리!</div><small>${ranks.length}명이 함께 ${Math.round((s.dur - left))}초 만에 쓰러뜨렸어요</small>`; msg = '보스를 쓰러뜨렸어요! 모두 수고했어요.'; }
+    else if (left <= 0) { if (this.ended !== 'lose') { this.ended = 'lose'; Snd.miss(); } over.className = 'b-over on lose'; over.innerHTML = `<div>⏰ 시간 끝!</div><small>남은 체력 ${(hp - tot).toLocaleString()} · 다음엔 꼭 이겨요!</small>`; msg = '아쉬워요! 정확하게 치면 연속 보너스로 더 세게 공격해요.'; }
+    else { over.className = 'b-over'; over.innerHTML = ''; msg = this.tv ? '모두 자기 화면에서 글을 쳐서 공격해요!' : '글을 맞게 칠 때마다 공격! 연속 15번 ×2, 30번 ×3 공격이에요.'; }
+    $('#boss-mon').classList.toggle('down', live && tot >= hp);
+    $('#boss-msg').textContent = msg; $('#boss-type').classList.toggle('off', !this.live());
+    const lv = this.live(); if (lv !== this._lv) { this._lv = lv; this.paint(); }
+  },
+  teacher() {
+    if (this.admin) { this.admin = false; this.tv = false; $('#boss-admin').style.display = 'none'; $('#scr-boss').classList.remove('tv'); toast('관리를 마쳤어요'); this.render(); return; }
+    Modal.show({title: '👩‍🏫 보스전 관리', html: '<p class="muted" style="margin:0 0 8px;font-size:14px">선생님 비밀번호를 쓰면 보스전을 열고 닫을 수 있어요.</p><input id="boss-pw" type="password" maxlength="30" autocomplete="off" placeholder="선생님 비밀번호" style="width:100%;font:inherit;padding:10px 12px;border:2px solid #e2e8f0;border-radius:12px">',
+      primary: {label: '관리 시작', fn: () => { if ($('#boss-pw').value !== ADMIN_PW) { toast('비밀번호가 맞지 않아요'); return; } this.admin = true; $('#boss-admin').style.display = ''; this.render(); toast('👩‍🏫 관리 모드예요'); }}, secondary: {label: '닫기', fn: () => {}}});
+    setTimeout(() => $('#boss-pw') && $('#boss-pw').focus(), 50);
+  },
+  start() {
+    const hp = NUM($('#boss-hp').value, 100, 100000), dur = NUM($('#boss-dur').value, 30, 900);
+    Cloud.fb.set(Cloud.fb.ref(Cloud.db, `classes/${Cloud.code()}/boss`), {on: true, id: String(Date.now()), hp, dur, start: Cloud.fb.serverTimestamp()}).then(() => toast('⚔️ 보스전 시작!')).catch(() => toast('시작하지 못했어요. Firebase 규칙을 확인해 주세요'));
+  },
+  stop() { Cloud.fb.set(Cloud.fb.ref(Cloud.db, `classes/${Cloud.code()}/boss/on`), false).then(() => toast('보스전을 닫았어요')).catch(() => toast('닫지 못했어요')); }
+};
+$('#boss-back').onclick = () => { Boss.close(); renderMap(); };
+$('#boss-teacher').onclick = () => Boss.teacher();
+$('#boss-start').onclick = e => { e.currentTarget.blur(); Boss.start(); };
+$('#boss-stop').onclick = e => { e.currentTarget.blur(); Boss.stop(); };
+$('#boss-tv').onclick = e => { e.currentTarget.blur(); Boss.tv = !Boss.tv; $('#scr-boss').classList.toggle('tv', Boss.tv); $('#boss-tv').textContent = Boss.tv ? '⌨️ 학생 화면' : '📺 TV 화면'; Boss.render(); };
+$('#boss-card-btn').onclick = () => Boss.open();
+
 $('#btn-chat').onclick = () => Chat.openScreen();
 $('#chat-back').onclick = () => { Cloud.chatUnwatch(); Chat.open = false; renderMap(); };
 $('#chat-send').onclick = () => Chat.send();
@@ -2286,7 +2451,7 @@ function checkUnlocks(n, b, a) {
   if (b.total < NEED_STARS && a.total >= NEED_STARS && !prog().passed[n]) msgs.push('⭐ 별 12개! 자리 익히기 줄을 모두 마치면 레벨 업 도전이 열려요');
   msgs.forEach((m, i) => setTimeout(() => toast(m), 500 + i * 1500));
 }
-function stopAll() { Practice.stop(); if (CurrentGame) { if (CurrentGame.running && GStat.keys > 0) { GStat.commit(); save(); } GStat.reset(); CurrentGame.stop(); CurrentGame = null; } Input.handler = null; if (KB.el) KB.setNext(null); if (typeof Cloud !== 'undefined') Cloud.unwatch(); }
+function stopAll() { if (typeof Boss !== 'undefined' && Boss.timer) { Boss.close(); Boss.timer = 0; } Practice.stop(); if (CurrentGame) { if (CurrentGame.running && GStat.keys > 0) { GStat.commit(); save(); } GStat.reset(); CurrentGame.stop(); CurrentGame = null; } Input.handler = null; if (KB.el) KB.setNext(null); if (typeof Cloud !== 'undefined') Cloud.unwatch(); }
 
 /* ================= 연습 ================= */
 const WRIST_KEYS = new Set(['Enter', 'Backspace', 'Quote', 'BracketLeft', 'BracketRight', 'Minus', 'Equal', 'Digit0', 'Backquote', 'Digit1', 'Slash']);
@@ -2723,6 +2888,7 @@ const ART = {
   }
 };
 
+Object.assign(ART, ART_EXTRA);
 function posIn(stage, el) { const a = stage.getBoundingClientRect(), b = el.getBoundingClientRect(); return [((b.left + b.width / 2) - a.left) / a.width * 100, ((b.top + b.height * .35) - a.top) / a.height * 100]; }
 const MoleGame = {
   L: null, holes: [], running: false, score: 0, hits: 0, spawned: 0, errors: 0, t0: 0, dur: 45, nextSpawn: 0, raf: 0,

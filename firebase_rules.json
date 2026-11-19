@@ -31,6 +31,23 @@
           "chatOff": {
             ".validate": "newData.isBoolean()"
           }
+        },
+        "boss": {
+          ".write": "$code.length >= 6",
+          "on": {
+            ".validate": "newData.isBoolean()"
+          },
+          "hp": {
+            ".validate": "newData.isNumber() && newData.val() >= 100 && newData.val() <= 100000"
+          },
+          "dur": {
+            ".validate": "newData.isNumber() && newData.val() >= 30 && newData.val() <= 900"
+          },
+          "hits": {
+            "$k": {
+              ".validate": "newData.hasChildren(['name','dmg','id']) && newData.child('name').isString() && newData.child('name').val().length <= 12 && newData.child('dmg').isNumber() && newData.child('dmg').val() >= 0 && newData.child('dmg').val() <= 100000"
+            }
+          }
         }
       }
     }
