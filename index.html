@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<!-- 타자 모험 v3.6 우리반용 (2026-11-19) · 한글 두벌식 10레벨 + 영어 자판 8레벨 · 제작 kingkongssam -->
+<!-- 타자 모험 v3.6.1 우리반용 (2026-11-19) · 한글 두벌식 10레벨 + 영어 자판 8레벨 · 제작 kingkongssam -->
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#ff7a2f">
-<title>타자 모험 v3.6 — 기본 자리부터 차근차근 레벨 업</title>
+<title>타자 모험 v3.6.1 — 기본 자리부터 차근차근 레벨 업</title>
 <style>
 :root{
   --bg:#eef4fb; --card:#ffffff; --ink:#1f2a3d; --muted:#556178; --btn:#c2410c; --btn-dark:#8f2f08;
@@ -520,6 +520,7 @@ svg.face{width:1.2em;height:1.2em;display:inline-block;vertical-align:middle;ove
 @keyframes jump{from{transform:translateY(0) rotate(-4deg)}to{transform:translateY(-12px) rotate(4deg)}}
 /* 줄다리기 청백전 */
 .bossarena{position:relative;height:clamp(250px,44vh,460px);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);user-select:none}
+#boss-arena .lanefx{display:none}
 .t-score{position:absolute;left:50%;top:3%;transform:translateX(-50%);z-index:3;display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.92);border-radius:999px;padding:4px 14px;font-weight:900;font-size:15px;box-shadow:0 3px 0 rgba(0,0,0,.12);white-space:nowrap}
 .t-score .tb{color:#1c7ed6}.t-score .tw{color:#495057}
 .t-score .wins{display:flex;gap:3px}.t-score .wins i{width:12px;height:12px;border-radius:50%;border:2px solid currentColor;display:block}.t-score .wins i.on{background:currentColor}
@@ -1229,7 +1230,7 @@ function validateContent() {
 <script>
 /* ================= 저장 ================= */
 const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
-const APP_VERSION = '3.6', APP_DATE = '2026-11-19';
+const APP_VERSION = '3.6.1', APP_DATE = '2026-11-19';
 /* ===== 우리 반 공유(선택) : Firebase 설정 =====
    Firebase 콘솔 → 프로젝트 설정 → 내 앱(웹) → SDK 설정의 firebaseConfig 값을 아래에 그대로 붙여 넣으세요.
    Realtime Database를 만들고 databaseURL까지 넣어야 켜집니다. 비워 두면 혼자 쓰는 앱으로 돌아갑니다. */
