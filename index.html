@@ -809,6 +809,8 @@ body.show-hands .kb .key.next{outline-color:var(--accent-dark)}
 .sp-alt{position:relative;width:16px;border-radius:99px;background:#e9ecef;overflow:hidden;flex:none}.sp-alt i{position:absolute;left:0;right:0;bottom:0;background:linear-gradient(#ffa94d,#fa5252);border-radius:99px}.sp-alt b{position:absolute;left:22px;top:0;font-size:11px;color:var(--muted);white-space:nowrap;display:none}
 .item.rock .tag{background:linear-gradient(90deg,#ffe066 var(--p,0%),#fff var(--p,0%))}
 @media (max-width:560px){.sp-panel{flex-direction:column;gap:6px}.sp-panel.land{flex-direction:row}}
+.bucket{position:absolute;left:10px;bottom:8px;z-index:3;background:rgba(255,255,255,.94);border-radius:999px;padding:4px 14px;font-weight:900;font-size:clamp(13px,2.4vw,17px);box-shadow:0 3px 0 rgba(0,0,0,.2);white-space:nowrap}
+.item.right.big .tag{font-size:clamp(20px,3.8vw,34px)}
 .stage.fall.left{background:#aee3ff}
 .item.left.boss .tag{font-size:clamp(20px,3.8vw,34px)}
 @media (max-width:560px){.order{min-width:0;max-width:48%;padding:8px 8px 10px}.chef-orders{gap:8px 6px;padding-top:50px}}
@@ -1153,7 +1155,7 @@ const LEVELS = [
     ],
     challenge:'ㅁㄴㅇㄹ ㄹㅇㄴㅁ ㅁㅇㄴㄹ ㄴㄹㅁㅇ ㅇㅁㄹㄴ ㄹㄴㅇㅁ',
     pool:['ㅁ','ㄴ','ㅇ','ㄹ'],
-    game:{type:'mole', name:'두더지 잡기', icon:'🐹', rule:'두더지가 들고 나온 글자를 쳐서 잡아요! 45초 동안 많이 잡을수록 별이 커져요.'}
+    game:{type:'mole', name:'두더지 잡기', icon:'🐹', rule:'두더지가 들고 나온 글자를 쳐서 잡아요! 나오자마자 빨리 잡을수록 점수가 높아요(⚡ 1.5배).'}
   },
   {
     n:2, title:'오른손 기본 자리', keys:'ㅗ ㅓ ㅏ ㅣ', target:70, newJamo:['ㅗ','ㅓ','ㅏ','ㅣ'], drills:8, grade:'3학년부터',
@@ -1189,7 +1191,7 @@ const LEVELS = [
     ],
     challenge:'어머니 할머니 어린이 호랑이 오리 한 마리 노란 하마',
     pool:['아이','나라','오리','하마','머리','허리','이마','하나','아니','미로','오이','이모','로마','노랑','마리','미리','모임','노인','알림','엄마','언니','어머니','어린이','호랑이','할머니','아리랑','미나리','오로라','하노이','나란히','어머나','날아','알아','안아','아하','하하','호호'],
-    game:{type:'fall', dir:'right', name:'물고기 낚시', icon:'🐟', unitName:'물고기', rule:'물고기가 헤엄쳐 지나가요. 물고기에 적힌 낱말을 쳐서 잡아요. 놓치면 목숨이 하나 줄어요!'}
+    game:{type:'fall', dir:'right', name:'물고기 낚시', icon:'🐟', unitName:'물고기', rule:'물고기가 헤엄쳐 지나가요. 물고기에 적힌 낱말을 쳐서 잡아요. 놓치면 목숨이 하나 줄어요! 큰 물고기는 느리지만 점수가 2배, 양동이에 10마리를 채우면 보너스예요.'}
   },
   {
     n:4, title:'윗줄 왼손', keys:'ㅂ ㅈ ㄷ ㄱ ㅅ', target:90, newJamo:['ㅂ','ㅈ','ㄷ','ㄱ','ㅅ'], drills:3, grade:'3~4학년',
@@ -1350,7 +1352,7 @@ const EN_LEVELS = [
     lines:['aaaa aaaa aaaa','ssss ssss ssss','asas sasa aass','dddd dddd dddd','ffff ffff ffff','dfdf fdfd ddff','asdf asdf fdsa fdsa','adsf sfad dafs fsda'],
     challenge:'asdf fdsa adsf sfad dafs fsda asdf fdsa',
     pool:['a','s','d','f'],
-    game:{type:'mole', name:'두더지 잡기', icon:'🐹', rule:'두더지가 들고 나온 글자를 쳐서 잡아요! 45초 동안 많이 잡을수록 별이 커져요.'}
+    game:{type:'mole', name:'두더지 잡기', icon:'🐹', rule:'두더지가 들고 나온 글자를 쳐서 잡아요! 나오자마자 빨리 잡을수록 점수가 높아요(⚡ 1.5배).'}
   },
   {
     n:2, title:'오른손 기본 자리', keys:'j k l ;', target:70, newJamo:['j','k','l',';'], drills:8, grade:'3~4학년',
@@ -1366,7 +1368,7 @@ const EN_LEVELS = [
     lines:['fgf fgf jhj jhj gh hg','gf gf hj hj gh hg ghgh','ad as all add ask','dad sad lad had has','gas hall fall flag glad','flash dash slash salad','half glass hash sash','a sad dad has a flag','all lads shall fall','ask dad; add a salad'],
     challenge:'a glad lad has a flag; dad shall add half a salad',
     pool:['ad','as','all','add','ask','dad','sad','lad','had','has','gas','hall','fall','flag','glad','flash','dash','slash','salad','half','glass','hash','sash','lash','gall','lass','fad','lads','shall','alas','flask','salsa'],
-    game:{type:'fall', dir:'right', name:'물고기 낚시', icon:'🐟', unitName:'물고기', rule:'물고기에 적힌 낱말을 쳐서 잡아요. 놓치면 목숨이 하나 줄어요!'}
+    game:{type:'fall', dir:'right', name:'물고기 낚시', icon:'🐟', unitName:'물고기', rule:'물고기에 적힌 낱말을 쳐서 잡아요. 놓치면 목숨이 하나 줄어요! 큰 물고기는 느리지만 점수가 2배, 양동이에 10마리를 채우면 보너스예요.'}
   },
   {
     n:4, title:'윗줄', keys:'q w e r t y u i o p', target:90, newJamo:['q','w','e','r','t','y','u','i','o','p'], drills:4, grade:'4~5학년',
@@ -1437,7 +1439,7 @@ function validateContent() {
 <script>
 /* ================= 저장 ================= */
 const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
-const APP_VERSION = '7.0', APP_DATE = '2026-11-20';
+const APP_VERSION = '7.1', APP_DATE = '2026-11-20';
 /* ===== 우리 반 공유(선택) : Firebase 설정 =====
    Firebase 콘솔 → 프로젝트 설정 → 내 앱(웹) → SDK 설정의 firebaseConfig 값을 아래에 그대로 붙여 넣으세요.
    Realtime Database를 만들고 databaseURL까지 넣어야 켜집니다. 비워 두면 혼자 쓰는 앱으로 돌아갑니다. */
@@ -2605,7 +2607,7 @@ G3.game = {
         const fin = new T.Group(); fin.position.set(.2, -.28, .58); const fm = G.m(G.cone(.26, .6, 5), c2, -.28, 0, 0, {flatShading: true}); fm.rotation.z = Math.PI / 2; fm.scale.z = .25; fin.add(fm);
         f.add(body, belly, band(.42), band(-.55), tail, dors, pelv, fin, G.m(G.sph(.3, 16), '#ffffff', .86, .28, .4), G.m(G.sph(.17, 12), '#14324a', .96, .28, .58), G.m(G.sph(.06, 8), '#ffffff', 1.02, .36, .7, {emissive: '#ffffff', emissiveIntensity: .8}));
         const ch = G.m(G.sph(.13, 10), '#ff8fab', .98, -.12, .5); ch.scale.set(1, .7, .4); const mo = G.m(G.tor(.1, .035, Math.PI), '#14324a', 1.3, -.2, .16); mo.rotation.set(0, .5, Math.PI); f.add(ch, mo);
-        upd = (t, r) => { const b = Math.max(r.h * 1.0, .5); f.scale.setScalar(b); f.position.set(0, r.h * .5 + b * .62 + Math.sin(t * 3 + ph) * .05, -.4); f.rotation.z = Math.sin(t * 3 + ph) * .05; f.rotation.y = Math.sin(t * 2 + ph) * .12; tail.rotation.y = Math.sin(t * 10 + ph) * .55; fin.rotation.y = .3 + Math.sin(t * 8 + ph) * .5; }; }
+        const big = el.classList.contains('big') ? 1.4 : 1; upd = (t, r) => { const b = Math.max(r.h * 1.0, .5) * big; f.scale.setScalar(b); f.position.set(0, r.h * .5 + b * .62 + Math.sin(t * 3 + ph) * .05, -.4); f.rotation.z = Math.sin(t * 3 + ph) * .05; f.rotation.y = Math.sin(t * 2 + ph) * .12; tail.rotation.y = Math.sin(t * 10 + ph) * .55; fin.rotation.y = .3 + Math.sin(t * 8 + ph) * .5; }; }
       else if (dir === 'left') { const boss = el.classList.contains('boss'), fast = el.classList.contains('fast'); const c = el.classList.contains('gold') || el.classList.contains('ice') || el.classList.contains('bomb') || el.classList.contains('trap') ? hsl(el, 85, 55) : boss ? '#9775fa' : fast ? '#ffd43b' : '#69db7c'; const f = new T.Group(); g.add(f); const ph = Math.random() * 6;
         const body = G.m(G.sph(1, 20), c, 0, 0, 0, {roughness: .3}); body.scale.set(1.1, .9, .8); f.add(body, G.m(G.sph(.24, 12), '#ffffff', -.45, .2, .62), G.m(G.sph(.24, 12), '#ffffff', .05, .2, .7), G.m(G.sph(.12, 10), '#14324a', -.52, .2, .82), G.m(G.sph(.12, 10), '#14324a', -.02, .2, .9));
         const mo = G.m(G.tor(.14, .04, Math.PI), '#14324a', -.25, -.25, .78); mo.rotation.z = boss ? 0 : Math.PI; f.add(mo);
@@ -4104,7 +4106,7 @@ const MoleGame = {
       hs.appendChild(h); this.holes.push({el: h, sign: h.querySelector('.sign'), jamo: null, until: 0});
     }
     this.fit(); G3.game.attach(st, 'mole'); GJ.begin(L);
-    this.score = 0; this.hits = 0; this.spawned = 0; this.errors = 0; this.running = true; this.t0 = performance.now(); this.nextSpawn = this.t0 + 500;
+    this.score = 0; this.hits = 0; this.spawned = 0; this.errors = 0; this.fastN = 0; this.running = true; this.t0 = performance.now(); this.nextSpawn = this.t0 + 500;
     Input.handler = (c, s) => this.onKey(c, s); setHUD({time: this.dur, score: 0});
     this.raf = requestAnimationFrame(t => this.tick(t));
   },
@@ -4119,7 +4121,7 @@ const MoleGame = {
       const pool = this.L.pool.filter(j => !used.has(j));
       if (free.length && pool.length) {
         const h = free[Math.floor(Math.random() * free.length)]; const j = pool[Math.floor(Math.random() * pool.length)];
-        h.kind = GJ.kind(true); h.jamo = j; h.until = now + stay * (h.kind === 'gold' ? .75 : 1); h.sign.textContent = j; h.el.classList.toggle('gold', h.kind === 'gold'); h.el.classList.toggle('ice', h.kind === 'ice'); h.el.classList.toggle('bomb', h.kind === 'bomb'); h.el.classList.toggle('trap', h.kind === 'trap'); h.el.classList.add('up'); if (h.kind !== 'trap') this.spawned++;
+        h.kind = GJ.kind(true); h.jamo = j; h.born = now; h.until = now + stay * (h.kind === 'gold' ? .75 : 1); h.sign.textContent = j; h.el.classList.toggle('gold', h.kind === 'gold'); h.el.classList.toggle('ice', h.kind === 'ice'); h.el.classList.toggle('bomb', h.kind === 'bomb'); h.el.classList.toggle('trap', h.kind === 'trap'); h.el.classList.add('up'); if (h.kind !== 'trap') this.spawned++;
       }
       this.nextSpawn = now + gap;
     }
@@ -4139,9 +4141,9 @@ const MoleGame = {
     if (h && h.kind === 'trap') { GJ.miss(); this.score = Math.max(0, this.score - 20); flashStage(); Snd.miss(); popText(h.el, '-20 함정!', 50, 30); this.hide(h); KB.flash(code, false); setHUD({score: this.score}); return; }
     if (h) {
       GStat.ok(ch); this.hits++; if (h.kind === 'bomb') { GJ.banner('💣 펑! 모두 잡았어요', 1200); this.holes.forEach(x => { if (x !== h && x.jamo && x.kind !== 'trap') { this.hits++; this.score += 5; x.el.classList.add('hit'); const e2 = x.el; setTimeout(() => e2.classList.remove('hit', 'up'), 220); x.jamo = null; } }); }
-      const pts = GJ.hit(h.kind === 'gold' ? 30 : 10); this.score += pts; if (h.kind === 'ice') { GJ.slow(performance.now()); this.holes.forEach(x => { if (x.jamo) x.until += 2500; }); } GJ.score(this.score); h.el.classList.add('hit'); const el = h.el; setTimeout(() => el.classList.remove('hit'), 250);
+      const nowT = performance.now(), q = (h.until - nowT) / Math.max(1, h.until - h.born), fast = q >= .6, pts = GJ.hit((h.kind === 'gold' ? 30 : 10) * (fast ? 1.5 : q >= .3 ? 1 : .7)); this.score += pts; if (fast) this.fastN = (this.fastN || 0) + 1; if (h.kind === 'ice') { GJ.slow(nowT); this.holes.forEach(x => { if (x.jamo) { x.until += 2500; x.born += 2500; } }); } GJ.score(this.score); h.el.classList.add('hit'); const el = h.el; setTimeout(() => el.classList.remove('hit'), 250);
       setTimeout(() => { if (!h.jamo) el.classList.remove('up'); }, 120); h.jamo = null;
-      Snd.pop(); KB.flash(code, true); popText(el, '+' + pts, 50, 30); { const st = $('#g-stage'); const [x, y] = posIn(st, el.querySelector('.mole')); ART.burst(st, x, y, {kind: 'star', n: 8, dist: 50, colors: ['#ffd43b', '#ff922b', '#fff']}); }
+      Snd.pop(); KB.flash(code, true); popText(el, (fast ? '⚡+' : '+') + pts, 50, 30); { const st = $('#g-stage'); const [x, y] = posIn(st, el.querySelector('.mole')); ART.burst(st, x, y, {kind: 'star', n: 8, dist: 50, colors: ['#ffd43b', '#ff922b', '#fff']}); }
     } else { const up = this.holes.filter(x => x.jamo); if (up.length === 1) GStat.bad(up[0].jamo); this.errors++; GJ.miss(); Snd.bad(); KB.flash(code, false); }
     setHUD({score: this.score});
   },
@@ -4151,7 +4153,7 @@ const MoleGame = {
     const keyAcc = this.hits / Math.max(1, this.hits + this.errors);
     const stars = Math.min(ratio >= 0.85 ? 3 : ratio >= 0.65 ? 2 : ratio >= 0.4 ? 1 : 0, keyAcc >= 0.8 ? 3 : keyAcc >= 0.6 ? 2 : keyAcc >= 0.4 ? 1 : 0);
     this.holes.forEach(h => this.hide(h));
-    finishGame(this.L, stars, `잡은 두더지 ${this.hits}마리 / ${resolved}마리 · 틀린 키 ${this.errors}번<br>점수 <b>${this.score}</b>점`, this.score);
+    finishGame(this.L, stars, `잡은 두더지 ${this.hits}마리 / ${resolved}마리 · ⚡ 빨리 잡기 ${this.fastN || 0}번 · 틀린 키 ${this.errors}번<br>점수 <b>${this.score}</b>점`, this.score);
   },
   stop() { this.running = false; cancelAnimationFrame(this.raf); }
 };
@@ -4161,7 +4163,7 @@ const FallGame = {
   L: null, dir: 'down', items: [], lock: null, buf: 0, score: 0, lives: 5, spawned: 0, popped: 0, escaped: 0, errors: 0, running: false, t0: 0, last: 0, dur: 60, nextSpawn: 0, raf: 0, layer: null,
   start(L) {
     this.L = L; this.dir = L.game.dir; const st = $('#g-stage');
-    st.innerHTML = ART.scene(this.dir === 'down' ? 'rain' : this.dir === 'up' ? 'fest' : this.dir === 'left' ? 'grass' : 'sea') + '<div class="layer"></div>'; this.layer = st.querySelector('.layer'); G3.game.attach(st, this.dir); GJ.begin(L);
+    st.innerHTML = ART.scene(this.dir === 'down' ? 'rain' : this.dir === 'up' ? 'fest' : this.dir === 'left' ? 'grass' : 'sea') + '<div class="layer"></div>'; this.layer = st.querySelector('.layer'); this.bk = 0; { const ls = L.pool.map(w => textUnits(w).length).sort((x, y) => x - y), hi = ls[Math.floor(ls.length * .8)] || 0; this.bigN = hi > (ls[Math.floor(ls.length * .4)] || 0) ? hi : 99; } if (this.dir === 'right') { const e = document.createElement('div'); e.className = 'bucket'; e.id = 'fish-bucket'; e.innerHTML = '🪣 <b>0</b>/10'; st.appendChild(e); } G3.game.attach(st, this.dir); GJ.begin(L);
     this.items = []; this.lock = null; this.buf = 0; this.score = 0; this.lives = 5; this.spawned = 0; this.popped = 0; this.escaped = 0; this.errors = 0; this.okKeys = 0;
     this.running = true; this.t0 = this.last = performance.now(); this.nextSpawn = this.t0 + 400;
     Input.handler = (c, s) => this.onKey(c, s); setHUD({time: this.dur, score: 0, lives: this.lives}); $('#g-buffer').textContent = '';
@@ -4195,10 +4197,10 @@ const FallGame = {
     const el = document.createElement('div'); el.className = 'item ' + this.dir;
     const hue = Math.floor(Math.random() * 360);
     el.innerHTML = this.dir === 'right' ? ART.tail(hue) + `<div class="fishb"><span class="tag">${esc(text)}</span></div>` : this.dir === 'up' ? `<div class="bln"><span class="tag">${esc(text)}</span></div><div class="string"></div>` : `<span class="tag">${esc(text)}</span>`;
-    el.style.setProperty('--hue', hue); const kind = GJ.kind(true); if (kind) el.classList.add(kind); let tp = ''; if (this.dir === 'left') { const n = textUnits(text).length; tp = n <= 4 ? 'fast' : n >= 8 ? 'boss' : ''; if (tp) el.classList.add(tp); }
+    el.style.setProperty('--hue', hue); const kind = GJ.kind(true); if (kind) el.classList.add(kind); let tp = ''; if (this.dir === 'left') { const n = textUnits(text).length; tp = n <= 4 ? 'fast' : n >= 8 ? 'boss' : ''; if (tp) el.classList.add(tp); } if (this.dir === 'right' && textUnits(text).length >= this.bigN) { tp = 'big'; el.classList.add('big'); }
     let x, y;
     if (this.dir === 'in') { const e = Math.random(); if (e < .5) { x = 6 + Math.random() * 88; y = -8; } else { x = e < .75 ? -10 : 110; y = 6 + Math.random() * 40; } } else if (this.dir === 'down') { x = 10 + Math.random() * 76; y = -8; } else if (this.dir === 'up') { x = 10 + Math.random() * 76; y = 108; } else if (this.dir === 'left') { x = 106; y = [36, 56, 76][Math.floor(Math.random() * 3)]; } else { x = -14; y = 10 + Math.random() * 70; }
-    const it = {text, kind, tp, units: textUnits(text), el, x, y, speed: speed * (0.85 + Math.random() * 0.3) * (tp === 'fast' ? 1.45 : tp === 'boss' ? .6 : 1)};
+    const it = {text, kind, tp, units: textUnits(text), el, x, y, speed: speed * (0.85 + Math.random() * 0.3) * (tp === 'fast' ? 1.45 : tp === 'boss' ? .6 : tp === 'big' ? .7 : 1)};
     el.style.left = x + '%'; el.style.top = y + '%';
     this.layer.appendChild(el); this.items.push(it); this.spawned++;
   },
@@ -4222,10 +4224,11 @@ const FallGame = {
   pop(it) {
     if (it.kind === 'trap') { this.lives--; GJ.miss(); Snd.miss(); flashStage(); popText(this.layer, '☠ 함정! ❤️-1', it.x, it.y); this.remove(it); this.lock = null; this.buf = 0; this.paintBuf(); setHUD({lives: Math.max(0, this.lives)}); return; }
     if (it.kind === 'bomb') { GJ.banner('💣 펑! 한꺼번에 터졌어요', 1200); for (const o of [...this.items]) { if (o !== it && o.kind !== 'trap') { this.popped++; this.score += 5 * o.units.length; o.el.classList.add('pop'); const e2 = o.el; setTimeout(() => e2.remove(), 300); this.items = this.items.filter(i => i !== o); ART.burst(this.layer, o.x, o.y, {n: 8}); } } }
-    this.popped++; const pts = GJ.hit(10 * it.units.length * (it.kind === 'gold' ? 3 : 1) * (it.tp === 'boss' ? 2 : 1)); this.score += pts; if (it.kind === 'gold' && this.lives < 5) { this.lives++; popText(this.layer, '❤️+1', it.x, Math.max(4, it.y - 10)); } if (it.kind === 'ice') GJ.slow(performance.now()); GJ.score(this.score);
+    this.popped++; const pts = GJ.hit(10 * it.units.length * (it.kind === 'gold' ? 3 : 1) * (it.tp === 'boss' || it.tp === 'big' ? 2 : 1)); this.score += pts; if (this.dir === 'right') this.bucket(); if (it.kind === 'gold' && this.lives < 5) { this.lives++; popText(this.layer, '❤️+1', it.x, Math.max(4, it.y - 10)); } if (it.kind === 'ice') GJ.slow(performance.now()); GJ.score(this.score);
     it.el.classList.add('pop'); const el = it.el; setTimeout(() => el.remove(), 300); this.items = this.items.filter(i => i !== it);
     this.lock = null; this.buf = 0; this.paintBuf(); Snd.pop(); popText(this.layer, '+' + pts, it.x, it.y); ART.burst(this.layer, it.x, it.y, this.dir === 'right' ? {kind: 'bubble', n: 10} : this.dir === 'down' ? {n: 10, colors: ['#e7f5ff', '#a5d8ff', '#74c0fc', '#fff']} : {n: 14}); setHUD({score: this.score});
   },
+  bucket() { const e = $('#fish-bucket'); if (!e) return; const n = Math.floor(this.popped / 10); if (n > (this.bk || 0)) { this.bk = n; this.score += 50; GJ.banner('🪣 양동이 가득! +50' + (this.lives < 5 ? ' · ❤️+1' : ''), 1500); if (this.lives < 5) this.lives++; Snd.done(); } e.innerHTML = `🪣 <b>${this.popped % 10}</b>/10${this.bk ? ` · 가득 ${this.bk}번` : ''}`; },
   paintBuf() {
     const b = $('#g-buffer');
     if (!this.lock || this.buf === 0) { b.textContent = ''; return; }
