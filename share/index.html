@@ -1,11 +1,12 @@
 <!DOCTYPE html>
-<!-- 타자연습 v3.7 (2026-11-03) · 한글 두벌식 10레벨 + 영어 자판 8레벨 · 제작 kingkongssam -->
+<!-- 타자연습 v3.8 (2026-11-03) · 한글 두벌식 10레벨 + 영어 자판 8레벨 · 제작 kingkongssam -->
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#ff7a2f">
-<title>타자연습 v3.7 — 기본 자리부터 차근차근 레벨 업</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
+<title>타자연습 v3.8 — 기본 자리부터 차근차근 레벨 업</title>
 <style>
 :root{
   --bg:#eef4fb; --card:#ffffff; --ink:#1f2a3d; --muted:#556178; --btn:#c2410c; --btn-dark:#8f2f08;
@@ -571,27 +572,96 @@ body.show-hands .typing-finger-caption{display:block}
 #activity-back:not([hidden]) + .logo{display:none}
 #activity-back{flex:none}
 .modal-bg.on .modal{max-height:calc(100dvh - 32px);overflow:auto}
+
+/* ===================== 디자인 2.0 — 섬 모험 (바다·모래·햇빛) ===================== */
+:root{--bg:#e6f5fc;--ink:#14324a;--muted:#4b6a82;--btn:#ffc93c;--btn-dark:#dc9f0c;--accent:#f0553a;--accent-dark:#c93b22;--star:#ffb703;--sea:#2b9fd9;--sea-dark:#1677b3;--line:#cfe6f3;--radius:20px;--shadow:0 3px 0 var(--line)}
+body{background:linear-gradient(#d3eefb 0,#e6f5fc 300px,#eef8fc 100%) fixed;color:var(--ink)}
+h1,h2,h3,.hero h1,#topbar .logo,.btn,.tab,.sect,.gamecard .name,.chcard .name,.hubhead h2,#m-title,.pr-titles .t,.b-over div,.t-score,.node .ttl,.line-row .num,.chip b{font-family:"Jua","Pretendard","Noto Sans KR","Malgun Gothic","Apple SD Gothic Neo",system-ui,sans-serif;font-synthesis:none;letter-spacing:0}
+/* 단추: 햇빛 노랑(주요) · 흰색(보조) */
+.btn{background:var(--btn);color:var(--ink);box-shadow:0 4px 0 var(--btn-dark);border-radius:16px}
+.btn:active{box-shadow:0 1px 0 var(--btn-dark)}
+.btn.sm{box-shadow:0 3px 0 var(--btn-dark)}
+.btn.sec{background:#fff;color:var(--ink);box-shadow:0 4px 0 var(--line),inset 0 0 0 2px var(--line)}
+.btn.sec.sm{box-shadow:0 3px 0 var(--line),inset 0 0 0 2px var(--line)}
+.btn.sec:active{box-shadow:0 1px 0 var(--line),inset 0 0 0 2px var(--line)}
+.btn.ghost{color:var(--muted);box-shadow:none;background:transparent}
+.btn:focus-visible,.tab:focus-visible,.iconbtn:focus-visible,.line-row:focus-visible{outline:3px solid var(--sea-dark);outline-offset:2px}
+.tab{box-shadow:0 3px 0 var(--line);color:var(--muted)}
+.tab.on{background:var(--sea);color:#fff;box-shadow:0 3px 0 var(--sea-dark)}
+body.show-hands .kb .key.next{outline-color:var(--accent-dark)}
+/* 카드·칩: 회색 그림자 대신 바다색 받침 */
+.card{box-shadow:var(--shadow);border-radius:var(--radius)}
+.chip{box-shadow:0 2px 0 var(--line)}
+.stage,.bossarena{box-shadow:0 4px 0 var(--line)}
+/* 윗줄 */
+#topbar{background:rgba(255,255,255,.92);backdrop-filter:blur(8px);box-shadow:0 2px 0 var(--line)}
+#topbar .logo{font-size:21px;gap:8px}
+#topbar .logo svg{width:30px;height:30px;flex:none}
+#topbar .ver,.hero .ver{background:#e3f3fb;color:var(--muted)}
+#topbar .userchip{background:#e3f3fb}
+#topbar .iconbtn{background:#e3f3fb;color:var(--ink);display:grid;place-items:center;padding:0}
+#topbar .iconbtn:hover{background:#d2ecf9}
+.ico{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;display:block}
+#uc-stars i,.total i{font-style:normal;color:var(--star)}
+/* 시작 화면 */
+.hero{padding:6px 0 14px}
+.hero3d{position:relative;height:clamp(170px,30vh,250px);border-radius:26px;overflow:hidden;background:linear-gradient(#bfe9ff,#7fd4f7 60%,#4fc3f7);box-shadow:0 4px 0 var(--line)}
+.hero3d .hero-fb{position:absolute;inset:0;display:grid;place-items:center}
+.hero3d .hero-fb svg.face{width:110px;height:110px;filter:drop-shadow(0 6px 0 rgba(0,60,110,.18))}
+.hero3d.g3 .hero-fb{display:none}
+.hero h1{font-size:clamp(34px,7vw,52px);margin-top:14px;color:var(--ink)}
+.hero p{font-weight:700}
+/* 지도 */
+.maphead .total{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+#btn-music{display:grid;place-items:center;border:0;background:#fff;border-radius:50%;width:36px;height:36px;color:var(--ink);box-shadow:0 3px 0 var(--line);cursor:pointer;padding:0;margin-left:2px}
+#btn-music.off{color:#9db4c4}
+.trail.g3{box-shadow:0 4px 0 var(--line)}
+.node .ttl .n{display:none}
+.trail.g3 .node.place .ball .num,.trail.g3 .node.place .ball .lock{display:none}
+.trail.g3 .node.place .ttl{display:flex;align-items:center;gap:6px;padding:3px 12px 3px 3px;font-size:15px;color:var(--ink);background:#fff;box-shadow:0 3px 0 rgba(0,60,110,.18)}
+.trail.g3 .node.place .ttl .n{display:grid;place-items:center;flex:none;width:24px;height:24px;border-radius:50%;background:#e3f3fb;color:var(--ink);font-size:14px}
+.trail.g3 .node.place.passed .ttl .n{background:#57b947;color:#fff}
+.trail.g3 .node.place.cur .ttl .n{background:var(--accent-dark);color:#fff}
+.trail.g3 .node.place.locked .ttl{background:rgba(255,255,255,.72);color:#5f7a8c;box-shadow:none}
+.trail.g3 .node.place .st{display:none}
+.trail.g3 .node.place.cur .st,.trail.g3 .node.place:not(:disabled):hover .st{display:block;font-size:12px;background:var(--ink);color:#fff;box-shadow:none;padding:1px 9px}
+.trail.g3 .node .ball .tag{background:var(--accent-dark);font-family:"Jua",inherit;font-synthesis:none;font-size:13px}
+.trail.g3 .node.cls .ttl{font-size:14px;color:var(--ink)}
+.gamecard .icon{width:54px;height:54px;border-radius:16px;display:grid;place-items:center;font-size:30px;background:#e3f3fb;color:var(--sea-dark);flex:none}
+.gamecard .icon .ico{width:30px;height:30px;stroke-width:2}
+#test-card .icon{background:#fff3cf;color:#b97a00}
+#boss-card .icon{background:#ffe3dc;color:var(--accent-dark)}
+.card.master{box-shadow:0 3px 0 #f1d48a}
+/* 레벨 화면의 줄 목록 */
+.line-row{padding:12px 16px;border-bottom-color:#e6f1f8}
+.line-row .num{background:#e3f3fb;color:var(--ink);font-size:16px}
+.line-row .stars b.on{color:var(--star)}
+.sect{font-size:19px}
+/* 모달 */
+#m-title{font-size:24px}
+@media (max-width:480px){#topbar .logo svg{width:26px;height:26px}.trail.g3 .node.place .ttl{font-size:13px;padding:2px 9px 2px 2px}.trail.g3 .node.place .ttl .n{width:20px;height:20px;font-size:12px}.gamecard .icon{width:46px;height:46px}}
+@media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;animation-iteration-count:1!important}}
 </style>
 </head>
 <body>
 <div id="app">
   <header id="topbar">
     <button type="button" id="activity-back" class="btn sec sm" title="돌아가기 (Esc)" aria-keyshortcuts="Escape" hidden>← 연습 목록</button>
-    <div class="logo">⌨️ 타자연습 <span class="ver" id="ver-top"></span></div>
+    <div class="logo"><span id="logo-ic" style="display:contents"></span>타자연습 <span class="ver" id="ver-top"></span></div>
     <div class="spacer"></div>
     <div class="userchip" id="userchip"><span class="av" id="uc-av"></span><span id="uc-name"></span><span id="uc-stars">⭐ 0</span></div>
-    <button class="iconbtn" id="btn-class" title="우리 반" aria-label="우리 반" style="display:none">👥</button>
-    <button class="iconbtn" id="btn-record" title="내 기록" aria-label="내 기록" style="display:none">📋</button>
-    <button class="iconbtn" id="btn-hands" title="손 모양 보기" aria-label="손 모양 보기">🖐️</button>
-    <button class="iconbtn" id="btn-sound" title="소리" aria-label="소리 켜기·끄기">🔊</button>
-    <button class="iconbtn" id="btn-user" title="사용자 바꾸기" aria-label="사용자 바꾸기">👤</button>
+    <button class="iconbtn" id="btn-class" title="우리 반" aria-label="우리 반" style="display:none"></button>
+    <button class="iconbtn" id="btn-record" title="내 기록" aria-label="내 기록" style="display:none"></button>
+    <button class="iconbtn" id="btn-hands" title="손 모양 보기" aria-label="손 모양 보기"></button>
+    <button class="iconbtn" id="btn-sound" title="소리" aria-label="소리 켜기·끄기"></button>
+    <button class="iconbtn" id="btn-user" title="사용자 바꾸기" aria-label="사용자 바꾸기"></button>
   </header>
 
   <main id="main">
     <!-- 사용자 -->
     <section id="scr-user" class="screen">
       <div class="hero">
-        <div class="big">⌨️</div>
+        <div class="hero3d" id="hero3d"></div>
         <h1>타자연습</h1>
         <p>기본 자리부터 차근차근, 레벨 업!</p>
         <p><span class="ver" id="ver-hero"></span></p>
@@ -622,7 +692,7 @@ body.show-hands .typing-finger-caption{display:block}
     <section id="scr-map" class="screen">
       <div class="maphead">
         <div class="tabs" id="course-tabs"><button class="tab on" data-course="ko">✏️ 한글 코스</button><button class="tab" data-course="en">🔤 영어 코스</button></div>
-        <div class="total"><span id="map-total"></span> <button class="iconbtn" id="btn-music" title="배경음악" aria-label="배경음악 켜기·끄기" style="margin-left:6px;border:0;background:#fff;border-radius:50%;width:36px;height:36px;font-size:17px;cursor:pointer;box-shadow:0 2px 6px rgba(30,50,90,.12)">🎵</button></div>
+        <div class="total"><span id="map-total"></span> <button class="iconbtn" id="btn-music" title="배경음악" aria-label="배경음악 켜기·끄기"></button></div>
       </div>
       <div class="trail" id="trail"><svg class="trail-svg" id="trail-svg" aria-hidden="true"></svg><div class="trail-grid" id="trail-grid"></div></div>
       <div class="card master" id="master-card" style="display:none"></div>
@@ -1148,7 +1218,7 @@ function validateContent() {
 <script>
 /* ================= 저장 ================= */
 const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
-const APP_VERSION = '3.7', APP_DATE = '2026-11-20';
+const APP_VERSION = '3.8', APP_DATE = '2026-11-20';
 /* ===== 우리 반 공유(선택) : Firebase 설정 =====
    Firebase 콘솔 → 프로젝트 설정 → 내 앱(웹) → SDK 설정의 firebaseConfig 값을 아래에 그대로 붙여 넣으세요.
    Realtime Database를 만들고 databaseURL까지 넣어야 켜집니다. 비워 두면 혼자 쓰는 앱으로 돌아갑니다. */
@@ -1368,7 +1438,7 @@ function updateChip() {
   const u = user(); const chip = $('#userchip');
   if (!u) { chip.classList.remove('on'); $('#btn-class').style.display = 'none'; $('#btn-record').style.display = 'none'; return; }
   $('#btn-class').style.display = classAvailable() ? '' : 'none'; $('#btn-record').style.display = '';
-  chip.classList.add('on'); $('#uc-av').innerHTML = ART.face(avatarOf(u)); $('#uc-name').textContent = u.name; $('#uc-stars').textContent = '⭐ ' + totalStars(u);
+  chip.classList.add('on'); $('#uc-av').innerHTML = ART.face(avatarOf(u)); $('#uc-name').textContent = u.name; $('#uc-stars').innerHTML = '<i>★</i> ' + totalStars(u);
 }
 
 /* ---- 모달 ---- */
@@ -1859,6 +1929,7 @@ function paintText(spans, units, typed, container) {
 
 /* ================= 사용자 화면 ================= */
 function renderUser() {
+  setTimeout(() => { const h = $('#hero3d'); if (h) G3.hero.show(h, pickedAvatar); }, 0);
   show('scr-user'); updateChip();
   const list = $('#user-list'); list.innerHTML = '';
   const names = Object.keys(DB.users).sort((a, b) => (DB.users[b].lastSeen || 0) - (DB.users[a].lastSeen || 0));
@@ -1876,7 +1947,7 @@ function renderUser() {
   $('#class-row').style.display = Cloud.enabled() ? '' : 'none'; $('#class-note').style.display = Cloud.enabled() ? '' : 'none';
   $('#class-code').value = DB.classCode || '';
   const ap = $('#avatar-pick'); ap.innerHTML = '';
-  AVATARS.forEach(a => { const b = document.createElement('button'); b.innerHTML = ART.face(a); b.setAttribute('aria-label', a); b.className = a === pickedAvatar ? 'on' : ''; b.onclick = () => { pickedAvatar = a; ap.querySelectorAll('button').forEach(x => x.classList.toggle('on', x.textContent === a)); Snd.pop(); }; ap.appendChild(b); });
+  AVATARS.forEach(a => { const b = document.createElement('button'); b.innerHTML = ART.face(a); b.setAttribute('aria-label', a); b.className = a === pickedAvatar ? 'on' : ''; b.onclick = () => { pickedAvatar = a; G3.hero.set(a); ap.querySelectorAll('button').forEach(x => x.classList.toggle('on', x.textContent === a)); Snd.pop(); }; ap.appendChild(b); });
 }
 function selectUser(name) {
   name = String(name || '').replace(/[\u0000-\u001f<>"'`]/g, '').trim().slice(0, 12); if (!name) { toast('이름(별명)을 써 주세요'); $('#user-name').focus(); return; }
@@ -1911,7 +1982,7 @@ function mergeUser(a, b) {
 $('#user-start').onclick = () => selectUser($('#user-name').value);
 $('#user-name').addEventListener('keydown', e => { if (e.key === 'Enter') selectUser(e.target.value); });
 $('#btn-user').onclick = () => { stopAll(); renderUser(); };
-$('#btn-sound').onclick = () => { DB.sound = !DB.sound; save(); $('#btn-sound').textContent = DB.sound ? '🔊' : '🔇'; if (DB.sound) Snd.ok(); Music.sync(); };
+$('#btn-sound').onclick = () => { DB.sound = !DB.sound; save(); $('#btn-sound').innerHTML = ICON[DB.sound ? 'sound' : 'mute']; if (DB.sound) Snd.ok(); Music.sync(); };
 $('#btn-music').onclick = e => { e.currentTarget.blur(); DB.music = DB.music === false; save(); Music.sync(); toast(DB.music ? '🎵 배경음악을 켰어요' : '🔕 배경음악을 껐어요'); };
 $('#btn-hands').onclick = () => { DB.hands = DB.hands === false; save(); applyHands(); toast(DB.hands ? '손 모양을 보여 줘요' : '손 안내를 숨겼어요'); };
 
@@ -1925,7 +1996,7 @@ var Music = {
   want() { const s = $('.screen.on'); return !!DB.sound && DB.music !== false && !!s && (s.id === 'scr-map' || s.id === 'scr-class'); },
   note(f, t, d, type, g) { const c = Snd.ctx; const o = c.createOscillator(), a = c.createGain(); o.type = type; o.frequency.value = f; a.gain.setValueAtTime(0.0001, t); a.gain.exponentialRampToValueAtTime(g, t + .015); a.gain.exponentialRampToValueAtTime(0.0001, t + d); o.connect(a); a.connect(this.gain); o.start(t); o.stop(t + d + .03); },
   sync() {
-    const w = this.want(); const b = $('#btn-music'); if (b) b.textContent = DB.music !== false ? '🎵' : '🔕';
+    const w = this.want(); const b = $('#btn-music'); if (b) { if (!b.firstChild && typeof ICON !== 'undefined') b.innerHTML = ICON.music; b.classList.toggle('off', DB.music === false); }
     if (w && !this.on) { const c = Snd.ac(); if (!c || c.state !== 'running') return; this.on = true; this.gain = c.createGain(); this.gain.gain.value = .0001; this.gain.gain.exponentialRampToValueAtTime(.55, c.currentTime + .8); this.gain.connect(c.destination); this.next = c.currentTime + .1; this.step = 0; this.timer = setInterval(() => this.pump(), 150); this.pump(); }
     else if (!w && this.on) { this.on = false; clearInterval(this.timer); const c = Snd.ctx, g = this.gain; try { g.gain.cancelScheduledValues(c.currentTime); g.gain.setValueAtTime(Math.max(.0001, g.gain.value), c.currentTime); g.gain.exponentialRampToValueAtTime(.0001, c.currentTime + .4); setTimeout(() => { try { g.disconnect(); } catch (e) {} }, 700); } catch (e) {} }
   },
@@ -2247,6 +2318,39 @@ function teacherEnter() {
     primary: {label: '들어가기', fn: () => { if ($('#tch-pw').value !== TEACHER_PW) { toast('비밀번호가 맞지 않아요'); return; } TEACH_SESSION = true; DB.teacherKeep = $('#tch-keep').checked; go(); }}, secondary: {label: '닫기', fn: () => {}}});
   setTimeout(() => $('#tch-pw') && $('#tch-pw').focus(), 50);
 }
+const ICON = (() => { const w = p => `<svg class="ico" viewBox="0 0 24 24" aria-hidden="true">${p}</svg>`; return {
+  people: w('<circle cx="9" cy="8" r="3.2"/><path d="M3 19c0-3.3 2.7-5.5 6-5.5s6 2.2 6 5.5"/><circle cx="17" cy="9" r="2.5"/><path d="M16.5 13.6c2.6.3 4.5 2.2 4.5 5"/>'),
+  chat: w('<path d="M4.5 5.5h15a1 1 0 011 1v8.5a1 1 0 01-1 1H10.5l-4.5 3.5V16H4.5a1 1 0 01-1-1V6.5a1 1 0 011-1z"/><path d="M8 9.5h8M8 12.5h5"/>'),
+  record: w('<rect x="5" y="4" width="14" height="17" rx="2.5"/><path d="M9 9h6M9 13h6M9 17h3"/>'),
+  hand: w('<path d="M9 11.5V5.2a1.5 1.5 0 013 0V10m0-1.7a1.5 1.5 0 013 0V11m0-1a1.5 1.5 0 013 0v4.7c0 3.6-2.3 6.1-5.7 6.1-2.6 0-4.2-1.200-5.300-3.400L5.300 13.700a1.400 1.400 0 012.400-1.500L9 13.800"/>'),
+  sound: w('<path d="M4 9.500v5h3.500l4.500 4v-13l-4.500 4z"/><path d="M15.500 9a4.500 4.500 0 010 6M18 6.500a8 8 0 010 11"/>'),
+  mute: w('<path d="M4 9.500v5h3.500l4.500 4v-13l-4.500 4z"/><path d="M16 9.500l5 5M21 9.500l-5 5"/>'),
+  user: w('<circle cx="12" cy="8.500" r="3.600"/><path d="M5 20c0-3.900 3.100-6.200 7-6.200s7 2.300 7 6.200"/>'),
+  music: w('<path d="M9 17.500V6l10-2v11.500"/><circle cx="6.800" cy="17.500" r="2.300"/><circle cx="16.800" cy="15.500" r="2.300"/>'),
+  watch: w('<circle cx="12" cy="13.500" r="7"/><path d="M12 13.500V9.500M9.500 3.500h5M12 3.500v3"/>'),
+  tug: w('<path d="M2.500 12h19"/><circle cx="6.500" cy="12" r="2.300"/><circle cx="17.500" cy="12" r="2.300"/><path d="M12 7.500v9"/>'),
+  logo: '<svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="15" fill="#7fd4f7"/><path d="M3 21c4-2 6 1 9 0s5-2 8-1 5 1 9 0v3a15 15 0 01-26 0z" fill="#2b9fd9"/><path d="M8 21c1-5 4-8 8-8s7 3 8 8z" fill="#57b947"/><path d="M16 13V6" stroke="#14324a" stroke-width="1.600" stroke-linecap="round"/><path d="M16 6l6 2-6 2.500z" fill="#f0553a"/></svg>'
+}; })();
+function paintIcons() { const set = (id, k) => { const e = $(id); if (e) e.innerHTML = ICON[k]; }; set('#btn-class', 'people'); set('#btn-chat', 'chat'); set('#btn-record', 'record'); set('#btn-hands', 'hand'); set('#btn-user', 'user'); set('#btn-sound', DB.sound ? 'sound' : 'mute');
+  const lg = $('#logo-ic'); if (lg) lg.innerHTML = ICON.logo; [['#test-card .icon', 'watch'], ['#class-card .icon', 'people'], ['#boss-card .icon', 'tug']].forEach(([s, k]) => { const e = $(s); if (e) e.innerHTML = ICON[k]; }); }
+/* ---------- 시작 화면의 작은 섬 ---------- */
+G3.hero = {
+  v: null, av: '', me: null, A: [], world: null,
+  show(host, av) { this.host = host; this.av0 = av; if (!host.querySelector('.hero-fb')) host.innerHTML = '<div class="hero-fb"></div>'; host.querySelector('.hero-fb').innerHTML = ART.face(av);
+    G3.load().then(T => { if (!T || !host.isConnected) return; try { if (!this.v || this.v.host.parentElement !== host) this.build(host); this.set(this.av0); this.v.start(); } catch (e) { console.warn('3D 첫 화면 실패', e); host.classList.remove('g3'); } }); },
+  build(host) {
+    const G = G3, T = G.T; const wrap = document.createElement('div'); wrap.className = 'g3-host'; host.appendChild(wrap); host.classList.add('g3');
+    const v = this.v = G.view(wrap, {fov: 28, shadow: 9, ground: 0x7fd3ff}); const S = v.scene, A = this.A = []; v.ticks.push((dt, t) => A.forEach(f => f(t, dt)));
+    const sea = G.m(G.g('sea', () => new T.PlaneGeometry(400, 400)), '#4fc3f7', 0, -.62, 0, {roughness: .35}); sea.rotation.x = -Math.PI / 2; sea.castShadow = false; S.add(sea);
+    const isl = (x, z, n, s) => { const g = new T.Group(); g.position.set(x, 0, z); g.scale.setScalar(s); g.add(G.m(G.cyl(1.62, 1.5, .3, 9), '#8ed35f', 0, 0, 0, {flatShading: true}), G.m(G.cyl(1.5, .85, .75, 9), '#c79a63', 0, -.5, 0, {flatShading: true})); const f = G.m(G.cyl(2.05, 2.05, .02, 24), '#c9f0ff', 0, -.6, 0, {transparent: true, opacity: .55}); f.castShadow = false; g.add(f); const lm = G.map.landmark(n, A); lm.position.y = .15; g.add(lm); S.add(g); return g; };
+    this.home = isl(0, 0, 1, 1.25); isl(-6.2, -1.6, 2, .9); isl(6.4, -1.4, 5, .9); isl(-11.5, -3.5, 7, .8); isl(11.8, -3.2, 8, .8);
+    for (let i = 0; i < 4; i++) { const c = G.game.cloud('#ffffff', .9 + (i % 2) * .4); c.position.set(-12 + i * 8, 4.6 + (i % 2) * .7, -9); S.add(c); A.push((t, dt) => { c.position.x += dt * .25; if (c.position.x > 17) c.position.x = -17; }); }
+    v.onresize = () => { const d = Math.max(11, 9.5 / v.cam.aspect * 1.9); v.cam.position.set(0, 3.2 + d * .22, d); v.cam.lookAt(0, .9, 0); };
+    A.push(t => { const m = this.me; if (!m) return; const h = Math.abs(Math.sin(t * 3)); m.position.y = .2 + h * .4; m.rotation.y = Math.sin(t * 1.2) * .6; m.scale.set(1.15 * (1 + (1 - h) * .06), 1.15 * (1 - (1 - h) * .08), 1.15); });
+    v.size();
+  },
+  set(av) { this.av0 = av; if (this.host && this.host.querySelector('.hero-fb')) this.host.querySelector('.hero-fb').innerHTML = ART.face(av); if (!this.v || this.av === av) return; this.av = av; if (this.me) this.home.remove(this.me); this.me = G3.animal(av); this.me.position.set(.95, .2, 1.05); this.home.add(this.me); }
+};
 function renderMap(course) {
   stopAll(); show('scr-map'); updateChip();
   const u = user(); if (!u) { renderUser(); return; }
@@ -2262,7 +2366,7 @@ function renderMap(course) {
     const c = document.createElement('button'); c.className = 'node ' + (locked ? 'locked' : passed ? 'passed' : 'cur');
     c.classList.add('place');
     c.innerHTML = `<div class="ball">${ART.landmark(L.n)}<span class="num">${L.n}</span>${locked ? '<span class="lock">🔒</span>' : ''}${passed ? '<span class="flag">🚩</span><span class="tag">통과</span>' : cur ? '<span class="tag">여기!</span>' : ''}${cur ? `<span class="av">${ART.face(avatarOf(u))}</span>` : ''}</div>
-      <div class="ttl">${esc(L.title)}</div>${locked ? '' : `<div class="st">⭐ ${info.total}/${NEED_STARS}</div>`}`;
+      <div class="ttl"><b class="n">${L.n}</b>${esc(L.title)}</div>${locked ? '' : `<div class="st">⭐ ${info.total}/${NEED_STARS}</div>`}`;
     c.disabled = locked;
     c.onclick = () => { if (G3.map.active()) G3.map.walkTo(L.n, () => openHub(L.n)); else openHub(L.n); };
     grid.appendChild(c);
@@ -2459,13 +2563,13 @@ function openHub(n) {
     const st = p.lines[n + '-' + i] || 0;
     const r = document.createElement('button'); r.className = 'line-row';
     const label = i < (L.drills || 0) ? `${[...new Set([...t].filter(c => c !== ' '))].join(' ')} 자리 익히기<small>${esc(t)}</small>` : esc(t);
-    r.innerHTML = `<span class="num">${i + 1}</span><span class="txt">${label}</span>${starsHTML(st)}<span class="btn sm">${st ? '다시' : '시작'}</span>`;
+    r.innerHTML = `<span class="num">${i + 1}</span><span class="txt">${label}</span>${starsHTML(st)}<span class="btn sm${st ? ' sec' : ''}">${st ? '다시' : '시작'}</span>`;
     r.onclick = () => startPractice(n, i);
     lines.appendChild(r);
   });
   { const st = p.lines[n + '-mix'] || 0; const ago = daysAgo(p, n); const due = p.passed[n] && ago !== null && ago >= 3;
     const r = document.createElement('button'); r.className = 'line-row';
-    r.innerHTML = `<span class="num">${L.lines.length + 1}</span><span class="txt">🎲 섞어 치기${due ? ' <span class="newrec" style="background:#ede9fe;color:#6d28d9;font-size:12px">🔁 복습할 때예요</span>' : ''}<small>${n > 1 ? '새 글쇠 + 앞에서 익힌 글쇠' : '이 레벨 글쇠'}를 무작위로 · 할 때마다 새 글</small></span>${starsHTML(st)}<span class="btn sm">${st ? '다시' : '시작'}</span>`;
+    r.innerHTML = `<span class="num">${L.lines.length + 1}</span><span class="txt">🎲 섞어 치기${due ? ' <span class="newrec" style="background:#ede9fe;color:#6d28d9;font-size:12px">🔁 복습할 때예요</span>' : ''}<small>${n > 1 ? '새 글쇠 + 앞에서 익힌 글쇠' : '이 레벨 글쇠'}를 무작위로 · 할 때마다 새 글</small></span>${starsHTML(st)}<span class="btn sm${st ? ' sec' : ''}">${st ? '다시' : '시작'}</span>`;
     r.onclick = () => startPractice(n, 'mix'); lines.appendChild(r); }
   // 약점 보충
   const wk = weakKeys(p, L); const wc = $('#hub-weak');
@@ -3136,7 +3240,7 @@ $('#ver-hero').textContent = 'v' + APP_VERSION + ' · ' + APP_DATE;
 $('#footer').textContent = `타자연습 v${APP_VERSION} 공유판 (${APP_DATE}) · 한글 두벌식·영어 자판 연습 · © kingkongssam`;
 KB.build(); Hands.build();
 window.addEventListener('resize', () => { if (KB.el && KB.el.parentElement) KB.fit(); if (CurrentGame === MoleGame && MoleGame.running) MoleGame.fit(); });
-$('#btn-sound').textContent = DB.sound ? '🔊' : '🔇';
+paintIcons();
 applyHands();
 (function init() {
   if (/[?#&]teacher\b/.test(location.search + location.hash)) setTimeout(teacherEnter, 300);
