@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<!-- 타자연습 v3.2 (2026-11-03) · 한글 두벌식 10레벨 + 영어 자판 8레벨 · 제작 kingkongssam -->
+<!-- 타자연습 v3.3 (2026-11-03) · 한글 두벌식 10레벨 + 영어 자판 8레벨 · 제작 kingkongssam -->
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#ff7a2f">
-<title>타자연습 v3.2 — 기본 자리부터 차근차근 레벨 업</title>
+<title>타자연습 v3.3 — 기본 자리부터 차근차근 레벨 업</title>
 <style>
 :root{
   --bg:#eef4fb; --card:#ffffff; --ink:#1f2a3d; --muted:#556178; --btn:#c2410c; --btn-dark:#8f2f08;
@@ -1133,7 +1133,7 @@ function validateContent() {
 <script>
 /* ================= 저장 ================= */
 const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
-const APP_VERSION = '3.2', APP_DATE = '2026-11-19';
+const APP_VERSION = '3.3', APP_DATE = '2026-11-19';
 /* ===== 우리 반 공유(선택) : Firebase 설정 =====
    Firebase 콘솔 → 프로젝트 설정 → 내 앱(웹) → SDK 설정의 firebaseConfig 값을 아래에 그대로 붙여 넣으세요.
    Realtime Database를 만들고 databaseURL까지 넣어야 켜집니다. 비워 두면 혼자 쓰는 앱으로 돌아갑니다. */
@@ -1976,7 +1976,7 @@ var G3 = {
   flag(c = '#fa5252', h = 1.3) { const f = this.m(this.box(.5, .32, .03), c, .27, h - .18, 0); return {g: this.grp([this.m(this.cyl(.03, .03, h, 6), '#868e96', 0, h / 2, 0), this.m(this.sph(.06, 8), '#ffd43b', 0, h, 0), f]), f}; },
   /* ---------- 지도 ---------- */
   map: {
-    v: null, key: '', st: null, trail: null, world: null, pts: [], anim: [], cols: 0, seen: {}, scr: 'scr-map',
+    v: null, key: '', st: null, trail: null, world: null, pts: [], anim: [], cols: 0, seen: {}, at: {}, walk: null, scr: 'scr-map',
     show(trail, st) { this.st = st; this.trail = trail; G3.load().then(T => { if (!T || !$('#' + this.scr).classList.contains('on')) return; try { this._show(); } catch (e) { console.warn('3D 지도 실패', e); G3.failed = true; [G3.map, G3.cmap].forEach(m => { if (m.trail) { m.trail.classList.remove('g3'); m.trail.style.height = ''; } if (m.v) { m.v.dispose(); m.v = null; } }); layoutTrail(prog()); if (typeof CLS_IDS !== 'undefined' && $('#scr-class').classList.contains('on')) layoutTrail(prog(), CLS_IDS); } }); },
     relayout() { if (this.v && this.trail && this.st && this.trail.classList.contains('g3')) { try { this._show(); } catch (e) {} } },
     _show() {
@@ -1998,6 +1998,14 @@ var G3 = {
       const T = G3.T, v = this.v, grid = this.trail.querySelector('.trail-grid'); if (!grid || !v.w) return; const p = new T.Vector3(), q = new T.Vector3();
       p.set(0, .5, 0).project(v.cam); q.set(1, .5, 0).project(v.cam); this.trail.style.setProperty('--u', ((q.x - p.x) * v.w / 2).toFixed(1) + 'px');
       [...grid.children].forEach((el, i) => { const o = this.pts[i]; if (!o) return; p.set(o.x, .9, o.z).project(v.cam); el.style.left = ((p.x + 1) / 2 * v.w).toFixed(1) + 'px'; el.style.top = ((1 - p.y) / 2 * v.h).toFixed(1) + 'px'; });
+    },
+    spot(n) { const q = this.pts[n - 1] || this.pts[0]; return new G3.T.Vector3(q.x + .75, .15, q.z + .95); },
+    active() { return !!(this.v && this.me && this.trail && this.trail.classList.contains('g3')); },
+    walkTo(n, cb) {
+      const T = G3.T, sk = this.sk, from = this.at[sk]; if (!this.active() || this.walk || !this.pts[n - 1] || from === n) { if (cb) cb(); return; }
+      const path = [this.spot(from)], st = from < n ? 1 : -1; for (let k = from; k !== n; k += st) { const a = this.pts[k - 1], b = this.pts[k - 1 + st], d = new T.Vector3(b.x - a.x, 0, b.z - a.z).normalize(); path.push(new T.Vector3(a.x + d.x * 1.35, .15, a.z + d.z * 1.35), new T.Vector3(b.x - d.x * 1.35, .15, b.z - d.z * 1.35)); }
+      path.push(this.spot(n)); let len = 0; for (let k = 1; k < path.length; k++) len += path[k].distanceTo(path[k - 1]);
+      this.at[sk] = n; const scr = this.scr; this.walk = {path, len, t1: -1, sp: Math.max(4.5, len / 1.3), cb: cb && (() => { if ($('#' + scr).classList.contains('on')) cb(); })}; this.v.start();
     },
     landmark(n, A) {
       const G = G3, T = G.T, L = [];
@@ -2036,19 +2044,21 @@ var G3 = {
           A.push(t0 => { kid.position.y = .15 + Math.abs(Math.sin(t0 * 2.6 + i + j * 1.3)) * (me ? .26 : .12); kid.rotation.y = Math.sin(t0 * .9 + j) * .4; }); });
         if (i + 1 === st.cur) {
           const ring = G.m(G.tor(1.72, .07), '#ff922b', 0, .2, 0, {emissive: '#ff7a2f', emissiveIntensity: 1}); ring.rotation.x = Math.PI / 2; ring.castShadow = false; isl.add(ring);
-          const me = this.me = G.animal(st.av); me.scale.setScalar(.82); W.add(me); const spot = q => new T.Vector3(q.x + .75, .15, q.z + .95), home = spot(p);
-          const arrow = G.m(G.cone(.16, .3, 4), '#ffd43b', 0, 0, 0, {emissive: '#ffd43b', emissiveIntensity: .8}); arrow.rotation.x = Math.PI; W.add(arrow);
-          const sk = st.id + '|' + st.course, from = this.seen[sk]; this.seen[sk] = st.cur; let path = null, t1 = -1, len = 0;
-          if (from && from < st.cur && this.pts[from - 1]) { path = [spot(this.pts[from - 1])]; for (let k = from - 1; k < i; k++) { const a = this.pts[k], b = this.pts[k + 1], d = new T.Vector3(b.x - a.x, 0, b.z - a.z).normalize(); path.push(new T.Vector3(a.x + d.x * 1.35, .15, a.z + d.z * 1.35), new T.Vector3(b.x - d.x * 1.35, .15, b.z - d.z * 1.35)); } path.push(home); for (let k = 1; k < path.length; k++) len += path[k].distanceTo(path[k - 1]); }
-          A.push(t0 => { const h = Math.abs(Math.sin(t0 * 3.2)); let walking = false;
-            if (path) { if (t1 < 0) t1 = t0 + .6; let d = Math.max(0, t0 - t1) * 3.2; if (d >= len) { path = null; if (typeof Snd !== 'undefined') Snd.pop(); } else { walking = true; let k = 1; while (k < path.length - 1 && d > path[k].distanceTo(path[k - 1])) { d -= path[k].distanceTo(path[k - 1]); k++; } const a = path[k - 1], b = path[k]; me.position.lerpVectors(a, b, Math.min(1, d / Math.max(.001, a.distanceTo(b)))); me.rotation.y = Math.atan2(b.x - a.x, b.z - a.z); me.position.y = .15 + Math.abs(Math.sin(t0 * 9)) * .16; } }
-            if (!walking) { me.position.set(home.x, .15 + h * .32, home.z); me.rotation.y = Math.sin(t0 * 1.1) * .5; }
-            me.scale.set(.82 * (1 + (1 - h) * .06), .82 * (1 - (1 - h) * .08), .82); ring.scale.setScalar(1 + Math.sin(t0 * 3) * .04); arrow.position.set(me.position.x, me.position.y + 1.75 + Math.sin(t0 * 4) * .1, me.position.z); arrow.rotation.y = t0 * 2; });
+          A.push(t0 => { ring.scale.setScalar(1 + Math.sin(t0 * 3) * .04); });
         }
         if (i < n - 1) { const q = this.pts[i + 1], dx = q.x - p.x, dz = q.z - p.z, len = Math.hypot(dx, dz), done = i + 1 < st.cur; const br = new T.Group(); br.position.set(p.x + dx / 2, .02, p.z + dz / 2); br.rotation.y = Math.atan2(-dz, dx); const L = len - 2.7, k = Math.max(3, Math.round(L / .3));
           for (let j = 0; j < k; j++) { const x = -L / 2 + (j + .5) * L / k; br.add(G.m(G.box(L / k * .78, .07, .62), done ? (j % 2 ? '#e0a96d' : '#d39a5c') : '#c2c9d0', x, -Math.sin((j + .5) / k * Math.PI) * .1, 0)); }
           [-1, 1].forEach(sx => [-1, 1].forEach(sz => br.add(G.m(G.cyl(.05, .05, .5, 6), done ? '#8b5e34' : '#9aa3ad', sx * (L / 2 + .05), .1, sz * .34)))); W.add(br); }
       });
+      this.walk = null; this.me = null;
+      if (st.cur) { const me = this.me = G.animal(st.av); me.scale.setScalar(.82); W.add(me); const sk = this.sk = st.id + '|' + st.course;
+        const arrow = G.m(G.cone(.16, .3, 4), '#ffd43b', 0, 0, 0, {emissive: '#ffd43b', emissiveIntensity: .8}); arrow.rotation.x = Math.PI; W.add(arrow);
+        const prev = this.seen[sk]; this.seen[sk] = st.cur; if (!this.at[sk] || this.at[sk] > n) this.at[sk] = st.cur;
+        const s0 = this.spot(this.at[sk]); me.position.copy(s0); if (prev && prev < st.cur) setTimeout(() => this.walkTo(st.cur), 500);
+        A.push(t0 => { const h = Math.abs(Math.sin(t0 * 3.2)), w = this.walk; let walking = false;
+          if (w) { if (w.t1 < 0) w.t1 = t0; let d = (t0 - w.t1) * w.sp; if (d >= w.len) { this.walk = null; if (typeof Snd !== 'undefined') Snd.pop(); if (w.cb) w.cb(); } else { walking = true; let k = 1; while (k < w.path.length - 1 && d > w.path[k].distanceTo(w.path[k - 1])) { d -= w.path[k].distanceTo(w.path[k - 1]); k++; } const a = w.path[k - 1], b = w.path[k]; me.position.lerpVectors(a, b, Math.min(1, d / Math.max(.001, a.distanceTo(b)))); me.rotation.y = Math.atan2(b.x - a.x, b.z - a.z); me.position.y = .15 + Math.abs(Math.sin(t0 * 10)) * .16; } }
+          if (!walking) { const hm = this.spot(this.at[sk]); me.position.set(hm.x, .15 + h * .32, hm.z); me.rotation.y = Math.sin(t0 * 1.1) * .5; }
+          me.scale.set(.82 * (1 + (1 - h) * .06), .82 * (1 - (1 - h) * .08), .82); arrow.position.set(me.position.x, me.position.y + 1.75 + Math.sin(t0 * 4) * .1, me.position.z); arrow.rotation.y = t0 * 2; }); }
       for (let i = 0; i < 26; i++) { const w = G.m(G.box(.7 + rnd() * .6, .01, .07), '#e3f8ff', (rnd() - .5) * cols * 6, -.6, (rnd() - .5) * rows * 7.5, {transparent: true, opacity: .7}); w.castShadow = false; const ph = rnd() * 6.28, x0 = w.position.x; W.add(w); A.push(t0 => { w.scale.x = .15 + (Math.sin(t0 * .9 + ph) + 1) * .5; w.position.x = x0 + Math.sin(t0 * .3 + ph) * .5; }); }
       const boat = c => G.grp([G.m(G.box(.7, .16, .3), '#a9713f', 0, 0, 0), G.m(G.cyl(.02, .02, .7, 5), '#5c3d1e', 0, .4, 0), G.m(G.cone(.3, .55, 3), c, .02, .45, 0, {flatShading: true, side: 2})]);
       [['#fff', 1], ['#ffd43b', -1]].forEach(([c, s], i) => { const b = boat(c); b.scale.setScalar(.8); W.add(b); const R = cols * 2.1 + 1.2, z0 = (rows * 2.75 + .3) * s; A.push(t0 => { const a = t0 * .08 * s + i * 2; b.position.set(Math.sin(a) * R, -.52 + Math.sin(t0 * 2 + i) * .03, z0 + Math.cos(a * 2) * .4); b.rotation.y = Math.cos(a) > 0 ? 0 : Math.PI; b.rotation.z = Math.sin(t0 * 2 + i) * .06; }); });
@@ -2092,7 +2102,7 @@ function renderMap(course) {
     c.innerHTML = `<div class="ball">${ART.landmark(L.n)}<span class="num">${L.n}</span>${locked ? '<span class="lock">🔒</span>' : ''}${passed ? '<span class="flag">🚩</span><span class="tag">통과</span>' : cur ? '<span class="tag">여기!</span>' : ''}${cur ? `<span class="av">${ART.face(avatarOf(u))}</span>` : ''}</div>
       <div class="ttl">${esc(L.title)}</div>${locked ? '' : `<div class="st">⭐ ${info.total}/${NEED_STARS}</div>`}`;
     c.disabled = locked;
-    c.onclick = () => openHub(L.n);
+    c.onclick = () => { if (G3.map.active()) G3.map.walkTo(L.n, () => openHub(L.n)); else openHub(L.n); };
     grid.appendChild(c);
   });
   $('#trail').classList.add('mapbg'); $('#trail').style.setProperty('--tile', ART.mapTile());
