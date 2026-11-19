@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<!-- 타자연습 v3.8 (2026-11-03) · 한글 두벌식 10레벨 + 영어 자판 8레벨 · 제작 kingkongssam -->
+<!-- 타자연습 v3.9 (2026-11-03) · 한글 두벌식 10레벨 + 영어 자판 8레벨 · 제작 kingkongssam -->
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#ff7a2f">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
-<title>타자연습 v3.8 — 기본 자리부터 차근차근 레벨 업</title>
+<title>타자연습 v3.9 — 기본 자리부터 차근차근 레벨 업</title>
 <style>
 :root{
   --bg:#eef4fb; --card:#ffffff; --ink:#1f2a3d; --muted:#556178; --btn:#c2410c; --btn-dark:#8f2f08;
@@ -527,7 +527,7 @@ svg.face{width:1.2em;height:1.2em;display:inline-block;vertical-align:middle;ove
 .stage.g3 .item.up .bln{background:none;box-shadow:none}.stage.g3 .item.up .bln::after{display:none}.stage.g3 .item.up .string{visibility:hidden}
 .stage.g3 .item.up.lock .bln{box-shadow:none}.stage.g3 .item.up.lock .tag{background:rgba(255,255,255,.92);border-radius:12px;padding:0 .35em;box-shadow:0 0 0 3px var(--accent)}
 .stage.g3 .item.right .fish-tail{visibility:hidden}.stage.g3 .item.right .fishb{background:none;box-shadow:none}.stage.g3 .item.right .fishb::before,.stage.g3 .item.right .fishb::after{display:none}
-.stage.g3 .item.right.lock .fishb{box-shadow:none}.stage.g3 .item.right.lock .tag{box-shadow:0 0 0 3px var(--accent)}
+.stage.g3 .item.right .fishb{padding:0}.stage.g3 .item.right .tag{box-shadow:0 3px 0 rgba(0,40,90,.25);border-radius:999px;padding:.08em .6em}.stage.g3 .item.right.lock .fishb{box-shadow:none}.stage.g3 .item.right.lock .tag{box-shadow:0 0 0 3px var(--accent)}
 .stage.g3 .item.down::before{display:none}
 .track.g3 .lane,.track.g3 .finish{visibility:hidden}
 /* 게임에서는 자판을 숨기고 무대를 크게 */
@@ -1218,7 +1218,7 @@ function validateContent() {
 <script>
 /* ================= 저장 ================= */
 const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
-const APP_VERSION = '3.8', APP_DATE = '2026-11-20';
+const APP_VERSION = '3.9', APP_DATE = '2026-11-20';
 /* ===== 우리 반 공유(선택) : Firebase 설정 =====
    Firebase 콘솔 → 프로젝트 설정 → 내 앱(웹) → SDK 설정의 firebaseConfig 값을 아래에 그대로 붙여 넣으세요.
    Realtime Database를 만들고 databaseURL까지 넣어야 켜집니다. 비워 두면 혼자 쓰는 앱으로 돌아갑니다. */
@@ -2230,8 +2230,15 @@ G3.game = {
     const hsl = (el, s, l) => { const h = Math.round((parseFloat(el.style.getPropertyValue('--hue')) || 0) / 20) * 20; return `hsl(${h}, ${s}%, ${l}%)`; };
     const mk = el => { const g = new T.Group(); let upd = null;
       if (dir === 'up') { const c = hsl(el, 85, 62); const b = G.m(G.sph(1, 22), c, 0, 0, -.6, {roughness: .35}); b.scale.set(1, 1.1, .5); const hi = G.m(G.sph(.16, 8), '#ffffff', -.38, .48, -.08, {emissive: '#ffffff', emissiveIntensity: .8}); hi.castShadow = false; g.add(b, hi, G.m(G.cone(.14, .2, 8), c, 0, -1.15, -.6), G.m(G.cyl(.012, .012, 1.5, 4), '#868e96', 0, -1.95, -.6)); upd = (t, r) => { g.scale.setScalar(Math.max(r.w * .62, r.h * .95)); g.rotation.z = Math.sin(t * 1.6 + g.id) * .06; }; }
-      else if (dir === 'right') { const c = hsl(el, 85, 60), c2 = hsl(el, 80, 45); const body = G.m(G.sph(1, 20), c, 0, 0, -.5, {roughness: .4}); const tail = G.m(G.cone(.55, .8, 4), c2, -1.25, 0, -.5, {flatShading: true}); tail.rotation.z = -Math.PI / 2; const fin = G.m(G.cone(.3, .5, 4), c2, -.1, .95, -.5, {flatShading: true}); const belly = G.m(G.sph(.8, 14), '#fff4e6', .05, -.3, -.42); belly.scale.set(1, .6, .5);
-        g.add(body, tail, fin, belly, G.m(G.sph(.17, 10), '#ffffff', .68, .3, -.02), G.m(G.sph(.09, 8), '#212529', .74, .3, .1)); upd = (t, r) => { const sy = r.h * .82, sx = Math.max(r.w * .6, sy * 1.3); g.scale.set(sx, sy, sy); tail.rotation.y = Math.sin(t * 9 + g.id) * .5; g.position.y += Math.sin(t * 3 + g.id) * .04; }; }
+      else if (dir === 'right') { const c = hsl(el, 88, 60), c2 = hsl(el, 85, 44), c3 = hsl(el, 90, 84); const f = new T.Group(); g.add(f); const ph = Math.random() * 6;
+        const body = G.m(G.sph(1, 24), c, 0, 0, 0, {roughness: .35}); body.scale.set(1.45, 1, .62); const belly = G.m(G.sph(1, 18), c3, .08, -.26, .1, {roughness: .4}); belly.scale.set(1.2, .7, .56);
+        const band = x => { const b = G.m(G.sph(1, 14), '#ffffff', x, 0, 0, {roughness: .4}); b.scale.set(.1, Math.sqrt(1 - (x / 1.45) ** 2) * 1.02, .64 * Math.sqrt(1 - (x / 1.45) ** 2)); return b; };
+        const tail = new T.Group(); tail.position.set(-1.3, 0, 0); [1, -1].forEach(s => { const l = G.m(G.cone(.42, .95, 5), c2, -.42, s * .34, 0, {flatShading: true}); l.rotation.z = Math.PI / 2 + s * .62; l.scale.z = .3; tail.add(l); });
+        const dors = G.m(G.cone(.55, .7, 5), c2, -.15, 1.0, 0, {flatShading: true}); dors.scale.z = .22; dors.rotation.z = .35; const pelv = G.m(G.cone(.28, .42, 5), c2, -.1, -.98, 0, {flatShading: true}); pelv.scale.z = .22; pelv.rotation.z = Math.PI - .4;
+        const fin = new T.Group(); fin.position.set(.2, -.28, .58); const fm = G.m(G.cone(.26, .6, 5), c2, -.28, 0, 0, {flatShading: true}); fm.rotation.z = Math.PI / 2; fm.scale.z = .25; fin.add(fm);
+        f.add(body, belly, band(.42), band(-.55), tail, dors, pelv, fin, G.m(G.sph(.3, 16), '#ffffff', .86, .28, .4), G.m(G.sph(.17, 12), '#14324a', .96, .28, .58), G.m(G.sph(.06, 8), '#ffffff', 1.02, .36, .7, {emissive: '#ffffff', emissiveIntensity: .8}));
+        const ch = G.m(G.sph(.13, 10), '#ff8fab', .98, -.12, .5); ch.scale.set(1, .7, .4); const mo = G.m(G.tor(.1, .035, Math.PI), '#14324a', 1.3, -.2, .16); mo.rotation.set(0, .5, Math.PI); f.add(ch, mo);
+        upd = (t, r) => { const b = Math.max(r.h * 1.0, .5); f.scale.setScalar(b); f.position.set(0, r.h * .5 + b * .62 + Math.sin(t * 3 + ph) * .05, -.4); f.rotation.z = Math.sin(t * 3 + ph) * .05; f.rotation.y = Math.sin(t * 2 + ph) * .12; tail.rotation.y = Math.sin(t * 10 + ph) * .55; fin.rotation.y = .3 + Math.sin(t * 8 + ph) * .5; }; }
       else { const d = G.grp([G.m(G.sph(.42, 14), '#a5d8ff', 0, 0, 0, {roughness: .15}), G.m(G.cone(.36, .7, 12), '#a5d8ff', 0, .52, 0, {roughness: .15}), G.m(G.sph(.1, 8), '#ffffff', -.14, .1, .36)]); g.add(d); upd = (t, r) => { d.position.y = r.h * .5 + .62; d.scale.setScalar(.9 + Math.sin(t * 6 + g.id) * .04); }; }
       g.traverse(x => { x.castShadow = false; }); return {g, upd}; };
     const objs = new Map(), dying = [];
