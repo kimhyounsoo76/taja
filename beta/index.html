@@ -1234,7 +1234,7 @@ const LEVELS = [
     ],
     challenge:'안녕하세요 선생님 노래 해요 학교 가요 고양이 병아리 돌고래 비행기',
     pool:['안녕','여기','저기','세상','노래','학교','선생님','생일','동생','사랑해','비행기','고양이','냉장고','여행','재미','개나리','베개','가게','매미','개미','아기','이야기','어제','내일','교실','교장','여러','별님','해님','달님','바다새','조개','미역','병아리','고래','돌고래','나비','열매','노래방','야옹','멍멍','사냥','요리','야외','애벌레','모래','해바라기','세모','네모','야영','노랑새'],
-    game:{type:'fall', dir:'up', name:'낱말 풍선', icon:'🎈', unitName:'풍선', rule:'낱말이 적힌 풍선이 올라가요. 낱말을 끝까지 치면 펑! 날아가기 전에 터트려요.'}
+    game:{type:'adv', ch:5, name:'5장 하늘 등대', icon:'🗼', rule:'먹구름 부하가 하늘 등대의 렌즈를 훔쳐 등불이 꺼졌어요. 등대를 고치고, 섬에 신호를 보내고, 렌즈 도둑을 쫓아요! 글자판에 나온 글자를 차례대로 쳐요.'}
   },
   {
     n:6, title:'아랫줄', keys:'ㅋ ㅌ ㅊ ㅍ ㅠ ㅜ ㅡ', target:110, newJamo:['ㅋ','ㅌ','ㅊ','ㅍ','ㅠ','ㅜ','ㅡ'], drills:3, grade:'3~4학년',
@@ -1440,7 +1440,7 @@ function validateContent() {
 <script>
 /* ================= 저장 ================= */
 const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
-const APP_VERSION = '13.7', APP_DATE = '2026-11-21';
+const APP_VERSION = '14.7', APP_DATE = '2026-11-22';
 /* ===== 우리 반 공유(선택) : Firebase 설정 =====
    Firebase 콘솔 → 프로젝트 설정 → 내 앱(웹) → SDK 설정의 firebaseConfig 값을 아래에 그대로 붙여 넣으세요.
    Realtime Database를 만들고 databaseURL까지 넣어야 켜집니다. 비워 두면 혼자 쓰는 앱으로 돌아갑니다. */
@@ -3380,7 +3380,7 @@ function openHub(n) {
     (g.type === 'adv' ? [1] : [1, 2, 3]).forEach(k => { const open = gUnlocked && stageOpen(p, n, k); const ss = stageStars(p, n, k); const b = document.createElement('button'); b.className = 'btn sm'; b.disabled = !open;
       b.innerHTML = g.type === 'adv' ? `${open ? '▶ ' : '🔒 '}모험 떠나기<small hidden>` : `${open ? '' : '🔒 '}${k}단계 ${GAME_STAGES[k].name}<small>${'★'.repeat(ss)}${'☆'.repeat(3 - ss)}</small>`;
       b.title = open ? '' : `${k - 1}단계에서 별 2개 이상이면 열려요`; b.onclick = () => startGame(n, k); row.appendChild(b); });
-    if (g.type === 'adv' && typeof Adv3D !== 'undefined' && Adv3D.raceOpen(g.ch)) { const b = document.createElement('button'); b.className = 'btn sm sec'; b.disabled = !gUnlocked; b.innerHTML = '🏁 숲길 달리기<small>내 기록과 겨루기</small>'; b.onclick = () => Adv3D.open(L, 'race'); row.appendChild(b); }
+    if (g.type === 'adv' && typeof Adv3D !== 'undefined' && Adv3D.raceOpen(g.ch)) { const b = document.createElement('button'); b.className = 'btn sm sec'; b.disabled = !gUnlocked; b.innerHTML = (g.ch === 5 ? '🏁 구름다리 달리기' : '🏁 숲길 달리기') + '<small>내 기록과 겨루기</small>'; b.onclick = () => Adv3D.open(L, 'race'); row.appendChild(b); }
     if (g.type === 'adv' && typeof Adv3D !== 'undefined' && Adv3D.defOpen(g.ch)) { const b = document.createElement('button'); b.className = 'btn sm sec'; b.disabled = !gUnlocked; b.innerHTML = '🛡️ 풍차 지키기<small>방어 기록 다시</small>'; b.onclick = () => Adv3D.open(L, 'def'); row.appendChild(b); }
     body.appendChild(row); if (gUnlocked && g.type !== 'adv') { const t = document.createElement('div'); t.className = 'muted'; t.style.cssText = 'font-size:12px;margin-top:6px'; t.textContent = '별 2개 이상이면 다음 단계가 열려요'; body.appendChild(t); } }
   }
@@ -4387,7 +4387,7 @@ applyHands();
 <div class="a3-ov on" id="a3-start"><div class="a3-card"><h1>🏘️ 1장 시작 마을</h1><p>글쇠 도둑 먹구름이 글쇠 돌을 훔쳐 달아났어요.<br>마을 신호기가 꺼져 버렸어요.<br>글쇠 수리공 견습생 <b>모아</b>와 함께 신호기를 고치고<br>등대에 신호를 보내요!</p><p class="k">ㅁㄴㅇㄹ</p><p>네 글쇠만 써요. 글자판에 나온 글자를 차례대로 쳐요.</p><button id="a3-start-btn">시작</button> <button id="a3-exit">나가기</button><small class="a3-ver2"></small></div></div>
 <div class="a3-ov" id="a3-end"><div class="a3-card"><h1>1장을 마쳤어요!</h1><div id="a3-end-stars"></div><div id="a3-end-got"></div><p id="a3-end-acc"></p><p id="a3-end-tip"></p><button id="a3-again">다시 하기</button></div></div></div>
 
-<div id="advx2" class="axhost"></div><div id="advx3" class="axhost"></div><div id="advx4" class="axhost"></div>
+<div id="advx2" class="axhost"></div><div id="advx3" class="axhost"></div><div id="advx4" class="axhost"></div><div id="advx5" class="axhost"></div>
 <script type="text/plain" id="a3-lib-three">/**
  * @license
  * Copyright 2010-2023 Three.js Authors
@@ -4883,7 +4883,7 @@ return {open, stop, mood: () => ({dark: active ? dark : 0, tense: false})};   /*
 window.__advChapters = window.__advChapters || {};
 window.__advBoot2 = function (HOOK, chId, rootSel) {
 const CH = window.__advChapters[chId]; if (!CH) throw new Error('장 자료가 없음: ' + chId);
-const VER = 'v13.7', T = THREE, ROOT = document.querySelector(rootSel || '#advx');
+const VER = 'v14.7', T = THREE, ROOT = document.querySelector(rootSel || '#advx');
 const $ = s => ROOT.querySelector(s);
 let active = false, runId = 0;
 
@@ -4995,6 +4995,22 @@ const choose = opts => new Promise(res => { const firsts = opts.map(o => o.text[
     Stat.ok++; if (HOOK) HOOK.ok(ch); sel.n++; sfx.ok(); if (sel.n >= sel.text.length) { handler = null; const id = sel.o.id; ps.slice().forEach(p => p === sel ? p.fin() : p.kill()); sfx.done(); res(id); } else sel.draw(); }; });
 let bubT = 0; const bubble = (t, ms) => { bub.textContent = t; bub.style.opacity = t ? 1 : 0; clearTimeout(bubT); if (t && ms !== 0) bubT = setTimeout(() => bub.style.opacity = 0, ms || 1600); };
 const useIt = x => { if ((ctx.carry.includes(x) || (CH.finds || []).includes(x)) && !ctx.used.includes(x)) ctx.used.push(x); };   /* 모험 가방의 '쓴 곳'(v12.6): 앞 장 선물이나 숨은 발견물을 이 장에서 썼을 때 */
+/* 소품 꺼내 쓰기(v14.2, 선생님 "아이템 사용이 극적이지 않다"): 쓸 때마다 모아 머리 위로 소품이 튀어나와 빛나고, 쓰는 곳(at)으로 날아간다. 화면 위에 "○○를 썼어요!" 띠. 장면의 has 걸음에 use: [x,y,z](또는 true)를 주면 쓴다 */
+const ITEMN = {'🚦': '등대 신호', '📡': '신호 무늬', '🧰': '연장', '📜': '풍차 설계도', '🐚': '소라 나팔', '🏮': '등불', '✉️': '병 속 편지', '🧭': '뱃길 나침반', '🪶': '하늘길 깃털', '🦿': '튼튼한 다리', '🦾': '힘센 팔', '🤖': '로봇 동료', '🐿️': '아기 다람쥐', '🦉': '부엉이', '💎': '글쇠 돌'};
+const josa = w => { const c = w.charCodeAt(w.length - 1) - 0xAC00; return c >= 0 && c <= 11171 && c % 28 ? '을' : '를'; };
+const useShow = (x, at) => new Promise(res => { if (!document.getElementById('ax-use-css')) { const st = document.createElement('style'); st.id = 'ax-use-css'; st.textContent = '.ax-use{position:fixed;left:50%;top:calc(max(10px,env(safe-area-inset-top)) + 58px);transform:translate(-50%,0);opacity:1;background:linear-gradient(#fff6cf,#ffe08a);color:#5f3715;border:3px solid #f2a93b;border-radius:999px;padding:8px 20px;font-weight:900;font-size:clamp(16px,2.2vw,24px);box-shadow:0 6px 18px #0004;z-index:6;pointer-events:none;white-space:nowrap;animation:axUse .3s ease-out}@keyframes axUse{from{transform:translate(-50%,-14px) scale(.85)}to{transform:translate(-50%,0) scale(1)}}'; document.head.appendChild(st); }
+  const nm = ITEMN[x] || ''; const bn = document.createElement('div'); bn.className = 'ax-use'; bn.textContent = x + ' ' + (nm ? nm + josa(nm) : '') + ' 썼어요!'; ROOT.appendChild(bn); 
+  const c = document.createElement('canvas'); c.width = c.height = 128; const g = c.getContext('2d'); g.font = '96px "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(x, 64, 70);
+  const tx = new T.CanvasTexture(c); const sp = new T.Sprite(new T.SpriteMaterial({map: tx, depthTest: false, transparent: true, fog: false})); sp.renderOrder = 9; S.add(sp); const hal = glow(3.2, '#fff2a8'); hal.material.depthTest = false; hal.renderOrder = 8;
+  const a0 = [MG.position.x, MG.position.y + 2.6, MG.position.z], a1 = [a0[0], a0[1] + 1.6, a0[2]], to = Array.isArray(at) ? at : null; let t = 0, done = false;
+  [523, 659, 784, 1047].forEach((f, i) => setTimeout(() => beep(f, .16, 'triangle', .05), i * 90));
+  const f = (now, dt) => { t += dt; const p = sp.position; let sc;
+    if (t < .35) { const k = t / .35; p.set(a0[0], a0[1] + (a1[1] - a0[1]) * (1 - (1 - k) * (1 - k)), a0[2]); sc = 1.6 * Math.sin(k * Math.PI * .5) * (1 + .25 * Math.sin(k * Math.PI)); }
+    else if (t < 1.0) { p.set(a1[0], a1[1] + Math.sin((t - .35) * 8) * .08, a1[2]); sc = 1.6; }
+    else if (to && t < 1.65) { const k = (t - 1) / .65, e = k * k * (3 - 2 * k); p.set(a1[0] + (to[0] - a1[0]) * e, a1[1] + (to[1] - a1[1]) * e + Math.sin(e * Math.PI) * 1.2, a1[2] + (to[2] - a1[2]) * e); sc = 1.6 * (1 - e * .5); }
+    else { if (!done) { done = true; const q = to || a1; burst(q[0], q[1], q[2], 18, '#fff2a8', 3); sfx.done(); } const k = Math.min(1, (t - (to ? 1.65 : 1)) / .3); sc = (to ? .8 : 1.6) * (1 - k); if (k >= 1) { S.remove(sp); S.remove(hal); tx.dispose(); ANIM.splice(ANIM.indexOf(f), 1); res(); } }
+    sp.scale.set(sc, sc, 1); hal.position.copy(p); hal.scale.set(sc * 2, sc * 2, 1); hal.material.opacity = .6 + Math.sin(t * 12) * .2; };
+  ANIM.push(f); setTimeout(() => bn.remove(), 2400); });
 const where = t => { $('.ax-where').textContent = t; }; const got = []; const inv = () => { $('.ax-inv').textContent = got.join(' '); window.__axGot = got.slice(); };   /* __axGot·__axFound: 모험 가방이 이번 판에 받은 것을 바로 보여 줌(v12.9) */
 
 /* ── 무대: 장 자료가 만든다 ── */
@@ -5088,7 +5104,7 @@ const step = async s => {
   if (s.guard) ctx.flags[s.guard + '_reach'] = await guard(s);   /* 도전 목표 '한 번에 막기'(v12.6): 적이 닿은 횟수 */
   if (s.chase) await chase(s);
   if (s.defend) await defend(s);
-  if (s.has) { const hv = ctx.owned.includes(s.has) || ctx.carry.includes(s.has) || got.includes(s.has) || ctx.found.includes(s.has) || ctx.foundOld.includes(s.has); if (hv) useIt(s.has); await run(hv ? s.then : s.else); }   /* 숨은 발견물(예: 📜 설계도)은 앞선 판에 찾았어도 가진 것으로 본다 */
+  if (s.has) { const hv = ctx.owned.includes(s.has) || ctx.carry.includes(s.has) || got.includes(s.has) || ctx.found.includes(s.has) || ctx.foundOld.includes(s.has); if (hv) useIt(s.has); if (hv && s.use) await useShow(s.has, s.use); await run(hv ? s.then : s.else); }   /* 숨은 발견물(예: 📜 설계도)은 앞선 판에 찾았어도 가진 것으로 본다 */
   if (s.when) await run(ctx.flags[s.when] === s.is ? s.then : s.else);
   if (s.wait) await sleep(s.wait);
 };
@@ -5218,7 +5234,7 @@ const tick = t => { const dt = Math.min(.05, (t - last) / 1000) * (window.__axPa
   if (active) requestAnimationFrame(tick); };
 const open = () => { if (active) return; active = true; runId++; size(); reset(); shortBtn(); $('.ax-end').classList.remove('on'); $('.ax-start').classList.add('on'); last = performance.now(); requestAnimationFrame(tick); };
 const stop = () => { active = false; runId++; handler = null; RC = null; raceOn = false; if (RP) rUI(false); G = null; CHS = null; DF = null; PK = null; BS = null; plates.slice().forEach(p => p.kill()); Mo.moving = false; Mo.res = null; bubble(''); };
-if (!HOOK) open(); window.__g2 = {get RC() { return RC; }, get PK() { return PK; }, get BS() { return BS; }, Mo, MG, press, plates, Stat, cam, stage, ctx, got, get G() { return G; }, get CHS() { return CHS; }, get DF() { return DF; }};
+if (!HOOK) open(); window.__g2 = {useShow, get RC() { return RC; }, get PK() { return PK; }, get BS() { return BS; }, Mo, MG, press, plates, Stat, cam, stage, ctx, got, get G() { return G; }, get CHS() { return CHS; }, get DF() { return DF; }};
 return {open, stop, mood: () => ({tense: !!(DF || BS || RC || CHS), dark: (CH.darkUntil ? !got.includes(CH.darkUntil) : CH.n === 3 && !got.includes('💎')) && !RC ? 1 : 0})};   /* darkUntil: 이 선물을 얻기 전까지 어두운 장면(4장은 공장에 불이 켜지기 전) */   /* mood: 배경음악용 — 방어·대장전·경주·쫓김이면 긴장, 3장은 글쇠 돌(💎)을 되찾기 전까지 어두운 숲 */
 };
 </script>
@@ -5532,7 +5548,7 @@ scenes: [
   {pose: 'cheer', say: '내가 찾아올게!', ms: 1700, wait: 1500},
   /* 어두운 길(누구나 지남): 낱말을 치면 걸어간다. 등불이 있으면 숨은 발견물이 보인다 */
   {where: '어두운 길', go: [-19.6, 0], face: [-15, 0]},
-  {has: '🏮', then: [{fx: 'lampOn', say: '등불을 켜자! 길이 환해졌어', ms: 2000, wait: 1700}], else: [{say: '어두워서 잘 안 보여. 조심조심 가자', ms: 2200, wait: 1800}]},
+  {has: '🏮', use: true, then: [{fx: 'lampOn', say: '등불을 켜자! 길이 환해졌어', ms: 2000, wait: 1700}], else: [{say: '어두워서 잘 안 보여. 조심조심 가자', ms: 2200, wait: 1800}]},
   {say: ''}, {face: FP[0], type: 'ko3_d1', at: [FP[0][0], 2.5, FP[0][1]], as: 'idle', tag: '낱말을 치면 걸어가요'}, {go: [-15.5, 0]},
   {has: '🏮', then: [{face: FP[0], fx: 'find', arg: 0, find: '🍄', say: '빛 버섯을 찾았어!', ms: 1500, wait: 1000}, {say: ''}]},
   {face: FP[1], type: 'ko3_d2', at: [FP[1][0], 2.3, FP[1][1]], as: 'idle'}, {go: [-11, 0]},
@@ -5544,7 +5560,7 @@ scenes: [
     {id: 'fork_sign', at: [-1.6, 3.9, -1.9], tasks: ['ko3_s1', 'ko3_s2'], each: 'signStep', steps: SIGNREAD, again: SIGNREAD}
   ]},
   /* 소라 나팔(2장 수문 먼저의 선물): 불면 숲길 쪽에서 아기 다람쥐가 대답한다. 이미 다람쥐와 함께라면 불지 않는다 */
-  {has: '🐿️', else: [{has: '🐚', then: [{say: '소라 나팔을 불어 볼까?', ms: 1800, wait: 1400}, {say: ''}, {type: 'ko3_shell', follow: 'moa', as: 'idle', tag: '🐚 소라 나팔 불기'},
+  {has: '🐿️', else: [{has: '🐚', use: true, then: [{say: '소라 나팔을 불어 볼까?', ms: 1800, wait: 1400}, {say: ''}, {type: 'ko3_shell', follow: 'moa', as: 'idle', tag: '🐚 소라 나팔 불기'},
     {fx: 'shellBlow', wait: 1500}, {fx: 'farSqueak', by: 'far', say: '🐿️ 찍찍! 여기야!', ms: 2200, wait: 2000}, {say: '숲길에 아기 다람쥐가 있나 봐!', ms: 2400, wait: 2100}]}]},
   /* 틀 2 — 갈림길: 물길 / 숲길 */
   {mark: 'fk', fork: 'ch3_way', flag: 'chosenPath', where: '갈림길', stand: [1.6, .2], look: [6, -2], ask: '어느 길로 갈까?', choices: [
@@ -6097,7 +6113,7 @@ scenes: [
   {go: [K[2][0], .7], face: K[2]}, {type: 'ko4_c3', at: [K[2][0], 2.5, K[2][1]], done: 'crate', arg: 2},
   {pose: 'cheer', say: '부품을 다 찾았어!', ms: 1700, wait: 1500},
   {go: STAND, face: R0}, {by: 'bot', say: '🤖 삐빅! 다리도 팔도 빠졌어', ms: 2400, wait: 2200},
-  {has: '🧰', then: [{say: '1장에서 받은 연장이 있어!', ms: 2000, wait: 1800}]},
+  {has: '🧰', use: [R0[0], 2.4, R0[1]], then: [{say: '1장에서 받은 연장이 있어!', ms: 2000, wait: 1800}]},
   /* 틀 1 — 장치 수리: 다리 먼저 / 팔 먼저. 둘 다 고치게 되며, 먼저 고친 쪽에 따라 생기는 일이 다르다 */
   {repair: 'ch4_order', flag: 'repairedDevice', where: '먼저 고칠 것 고르기', look: R0, ask: '무엇부터 고칠까?', choices: [
     {id: 'legs', where: '다리 고치기', at: [5.6, 5.2, -1.4], task: 'ko4_pick_legs', tag: '🦿 다리 먼저<br>로봇이 일어나요',
@@ -6153,7 +6169,7 @@ scenes: [
   /* 날개 끼우기: 로봇이 날개를 들고, 모아가 낱말로 맞추고 조인다 */
   {mark: 'dfe', cam: [1.4, 3.6], fx: 'cloudsFlee', pose: 'cheer', say: '먹구름 무리가 달아났어!', ms: 2000, wait: 1800},
   {by: 'bot', fx: 'botFace', say: '🤖 이제 날개를 끼우자!', ms: 2000, wait: 1800},
-  {has: '📜', then: [{pose: 'lift', say: '설계도에 끼우는 자리가 그려져 있어!', ms: 2400, wait: 2200}]},
+  {has: '📜', use: [BLAT[0], BLAT[1] - 1.2, BLAT[2]], then: [{pose: 'lift', say: '설계도에 끼우는 자리가 그려져 있어!', ms: 2400, wait: 2200}]},
   {where: '날개 끼우기', fx: 'rotorTo', arg: 0}, {fx: 'bladeFetch', arg: 0}, {face: [W[0], W[1] + 2]},
   {type: 'ko4_b1', at: BLAT, tag: '낱말을 치면 로봇이 날개를 들어요', done: 'bladeUp', arg: 0},
   /* 📜가 있으면 한 번에 바르게, 없으면 첫 날개를 거꾸로 끼워 덜컹 → 돌려서 다시 끼움(선생님 결정 2026-11-21: 설계도 차이가 보이게) */
@@ -6489,9 +6505,549 @@ build(E) { const {T, S, rnd, M, WM, add, flat, disc, glow, inst, FONT, ANIM, MG,
 };
 })();
 </script>
+<script type="text/plain" id="a3-lib-ch5">/* 타자 모험 · 5장 하늘 등대 (5-1: 등대 고치기) — 기획안 5.0 §7의 5장:
+   윗줄 오른손 ㅛㅕㅑㅐㅔ, 핵심 선택 = 어느 섬으로 신호를 먼저 보낼지(5-2), 결과 = 등대 점등·섬 사이 소식 교환, 이후 = 9장 편지 전달 경로, 반복 = 도둑 부하 추격 고스트(5-3). 대장 없음.
+   기획안에 없는데 넣은 것(선생님께 알림): 등대지기 갈매기 '요요', 문의 신호 자물쇠(등대가 마지막으로 받은 신호 = 1장에서 모아가 보낸 🚦 신호),
+   예비 렌즈(작아서 빛이 가까운 섬까지만 닿음 → 5-3에서 진짜 렌즈를 되찾는 까닭), 신호판(☀ 해 · ★ 별 · ▲ 세모 차례 = 1장 📡 신호 무늬, 있으면 한 번에 맞춤),
+   도르래 바구니(렌즈가 무거워 갈매기가 못 듦).
+   5-3(렌즈 도둑 쫓기)에 넣은 것(기획안에 없음, 선생님께 알림): 절벽 오른쪽 끝의 구름다리와 끝 섬(다리가 끊겨 막다른 곳), 도둑이 렌즈가 무거워 높이 못 남(막다른 곳에서 붙잡히는 까닭),
+   도둑의 한마디("나도 반짝이는 불빛이 갖고 싶었을 뿐이야" — 10장 먹구름과의 화해 실마리), 예비 렌즈를 빼고 진짜 렌즈를 끼우면 빛이 먼 섬까지 닿아 무너진 다리가 보임(6장 고리). */
+(() => {
+const NEW = 'ㅛㅕㅑㅐㅔ', ALL = 'ㅁㄴㅇㄹㅎㅗㅓㅏㅣㅂㅈㄷㄱㅅㅛㅕㅑㅐㅔ';
+const word = (text, keys) => ({language: 'ko', stage: 5, allowedKeySet: keys, text, inputMode: 'word', difficulty: 1, contentVersion: 1});
+const task = (text, keys) => ({language: 'ko', stage: 5, allowedKeySet: keys, text, inputMode: 'jamo', difficulty: 1, contentVersion: 1});
+/* 자리: 등대(L, 밑동 가운데), 문 앞(DS), 신호판(PN)과 서는 곳(PS), 도르래(WN)와 서는 곳(WS), 바구니(BK), 갈매기 말뚝(GP) */
+const L = [14, -7], DS = [14, -2.9], PN = [7.4, -3.5], PS = [7.4, -1.5], WN = [21, -3.4], WS = [20.4, -1.3], BK = [17.7, -5.3], GP = [10.4, -3.3];
+const GAL = 9.4, LAMP = [L[0], 10.25, L[1]], TOPG = [16.25, GAL + .05, -5.95];   /* 전망대 바닥 높이, 등불 가운데, 꼭대기에서 갈매기가 서는 곳 */
+const CAM = [1.35, 3.6], DZ = 2.36;   /* DZ: 등대 문이 붙는 앞쪽 거리(장면 자료에서도 씀) */
+let GF = () => [GP[0], 3.3, GP[1]];
+/* 5-3: 구름다리(BR0~BR1, z 1.6), 끝 섬(ISL5 가운데, 반지름 ISR), 도둑이 몰리는 곳(TC), 렌즈가 떨어지는 곳(LD), 구름다리 달리기 코스 */
+const BR0 = 62, BR1 = 86, ISL5 = [91, 1.6], ISR = 5, TC = [94.4, 1.6], LD = [93, 1.6];
+const RW = ['어서', '달려', '세게', '저기야', '기다려', '힘내', '돌려내', '요요야'], RPATH = [[26, 1.6], [58, 1.6], [90, 1.6]], RFIN = RPATH[2];
+window.__advChapters[5] = {
+n: 5, name: '하늘 등대', part: '5-3', start: [-34, 1.6], routes: ['pond', 'forest'],
+collect: ['🧭', '🪶'], collectName: '섬 소식',   // 5-2 갈래 선물: 🧭 뱃길 나침반(연못 나루 먼저, 사공의 심부름 갈매기) / 🪶 하늘길 깃털(동물의 숲 먼저, 부엉이) — 9장 편지 전달 길
+marks: {dr: {label: '등대 문부터', at: [3, 1.6]}, pn: {label: '신호판부터', at: [14, -3.5]}, p2: {label: '5-2부터', at: [11, .6], got: ['🔆']}, p3: {label: '5-3부터', at: [11, .6], got: ['🔆']}},
+race: {course: 'ch5_bridge', rules: 1, content: 1, label: '🏁 구름다리 달리기', where: '🏁 구름다리 달리기', tag: '바르게 치면 달려요', pace: 80, minAcc: 90, cam: 1.12, finCam: [1.3, 2.4],
+  ask: {by: 'gull', say: '구름다리를 한번 달려 볼래?', face: [12.6, -1.4], goSay: '다리 앞에서 출발하자!', nextSay: '다음 섬으로 가자!', choices: [{id: 'race', task: 'ko5_ask_race', at: [13.4, 3.7, 2], tag: '🏁 구름다리 달리기'}, {id: 'next', task: 'ko5_ask_next', at: [19.8, 3.7, 2], tag: '🌉 다음 장으로'}]}, path: RPATH, words: RW.map((w, i) => 'ko5_r' + i)},   /* 기획안 §7 5장 반복 = 도둑 부하 추격 고스트. 3장 숲길 달리기와 같은 틀 */
+uses: ['🚦', '📡'], carryTest: [['🚦', '등대 신호'], ['📡', '신호 무늬']],   // 1장에서 가져오는 것: 🚦 = 누구나(등대와 주고받은 신호, 문을 여는 단서), 📡 = 1장 등대 먼저의 선물(신호판을 한 번에 맞춤)
+darkUntil: '🔆',                                                            // 등대에 불이 켜지기 전까지는 어두운 장면(배경음악용)
+keymap: {KeyA: 'ㅁ', KeyS: 'ㄴ', KeyD: 'ㅇ', KeyF: 'ㄹ', KeyG: 'ㅎ', KeyH: 'ㅗ', KeyJ: 'ㅓ', KeyK: 'ㅏ', KeyL: 'ㅣ', KeyQ: 'ㅂ', KeyW: 'ㅈ', KeyE: 'ㄷ', KeyR: 'ㄱ', KeyT: 'ㅅ', KeyY: 'ㅛ', KeyU: 'ㅕ', KeyI: 'ㅑ', KeyO: 'ㅐ', KeyP: 'ㅔ'}, jamo: ALL,
+sky: {bg: '#56627c', fog: '#606c86', hemi: '#b9c3d8', ground: '#4e5a4a', hemiI: .42, sun: '#c9cde0', sunI: .5},
+card: {title: '🗼 5장 하늘 등대', html: '<p>구름 위 하늘 등대의 불이 꺼졌어요.<br>등대지기 갈매기를 도와<br><b>모아</b>와 함께 다시 불을 밝혀요!</p>', keys: NEW, how: '새 글쇠 ㅛ ㅕ ㅑ ㅐ ㅔ를 써요. 오른손 윗줄이에요.'},
+endTitle: '5장을 마쳤어요!', tipOther: '다른 섬에 먼저 보내면 다른 손님이 와요 · 🏁 구름다리 달리기가 열렸어요', tipBoth: '두 섬 모두 먼저 보내 봤어요! · 🏁 구름다리 달리기가 열렸어요', nextTip: '다음은 6장 무너진 다리',
+
+/* ── 입력 과제: 새 글쇠(ㅛㅕㅑㅐㅔ)가 꼭 들어가게 골랐다. 문 신호는 1장에서 보낸 그대로(자모) ── */
+tasks: {
+  ko5_s1: task('ㅁㄴㅇㄹ', ALL), ko5_s2: task('ㄹㅇㄴㅁ', ALL),
+  ko5_drawer: word('서랍', ALL),
+  ko5_p0: word('해', ALL), ko5_p1: word('별', ALL), ko5_p2: word('세모', ALL), ko5_pw: word('별', ALL),
+  ko5_w1: word('당겨', ALL), ko5_w2: word('세게', ALL), ko5_w3: word('살살', ALL), ko5_call: word('요요야', ALL),
+  ko5_lv1: word('레버', ALL), ko5_lv2: word('내려', ALL),
+  /* 5-2: 먼저 보낼 섬 고르기(연못/산새), 나루로 보내는 신호, 숲으로 보내는 신호 */
+  ko5_pick_pond: word('연못', ALL), ko5_pick_forest: word('산새', ALL),
+  ko5_n1: word('할아버지', ALL), ko5_n2: word('안녕하세요', ALL), ko5_n3: word('여기요', ALL),   /* 사공 할아버지께: 존댓말 */
+  ko5_f1: word('안녕', ALL), ko5_f2: word('여기야', ALL), ko5_f3: word('대답해', ALL),   /* 부엉이(친구)에게: 반말 */
+  /* 5-3: 도둑 쫓기(낱말마다 한 걸음씩 다가감), 렌즈 내려놓게 하기, 도르래, 장 끝 고르기, 구름다리 달리기 */
+  ko5_c0: word('거기서', ALL), ko5_c1: word('기다려', ALL), ko5_c2: word('달려', ALL), ko5_c3: word('저기야', ALL), ko5_c4: word('힘내', ALL),
+  ko5_c5: word('요요야', ALL), ko5_c6: word('어서', ALL), ko5_c7: word('돌려내', ALL), ko5_c8: word('이얍', ALL), ko5_c9: word('잡아라', ALL),
+  ko5_drop: word('내려', ALL), ko5_ask_race: word('달려', ALL), ko5_ask_next: word('가자', ALL),
+  ...Object.fromEntries(RW.map((w, i) => ['ko5_r' + i, word(w, ALL)]))
+},
+
+/* ── 장면 자료 ── */
+scenes: [
+  {where: '구름 위 절벽', go: [-20, 1.6]},
+  {pose: 'surprise', say: '구름 위까지 올라왔어!', ms: 2000, wait: 1800},
+  {say: '바람이 차갑다…', ms: 1600, wait: 1400},
+  {where: '하늘 등대', go: [3, 1.6], face: L, cam: CAM}, {say: '등대에 불이 꺼져 있어', ms: 1900, wait: 1700},
+  {fx: 'thiefFly', pose: 'surprise', say: '저 구름이 뭘 들고 가!', ms: 2200, wait: 2600},
+  {fx: 'gullPanic', by: 'gull', say: '끼룩! 먹구름 부하가 등대 렌즈를 훔쳐 갔어!', ms: 2800, wait: 2600},
+  {go: [7.6, 1.2], face: GP}, {by: 'gull', say: '나는 등대지기 갈매기 요요야', ms: 2400, wait: 2200},
+  {by: 'gull', say: '불이 꺼지면서 등대 문까지 잠겼어…', ms: 2600, wait: 2400},
+  {pose: 'cheer', say: '내가 도울게!', ms: 1600, wait: 1400},
+  {by: 'gull', say: '등대가 마지막으로 받은 신호를 쳐야 문이 열려', ms: 3000, wait: 2800},
+  {mark: 'dr', where: '등대 문', cam: CAM, go: DS, face: [L[0], L[1]]},
+  /* 🚦(1장 등대와 주고받은 신호)가 있으면: 소품을 꺼내 문에 비추면 앞 신호가 저절로 켜지고 등대가 기억해 깜박인다 → 답신만 친다. 없으면: 일지를 읽으러 가서 두 줄 다 치고, 문이 무겁게 열린다(v14.2 선생님 "더 대비되게") */
+  {has: '🚦', use: [L[0] + 1.25, 1.95, L[1] + DZ + .2],
+   then: [{pose: 'lift', say: '시작 마을에서 내가 보낸 신호야!', ms: 2200, wait: 600}, {fx: 'signalProject'},
+     {fx: 'gullLook', by: 'gull', say: '끼룩! 등대가 너를 기억해!', ms: 2400, wait: 2200}, {by: 'gull', say: '답신만 치면 문이 열려!', ms: 2000, wait: 1800}, {say: ''},
+     {type: 'ko5_s2', at: [L[0], 3.6, L[1] + 3], tag: '답신을 쳐요', each: 'rune', done: 'doorOpen'},
+     {pose: 'cheer', say: '문이 활짝 열렸어!', ms: 1800, wait: 1600}],
+   else: [{fx: 'logGlow', by: 'gull', say: '문 옆 등대 일지에 마지막 신호가 적혀 있어', ms: 2800, wait: 2400},
+     {go: [12.3, -3.2], face: [12.65, -4.5]}, {pose: 'inspect', say: '보낸 신호, 받은 신호… 두 줄이네', ms: 2400, wait: 2200},
+     {go: DS, face: [L[0], L[1]]}, {say: ''},
+     {type: 'ko5_s1', at: [L[0], 3.6, L[1] + 3], tag: '마지막 신호를 쳐요', each: 'rune', done: 'runeHalf'},
+     {type: 'ko5_s2', at: [L[0], 3.6, L[1] + 3], each: 'rune', done: 'doorHeavy'},
+     {pose: 'cheer', say: '끙… 문이 열렸어!', ms: 1800, wait: 1600}]},
+  {by: 'gull', say: '안쪽 서랍에 예비 렌즈가 있어', ms: 2400, wait: 2000},
+  {where: '등대 안 서랍', go: [L[0], -3.5], face: [L[0], L[1]]},
+  {type: 'ko5_drawer', at: [L[0], 3.4, L[1] + 3], tag: '낱말을 치면 서랍이 열려요', done: 'lensOut'},
+  {pose: 'lift', say: '예비 렌즈야! 조금 작지만…', ms: 2200, wait: 2000}, {fx: 'lensPocket'},
+  {mark: 'pn', cam: CAM, by: 'gull', say: '불을 켜려면 신호판부터 맞춰야 해', ms: 2600, wait: 2400},
+  {where: '신호판', path: [[13, -1.4], PS], face: PN},
+  {by: 'gull', say: '등대가 깜박이던 차례대로 눌러야 불이 들어와', ms: 2800, wait: 2600},
+  /* 📡(1장 등대 먼저의 선물)가 있으면: 소품을 꺼내 들면 신호판 위에 ☀★▲ 차례가 떠올라 한 번에 맞춘다. 없으면: 한 번 틀려 불꽃이 튀고 신호판이 꺼졌다 켜진 뒤 등대 깜박임을 보고 다시 */
+  {has: '📡', use: [PN[0], 1.7, PN[1] + .3],
+   then: [{pose: 'lift', say: '1장에서 본 신호 무늬야!', ms: 2000, wait: 300}, {fx: 'symbolsFloat'},
+     {type: 'ko5_p0', at: [PN[0], 5.7, PN[1]], tag: '떠오른 차례대로 눌러요', done: 'btn', arg: 0},
+     {type: 'ko5_p1', at: [PN[0], 5.7, PN[1]], done: 'btn', arg: 1},
+     {type: 'ko5_p2', at: [PN[0], 5.7, PN[1]], done: 'btn', arg: 2},
+     {fx: 'panelOk'}, {fx: 'gullLook', by: 'gull', say: '끼룩?! 어떻게 한 번에 알았어?', ms: 2400, wait: 2200}],
+   else: [{say: '음… 별부터 눌러 볼까?', ms: 1800, wait: 1400}, {type: 'ko5_pw', at: [PN[0], 3.3, PN[1]], tag: '단추를 눌러요', done: 'btnWrong', arg: 1},
+     {fx: 'panelSpark', pose: 'oops', say: '앗! 불꽃이 튀고 꺼졌어!', ms: 2200, wait: 600}, {fx: 'panelBack'},
+     {by: 'gull', say: '등대 꼭대기 불빛을 봐!', ms: 2000, wait: 1800},
+     {fx: 'blinkHint', say: '해… 별… 세모!', ms: 2400, wait: 600},
+     {type: 'ko5_p0', at: [PN[0], 3.3, PN[1]], tag: '차례대로 눌러요', done: 'btn', arg: 0},
+     {type: 'ko5_p1', at: [PN[0], 3.3, PN[1]], done: 'btn', arg: 1},
+     {type: 'ko5_p2', at: [PN[0], 3.3, PN[1]], done: 'btn', arg: 2},
+     {fx: 'panelOk'}]},
+  {pose: 'cheer', say: '신호판이 켜졌어!', ms: 2000, wait: 1800},
+  {by: 'gull', say: '이제 렌즈를 꼭대기로 올려야 해', ms: 2400, wait: 2200},
+  {by: 'gull', say: '렌즈가 무거워서 나는 못 들어. 도르래로 올리자!', ms: 3000, wait: 2600},
+  {where: '도르래', go: WS, face: BK}, {fx: 'lensToBasket'}, {fx: 'gullUp', by: 'gull', say: '꼭대기에서 받을게!', ms: 2000, wait: 400},
+  {face: WN},
+  {type: 'ko5_w1', at: [WN[0], 3.3, WN[1]], tag: '낱말을 치면 바구니가 올라가요', each: 'crank', done: 'lift', arg: 0},
+  {type: 'ko5_w2', at: [WN[0], 3.3, WN[1]], each: 'crank', done: 'lift', arg: 1},
+  {face: BK, say: '거의 다 왔어!', ms: 1400, wait: 900}, {face: WN},
+  {type: 'ko5_w3', at: [WN[0], 3.3, WN[1]], tag: '살살 올려요', each: 'crank', done: 'lift', arg: 2},
+  {face: BK, say: '요요를 부르자!', ms: 1500, wait: 1100},
+  {type: 'ko5_call', at: [WS[0] - 1.2, 4.6, WS[1] - .4], tag: '요요를 불러요', done: 'gullCatch'},
+  {by: 'gull', say: '끼룩! 렌즈를 끼울게!', ms: 2000, wait: 400}, {fx: 'lensFit'},
+  {by: 'gull', say: '딱 맞았어! 이제 레버를 내려 줘!', ms: 2400, wait: 2200},
+  {where: '신호판', go: PS, face: PN},
+  {type: 'ko5_lv1', at: [PN[0] + .9, 3.3, PN[1]], tag: '레버를 잡아요', done: 'leverGrab'},
+  {type: 'ko5_lv2', at: [PN[0] + .9, 3.3, PN[1]], done: 'leverDown'},
+  {fx: 'lightOn', wait: 300}, {get: '🔆', pose: 'cheer', say: '등대에 불이 켜졌어!', ms: 2400, wait: 2400},
+  {fx: 'gullDown', by: 'gull', say: '끼룩끼룩! 고마워, 꼬마 손님!', ms: 2600, wait: 2400},
+  {where: '하늘 등대', go: [11, .6], face: [12, -40]},
+  {by: 'gull', say: '그런데 예비 렌즈라 빛이 가까운 섬까지만 닿아', ms: 3000, wait: 2800},
+  {by: 'gull', say: '먼 섬까지 비추려면 진짜 렌즈를 되찾아야 해', ms: 3000, wait: 2800},
+  {pose: 'cheer', say: '먼저 가까운 섬에 소식을 전하자!', ms: 2400, wait: 2200},
+  /* ══ 5-2 신호 보내기: 먼저 보낼 섬을 고른다. 두 섬 모두 보내지만, 먼저 받은 섬에서 손님(심부름 새)이 와서 선물을 준다 ══ */
+  {mark: 'p2', where: '하늘 등대', cam: CAM, go: [11, .6], face: [12, -40]},
+  {by: 'gull', say: '두 섬도 렌즈 도둑을 봤을지 몰라. 물어보자!', ms: 2800, wait: 2600},
+  {where: '신호판', go: PS, face: PN}, {say: ''},
+  {repair: 'ch5_signal', flag: 'routeChoice', where: '먼저 보낼 섬 고르기', look: PN, ask: '어느 섬에 먼저 신호를 보낼까?', choices: [
+    {id: 'pond', where: '연못 나루에 신호', at: [3.6, 4.6, -1.6], task: 'ko5_pick_pond', tag: '🚣 연못 나루 먼저<br>뱃사공에게',
+      parts: [{stand: PS, look: PN, at: [PN[0], 3.3, PN[1]], task: 'ko5_n1', each: 'aimPond', done: 'flashPond'}, {at: [PN[0], 3.3, PN[1]], task: 'ko5_n2', each: 'aimPond', done: 'flashPond'}, {at: [PN[0], 3.3, PN[1]], task: 'ko5_n3', each: 'aimPond', done: 'flashPond'}],
+      after: [{fx: 'answer', arg: 'pond', wait: 300}],
+      first: [{pose: 'surprise', say: '나루에서 등불로 대답했어!', ms: 2200, wait: 1600}, {fx: 'msgFly', arg: 'pond', say: '저기, 갈매기가 날아와!', ms: 2000, wait: 400}, {fx: 'msgLand'},
+        {by: 'msg', say: '끼룩! 사공 할아버지 심부름 왔어', ms: 2400, wait: 2200},
+        {has: '🧭', then: [{by: 'msg', say: '나침반은 벌써 갖고 있구나! 잘 쓰고 있지?', ms: 2600, wait: 2400}],
+         else: [{fx: 'giftTo', get: '🧭', by: 'msg', say: '뱃길 나침반이야. 배로 가는 길을 알려 줘', ms: 2800, wait: 2600}]}],
+      second: [{pose: 'cheer', say: '나루에서도 등불로 대답했어!', ms: 2200, wait: 2000}]},
+    {id: 'forest', where: '동물의 숲에 신호', at: [11.2, 4.6, -1.6], task: 'ko5_pick_forest', tag: '🌲 동물의 숲 먼저<br>부엉이에게',
+      parts: [{stand: PS, look: PN, at: [PN[0], 3.3, PN[1]], task: 'ko5_f1', each: 'aimForest', done: 'flashForest'}, {at: [PN[0], 3.3, PN[1]], task: 'ko5_f2', each: 'aimForest', done: 'flashForest'}, {at: [PN[0], 3.3, PN[1]], task: 'ko5_f3', each: 'aimForest', done: 'flashForest'}],
+      after: [{fx: 'answer', arg: 'forest', wait: 300}],
+      first: [{pose: 'surprise', say: '숲에서 반짝반짝 대답했어!', ms: 2200, wait: 1600}, {fx: 'msgFly', arg: 'forest', say: '부엉이가 날아와!', ms: 2000, wait: 400}, {fx: 'msgLand'},
+        {by: 'msg', say: '부엉! 신호 잘 받았어, 모아!', ms: 2400, wait: 2200},
+        {has: '🪶', then: [{by: 'msg', say: '깃털은 벌써 갖고 있구나! 잘 간직해', ms: 2600, wait: 2400}],
+         else: [{fx: 'giftTo', get: '🪶', by: 'msg', say: '하늘길 깃털이야. 새들이 다니는 길을 알려 줘', ms: 2800, wait: 2600}]}],
+      second: [{pose: 'cheer', say: '숲에서도 반짝 대답했어!', ms: 2200, wait: 2000}]}
+  ]},
+  {fx: 'aimOff', where: '하늘 등대', by: 'gull', say: '끼룩! 두 섬 모두 소식이 닿았어!', ms: 2400, wait: 2200},
+  {fx: 'msgPoint', by: 'msg', say: '그런데 렌즈를 든 먹구름이 구름다리 쪽으로 갔어!', ms: 3000, wait: 2800},
+  {by: 'gull', say: '구름다리는 절벽 오른쪽 끝이야', ms: 2400, wait: 2200},
+  {pose: 'cheer', say: '렌즈를 되찾으러 가자!', ms: 2000, wait: 1800},
+  /* ══ 5-3 렌즈 도둑 쫓기: 구름다리 위에서 렌즈가 무거워 낮게 나는 도둑을 쫓는다 → 끊긴 다리 끝 섬에서 렌즈를 되찾음 → 진짜 렌즈로 바꿔 끼우면 빛이 먼 섬까지 ══ */
+  {mark: 'p3', where: '하늘 등대', cam: CAM, go: [11, .6], face: [40, 1.6]},
+  {fx: 'gullJoin', by: 'gull', say: '나도 같이 갈게! 끼룩!', ms: 2200, wait: 1600},
+  {where: '구름다리', cam: [1.25, 2.4], path: [[24, 1.6], [57, 1.6]], face: [70, 1.6]},
+  {fx: 'thiefSpot', pose: 'surprise', say: '저기! 다리 위에 먹구름이 있어!', ms: 2200, wait: 2000},
+  {by: 'thief', say: '헉헉… 렌즈가 너무 무거워…', ms: 2400, wait: 2200},
+  {by: 'gull', say: '렌즈가 무거워서 높이 못 나나 봐!', ms: 2600, wait: 2400},
+  {fx: 'thiefNotice', by: 'thief', say: '앗, 들켰다!', ms: 1500, wait: 900},
+  {where: '렌즈 도둑 쫓기', chase: 'ch5_bridge', follow: 'thief', tag: '🏃 낱말을 치면 쫓아가요', tasks: ['ko5_c0', 'ko5_c1', 'ko5_c2', 'ko5_c3', 'ko5_c4', 'ko5_c5', 'ko5_c6', 'ko5_c7', 'ko5_c8', 'ko5_c9'], start: .3, speed: .07, back: .4, reset: .45, each: 'chaseStep', gap: 'thiefGap', onCatch: 'thiefAway', onWin: 'thiefCorner'},
+  {by: 'thief', say: '헉… 다리가 끊겼어…', ms: 2200, wait: 2000},
+  {pose: 'cheer', say: '렌즈를 내려놔!', ms: 1800, wait: 1400},
+  {type: 'ko5_drop', at: [TC[0], 4.6, TC[1]], tag: '낱말을 치면 렌즈를 내려놓아요', done: 'thiefDrop'},
+  {by: 'thief', say: '흥… 나도 반짝이는 불빛이 갖고 싶었을 뿐이야', ms: 3000, wait: 2600},
+  {fx: 'thiefFlee', say: '', wait: 1600},
+  {pose: 'inspect', say: '…불빛이 갖고 싶었다고?', ms: 2200, wait: 2000},
+  {go: [LD[0] - 1.3, LD[1]], face: [LD[0], LD[1]]},
+  {fx: 'lensPick', pose: 'lift', say: '진짜 렌즈를 되찾았어!', ms: 2200, wait: 2000},
+  {by: 'gull', say: '끼룩! 어서 등대로 가져가자!', ms: 2400, wait: 1800},
+  {fx: 'basketDown', where: '하늘 등대', cam: CAM, path: [[86, 1.6], [57, 1.6], [24, 1.6], WS], face: BK},   /* v14.5: 가운데서 멈추지 않고 도르래까지 한 번에 뛴다(선생님 지적) */
+  {where: '도르래'}, {fx: 'lensToBasket'}, {fx: 'gullUp', by: 'gull', say: '꼭대기에서 바꿔 끼울게!', ms: 2000, wait: 400},
+  {face: WN},
+  {type: 'ko5_w1', at: [WN[0], 3.3, WN[1]], tag: '낱말을 치면 바구니가 올라가요', each: 'crank', done: 'lift', arg: 0},
+  {type: 'ko5_w2', at: [WN[0], 3.3, WN[1]], each: 'crank', done: 'lift', arg: 1},
+  {type: 'ko5_w3', at: [WN[0], 3.3, WN[1]], tag: '살살 올려요', each: 'crank', done: 'lift', arg: 2},
+  {face: BK}, {fx: 'gullCatch'}, {fx: 'spareOut', by: 'gull', say: '예비 렌즈를 빼고…', ms: 1800, wait: 200}, {fx: 'lensFit', by: 'gull', say: '진짜 렌즈를 끼울게!', ms: 1800, wait: 200},
+  {fx: 'bigBeam', wait: 300}, {where: '하늘 등대', go: [16.5, 1.2], face: [60, -80]},
+  {pose: 'cheer', say: '빛이 먼 섬까지 닿았어!', ms: 2200, wait: 2000},
+  {fx: 'farLook', by: 'gull', say: '끼룩! 안개 속 섬이 보여!', ms: 2400, wait: 2200},
+  {pose: 'inspect', say: '저 섬… 다리가 무너져 있어', ms: 2400, wait: 2200},
+  {fx: 'gullDown', by: 'gull', say: '고마워, 모아! 이제 섬마다 소식이 오갈 수 있어', ms: 3000, wait: 2600},
+  {face: [20, 1.6], wait: 300}
+],
+
+/* ── 무대 ── */
+build(E) { const {T, S, rnd, M, WM, add, flat, disc, glow, inst, FONT, MG, burst, setSt, sleep, sfx} = E;
+  const sm = (a, b, k) => a + (b - a) * k, ease = k => k * k * (3 - 2 * k);
+  const dSeg = (x, z, a, b) => { const dx = b[0] - a[0], dz = b[1] - a[1], k = Math.max(0, Math.min(1, ((x - a[0]) * dx + (z - a[1]) * dz) / (dx * dx + dz * dz || 1))); return Math.hypot(x - a[0] - dx * k, z - a[1] - dz * k); };
+  const canvasTex = (w, h, draw) => { const c = document.createElement('canvas'); c.width = w; c.height = h; draw(c.getContext('2d'), w, h); const t = new T.CanvasTexture(c); t.encoding = T.sRGBEncoding; return t; };
+  const stone = M('#9aa0a6'), stoneD = M('#6f767d'), wood = M('#9a6a3c'), woodD = M('#6b4626'), brass = M('#c9a443', {metalness: .45, roughness: .45}), iron = M('#4a525a', {metalness: .35});
+  /* 모아가 걷는 길과 비워 둘 자리 */
+  const WALKS = [[-40, 1.6, 22, 1.6], [L[0], 1.4, L[0], -3.6], [PS[0], 1.4, PS[0], -1.3], [WS[0], 1.4, WS[0], -1.1], [7.6, 1.6, 11, .6]];
+  const KEEP = [[L[0], L[1], 4], [PN[0], PN[1], 2], [WN[0], WN[1], 2.2], [BK[0], BK[1], 1.6], [GP[0], GP[1], 1.3], [-34, 1.6, 4]];
+  const free = (x, z, pad) => WALKS.every(w => dSeg(x, z, [w[0], w[1]], [w[2], w[3]]) > 2 + (pad || 0)) && KEEP.every(k => Math.hypot(x - k[0], z - k[1]) > k[2] + (pad || 0));
+  const ZB = -15;   /* 절벽 뒤 끝(그 너머는 구름 바다) */
+
+  /* 땅: 절벽 꼭대기 풀밭(바람에 누운 짧은 풀) */
+  { const gt = canvasTex(512, 512, (x) => { x.fillStyle = '#7b9a5a'; x.fillRect(0, 0, 512, 512); for (let i = 0; i < 5200; i++) { x.fillStyle = ['#86a564', '#6e8d50', '#93ae6c', '#64824a', '#a3b878'][i % 5]; x.globalAlpha = .5; x.fillRect(rnd() * 512, rnd() * 512, 4 + rnd() * 6, 1.5 + rnd() * 2); } });
+    gt.wrapS = gt.wrapT = T.RepeatWrapping; gt.repeat.set(13, 5);
+    const g = new T.Mesh(new T.PlaneGeometry(150, 52), new T.MeshStandardMaterial({map: gt, roughness: 1})); g.rotation.x = -Math.PI / 2; g.position.set(-4, 0, ZB + 26); g.receiveShadow = true; S.add(g); }
+  /* 길: 자갈 섞인 흙길 */
+  const roadTex = canvasTex(256, 256, (x) => { x.fillStyle = '#cbbd9c'; x.fillRect(0, 0, 256, 256); for (let i = 0; i < 900; i++) { x.fillStyle = ['#bcae8c', '#d8cbad', '#aea07f', '#e2d7bd'][i % 4]; x.globalAlpha = .55; const r = 2 + rnd() * 6; x.beginPath(); x.ellipse(rnd() * 256, rnd() * 256, r, r * .6, rnd() * 3, 0, 6.3); x.fill(); } });
+  roadTex.wrapS = roadTex.wrapT = T.RepeatWrapping;
+  const road = (x0, z0, x1, z1, w) => { const dx = x1 - x0, dz = z1 - z0, Ln = Math.hypot(dx, dz), a = -Math.atan2(dz, dx); flat(Ln + w * .6, w + .5, '#9c8f70', (x0 + x1) / 2, (z0 + z1) / 2, a, .022); const e = flat(Ln + w * .6, w, '#ffffff', (x0 + x1) / 2, (z0 + z1) / 2, a, .026); const t = roadTex.clone(); t.needsUpdate = true; t.repeat.set((Ln + w * .6) / 4, w / 4); e.material.map = t; };
+  road(-40, 1.6, 24, 1.6, 3); road(24, 1.6, BR0 + .5, 1.6, 3);   /* 5-3: 구름다리로 가는 길 */ road(L[0], 1.2, L[0], -4, 2.4); road(PS[0], 1.2, PN[0], -2.8, 2); road(WS[0], 1.2, WS[0], -2.6, 2);
+  disc(3.6, 3.6, '#b6a988', L[0], L[1], .02, 40);
+  /* 절벽 가장자리: 뒤쪽 바위 끝과 아래로 떨어지는 바위벽, 앞쪽은 풀밭이 화면 밖까지 이어진다 */
+  { const RK = []; for (let x = -78; x <= 70; x += 1.6) { const z = ZB + (rnd() - .5) * 1.2; RK.push({p: [x, -.4 - rnd() * .5, z], r: [rnd(), rnd() * 3, rnd()], s: [1.4 + rnd() * .9, 1 + rnd() * .7, 1.2 + rnd() * .6], c: ['#8c9196', '#7d8389', '#9aa0a5'][(rnd() * 3) | 0]}); RK.push({p: [x + .8, -3.4 - rnd() * 2, z - 1], r: [rnd(), rnd() * 3, rnd()], s: [1.8 + rnd(), 3 + rnd() * 1.5, 1.6], c: ['#6f757b', '#7b8187', '#666c72'][(rnd() * 3) | 0]}); }
+    for (let z = ZB; z < 12; z += 1.8) [-78, 70].forEach(x => RK.push({p: [x + (rnd() - .5), -1 - rnd(), z], r: [rnd(), rnd() * 3, rnd()], s: [2, 2.6, 1.8], c: '#7d8389'}));
+    inst(new T.DodecahedronGeometry(1, 0), WM(), RK.filter(o => !(o.p[0] > 66 && Math.abs(o.p[2] - 1.6) < 2.8)), true); }   /* 5-3: 구름다리가 지나는 절벽 끝 바위는 뺀다 */
+  /* 구름 바다: 절벽 아래를 덮는 구름과 몽글몽글한 구름 덩이(천천히 흐른다) */
+  const seaTex = canvasTex(512, 512, (x, w, h) => { x.fillStyle = '#d9dfe9'; x.fillRect(0, 0, w, h); for (let i = 0; i < 320; i++) { const r = 10 + rnd() * 46, cx = rnd() * w, cy = rnd() * h, g = x.createRadialGradient(cx, cy, 0, cx, cy, r); g.addColorStop(0, 'rgba(255,255,255,.75)'); g.addColorStop(1, 'rgba(255,255,255,0)'); x.fillStyle = g; x.fillRect(cx - r, cy - r, r * 2, r * 2); } });
+  seaTex.wrapS = seaTex.wrapT = T.RepeatWrapping; seaTex.repeat.set(10, 10);
+  const seaM = new T.MeshStandardMaterial({map: seaTex, roughness: 1, color: '#8f9ab0'});
+  { const e = new T.Mesh(new T.PlaneGeometry(700, 700), seaM); e.rotation.x = -Math.PI / 2; e.position.set(0, -5, -150); S.add(e); }
+  const PUFF = [], puffM = new T.MeshStandardMaterial({color: '#a9b2c5', roughness: 1, flatShading: false});
+  { const L0 = []; for (let i = 0; i < 150; i++) { const x = -110 + rnd() * 230, z = ZB - 4 - rnd() * 90, s = 2.2 + rnd() * 4.5; L0.push({p: [x, -4.2 + rnd() * 1.4, z], s: [s * 1.6, s * .55, s], r: [0, rnd() * 3, 0]}); }
+    for (let x = -84; x < 80; x += 3.4) L0.push({p: [x + rnd() * 2, -2.6 - rnd(), ZB - 2.6 - rnd() * 2], s: [3.4, 1.4, 2.4], r: [0, rnd() * 3, 0]});
+    const m = inst(new T.IcosahedronGeometry(1, 2), puffM, L0); if (m) PUFF.push(m); }
+  /* 먼 하늘의 떠 있는 섬들(가까운 두 섬 = 2장 연못 나루·3장 동물의 숲, 먼 섬은 안개 속) — 5-2에서 신호를 보낸다 */
+  const ISL = []; let FARB = null; const FLAGS2 = [];
+  const island = (x, y, z, s, kind) => { const g = new T.Group(); g.position.set(x, y, z); g.scale.setScalar(s); S.add(g);
+    const top = add(new T.CylinderGeometry(3.2, 2.6, 1, 10), M('#6f9a54'), 0, 0, 0, g); top.castShadow = false;
+    const rock = add(new T.ConeGeometry(2.7, 3.6, 9), M('#7b7f86'), 0, -2.3, 0, g); rock.rotation.x = Math.PI; rock.castShadow = false;
+    if (kind === 'pond') { const w = add(new T.CylinderGeometry(1.5, 1.5, .1, 14), M('#5c95c9', {roughness: .3}), -.4, .52, .4, g); w.castShadow = false; const b = add(new T.BoxGeometry(.9, .3, .4), M('#a0683a'), -.4, .7, .4, g); b.castShadow = false; add(new T.CylinderGeometry(.04, .04, .9, 5), M('#5a3a20'), -.4, 1.2, .4, g).castShadow = false; }
+    if (kind === 'forest') [[-1, 1.3, .3, 1], [.8, 1.6, -.4, 1.2], [.2, 1.2, 1.2, .9], [-1.6, 1.1, -1, .8]].forEach(a => { const t = add(new T.ConeGeometry(.8 * a[3], 2.2 * a[3], 7), M('#3f7a45'), a[0], a[1], a[2], g); t.castShadow = false; });
+    if (kind === 'far') { add(new T.ConeGeometry(1.8, 3.4, 6), M('#8b8f99'), .3, 2.1, -.2, g).castShadow = false;
+      FARB = new T.Group(); g.add(FARB); FARB.visible = false; [[0, 0], [1, -.35], [2, -.9]].forEach(a => { const b = add(new T.BoxGeometry(.95, .12, 1.1), M('#8a5c34'), -3.4 - a[0], .4 + a[1], .6, FARB); b.rotation.z = a[0] * .25; b.castShadow = false; }); [[-3, .6], [-3, -.6]].forEach(a => add(new T.CylinderGeometry(.08, .08, 1.2, 6), M('#6b4626'), a[0], 1, a[1] + .6, FARB).castShadow = false); }   /* 5-3에서 빛이 닿으면 보이는 무너진 다리(6장 고리) */
+    ISL.push({g, y, o: rnd() * 6}); return g; };
+  island(-24, 2, -60, 2.4, 'pond'); island(34, 3, -64, 2.6, 'forest'); island(88, 6, -104, 3.2, 'far');
+
+  /* 등대: 흰 바탕에 붉은 띠, 돌 받침, 전망대 난간, 유리 등실, 붉은 지붕 */
+  const LH = new T.Group(); LH.position.set(L[0], 0, L[1]); S.add(LH);
+  const stripe = canvasTex(64, 256, (x) => { x.fillStyle = '#f2efe8'; x.fillRect(0, 0, 64, 256); x.fillStyle = '#c8433a'; [[0, 46], [104, 46], [208, 48]].forEach(a => x.fillRect(0, a[0], 64, a[1])); x.globalAlpha = .12; x.fillStyle = '#6a6056'; for (let i = 0; i < 140; i++) x.fillRect(rnd() * 64, rnd() * 256, 2, 3 + rnd() * 6); });
+  { add(new T.CylinderGeometry(2.75, 2.95, .6, 20), stone, 0, .3, 0, LH); add(new T.CylinderGeometry(2.55, 2.7, .3, 20), stoneD, 0, .75, 0, LH);
+    const sh = add(new T.CylinderGeometry(1.75, 2.35, GAL - .9, 24), new T.MeshStandardMaterial({map: stripe, roughness: .8}), 0, .9 + (GAL - .9) / 2, 0, LH);
+    add(new T.CylinderGeometry(2.25, 1.9, .5, 24), M('#e9e4da'), 0, GAL - .2, 0, LH);
+    add(new T.CylinderGeometry(2.95, 2.95, .18, 24), iron, 0, GAL, 0, LH);   /* 전망대 바닥 */
+    const PO = []; for (let k = 0; k < 26; k++) { const a = k / 26 * 6.283; PO.push({p: [Math.cos(a) * 2.85, GAL + .42, Math.sin(a) * 2.85], s: 1}); } inst(new T.BoxGeometry(.07, .72, .07), iron, PO.map(o => ({p: [o.p[0] + L[0], o.p[1], o.p[2] + L[1]], s: 1})));
+    const rail = add(new T.TorusGeometry(2.85, .05, 6, 40), iron, 0, GAL + .78, 0, LH); rail.rotation.x = Math.PI / 2;
+    add(new T.CylinderGeometry(1.5, 1.5, .35, 18), M('#3d4650'), 0, GAL + .3, 0, LH); }
+  /* 등실: 유리(창살)와 지붕. 안의 등불은 꺼져 있다가 5-1 끝에 켜진다 */
+  const glassM = new T.MeshStandardMaterial({color: '#9fb9cf', transparent: true, opacity: .28, roughness: .1, metalness: .2, depthWrite: false});
+  { add(new T.CylinderGeometry(1.42, 1.42, 1.5, 18, 1, true), glassM, 0, GAL + 1.22, 0, LH).castShadow = false;
+    for (let k = 0; k < 9; k++) { const a = k / 9 * 6.283; add(new T.BoxGeometry(.07, 1.5, .07), iron, Math.cos(a) * 1.43, GAL + 1.22, Math.sin(a) * 1.43, LH); }
+    add(new T.CylinderGeometry(1.6, 1.6, .16, 18), iron, 0, GAL + 2.02, 0, LH); add(new T.ConeGeometry(1.75, 1.3, 18), M('#b8392f'), 0, GAL + 2.75, 0, LH); add(new T.SphereGeometry(.22, 12, 10), brass, 0, GAL + 3.5, 0, LH); add(new T.CylinderGeometry(.03, .03, .7, 5), iron, 0, GAL + 3.9, 0, LH); }
+  const lampM = new T.MeshStandardMaterial({color: '#5d6168', emissive: '#ffd36a', emissiveIntensity: 0, roughness: .4});
+  { add(new T.CylinderGeometry(.35, .45, .35, 12), iron, 0, GAL + .62, 0, LH); add(new T.SphereGeometry(.32, 14, 12), lampM, 0, GAL + .95, 0, LH); }
+  const lampG = glow(6, '#ffe6a0'); lampG.position.set(LAMP[0], LAMP[1], LAMP[2]); lampG.material.opacity = 0;
+  const lampL = new T.PointLight('#ffd690', 0, 46, 1.4); lampL.position.set(LAMP[0], LAMP[1], LAMP[2] + 1); S.add(lampL);
+  /* 빛줄기 두 개(불이 켜지면 돈다). 예비 렌즈라 길이가 짧다 */
+  const beamM = new T.MeshBasicMaterial({vertexColors: true, color: '#fff1bf', transparent: true, opacity: 0, depthWrite: false, blending: T.AdditiveBlending, fog: false, side: T.DoubleSide});
+  const BEAM = new T.Group(); BEAM.position.set(LAMP[0], LAMP[1], LAMP[2]); S.add(BEAM);
+  const BEAMS = []; [Math.PI / 2].forEach(a => { const g = new T.ConeGeometry(4.6, 62, 20, 8, true); { const P = g.attributes.position, C = new Float32Array(P.count * 4); for (let i = 0; i < P.count; i++) { const k = (31 - P.getY(i)) / 62; C.set([1, 1, 1, Math.pow(1 - k, 1.6)], i * 4); } g.setAttribute('color', new T.BufferAttribute(C, 4)); }   /* 끝으로 갈수록 흐려진다 */   /* 빛줄기 하나가 뒤쪽 하늘(섬들)만 쓸고 지나간다 — 화면 쪽으로 오면 하얗게 덮여서 */ g.translate(0, -31, 0); const e = new T.Mesh(g, beamM); e.rotation.z = Math.PI / 2; e.rotation.y = a; e.castShadow = false; BEAM.add(e); BEAMS.push(e); });
+  /* 등대 작은 창(불이 켜지면 함께 밝아진다) */
+  const winM = new T.MeshStandardMaterial({color: '#2c3540', emissive: '#ffcf6a', emissiveIntensity: 0, roughness: .3});
+  [[2.6, .3], [5, -.25], [7.2, .2]].forEach(a => { const r = 2.35 - (a[0] - .9) / (GAL - .9) * .6 + .02, ang = a[1]; const g = new T.Group(); g.position.set(Math.sin(ang) * r, a[0], Math.cos(ang) * r); g.rotation.y = ang; LH.add(g); add(new T.BoxGeometry(.62, .86, .1), M('#ddd6c8'), 0, 0, 0, g); add(new T.BoxGeometry(.44, .66, .06), winM, 0, 0, .05, g); });
+  /* 문: 둥근 머리 문틀, 나무문(열림), 옆에 신호 자물쇠(네 칸 무늬)와 등대 일지 */
+  /* DZ(문이 붙는 앞쪽 거리)는 맨 위에 */
+  { add(new T.BoxGeometry(1.9, 2.6, .3), stoneD, 0, 1.3 + .6, DZ - .05, LH); const ar = add(new T.CylinderGeometry(.95, .95, .3, 16, 1, false, 0, Math.PI), stoneD, 0, 3.2, DZ - .05, LH); ar.rotation.set(Math.PI / 2, 0, Math.PI / 2);
+    add(new T.BoxGeometry(1.4, 2.3, .12), M('#141a20'), 0, 1.75, DZ + .07, LH); add(new T.BoxGeometry(1.2, .25, .45), stone, 0, .72, DZ + .25, LH); }
+  const door = new T.Group(); door.position.set(-.7, .6, DZ + .14); LH.add(door);
+  { add(new T.BoxGeometry(1.4, 2.25, .12), wood, .7, 1.12, 0, door); [.4, 1.12, 1.84].forEach(y => add(new T.BoxGeometry(1.36, .1, .05), woodD, .7, y, .07, door)); add(new T.TorusGeometry(.1, .025, 6, 12), brass, 1.2, 1.1, .1, door); }
+  const RUNE = []; { const plate = new T.Group(); plate.position.set(1.25, 1.95, DZ + .1); LH.add(plate); add(new T.BoxGeometry(.5, 1.25, .08), stoneD, 0, 0, 0, plate);
+    for (let k = 0; k < 4; k++) { const m = new T.MeshStandardMaterial({color: '#39424c', emissive: '#7ff0ff', emissiveIntensity: 0}); add(new T.BoxGeometry(.28, .2, .05), m, 0, .45 - k * .3, .06, plate); RUNE.push(m); } }
+  const logM = new T.MeshStandardMaterial({color: '#e8dcbc', emissive: '#ffe08a', emissiveIntensity: 0}); { const lg = new T.Group(); lg.position.set(-1.35, 1.6, DZ + .12); LH.add(lg); add(new T.BoxGeometry(.55, .7, .08), logM, 0, 0, 0, lg); add(new T.BoxGeometry(.6, .06, .1), woodD, 0, .36, .02, lg); }
+  /* 서랍장(문 안쪽, 문이 열리면 보인다)과 예비 렌즈 */
+  const drawer = new T.Group(); drawer.position.set(0, 1.25, DZ - .2); LH.add(drawer); add(new T.BoxGeometry(.8, .3, .4), woodD, 0, 0, 0, drawer); add(new T.SphereGeometry(.05, 8, 6), brass, 0, 0, .22, drawer);
+  const mkLens = r => { const g = new T.Group(); const rim = add(new T.TorusGeometry(r, r * .14, 8, 24), brass, 0, 0, 0, g); rim.castShadow = false; const gl = add(new T.CylinderGeometry(r, r, r * .18, 24), new T.MeshStandardMaterial({color: '#cfe9ff', transparent: true, opacity: .75, emissive: '#bfe6ff', emissiveIntensity: .35, roughness: .05}), 0, 0, 0, g); gl.rotation.x = Math.PI / 2; gl.castShadow = false; const sp = glow(r * 4, '#e6f6ff'); S.remove(sp); g.add(sp); S.add(g); return g; };
+  const lens0 = mkLens(.42); lens0.visible = false; let lens = lens0;   /* lens: 지금 다루는 렌즈(5-3에서 진짜 렌즈 lensR로 바뀐다) */
+  const lensR = mkLens(.55); lensR.visible = false;
+  /* 신호판: 기울어진 판에 해·별·세모 단추 셋, 위에 작은 등, 옆에 레버. 등대까지 굵은 줄이 이어진다 */
+  const PG = new T.Group(); PG.position.set(PN[0], 0, PN[1]); S.add(PG);
+  const symTex = s => canvasTex(128, 128, (x) => { x.fillStyle = '#f6efd9'; x.beginPath(); x.arc(64, 64, 60, 0, 6.3); x.fill(); x.fillStyle = '#3a3f46'; x.font = '900 82px ' + FONT; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText(s, 64, 70); });
+  const SYM = ['☀', '★', '▲'], BTN = [];
+  { add(new T.BoxGeometry(.25, 1.1, .25), iron, -.7, .55, 0, PG); add(new T.BoxGeometry(.25, 1.1, .25), iron, .7, .55, 0, PG);
+    const board = new T.Group(); board.position.set(0, 1.25, 0); board.rotation.x = -.55; PG.add(board); add(new T.BoxGeometry(2.1, 1.05, .16), M('#5b6672', {metalness: .25}), 0, 0, 0, board); add(new T.BoxGeometry(2.2, 1.15, .1), M('#3f4852'), 0, 0, -.07, board);
+    SYM.forEach((s, i) => { const b = new T.Group(); b.position.set(-.62 + i * .62, -.05, .09); board.add(b); const cap = new T.Mesh(new T.CylinderGeometry(.24, .24, .1, 20), new T.MeshStandardMaterial({color: ['#f2b632', '#f5d76e', '#7fc4f2'][i], emissive: ['#ffb02e', '#ffe066', '#5ab8ff'][i], emissiveIntensity: 0})); cap.rotation.x = Math.PI / 2; b.add(cap);
+      const face = new T.Mesh(new T.CircleGeometry(.17, 20), new T.MeshBasicMaterial({map: symTex(s), transparent: true})); face.position.z = .056; b.add(face); BTN.push({b, cap, t: -1}); }); }
+  const pLampM = new T.MeshStandardMaterial({color: '#6c2a26', emissive: '#ff5544', emissiveIntensity: .25}); add(new T.SphereGeometry(.15, 10, 8), pLampM, 0, 1.95, -.2, PG);
+  const lever = new T.Group(); lever.position.set(1.05, 1.15, .05); PG.add(lever); add(new T.BoxGeometry(.18, .3, .3), iron, 0, 0, 0, PG).position.set(1.05, 1.1, .05);
+  { add(new T.CylinderGeometry(.04, .04, .75, 6), M('#b7bec4', {metalness: .4}), 0, .37, 0, lever); add(new T.SphereGeometry(.1, 10, 8), M('#d9423a'), 0, .76, 0, lever); } lever.rotation.x = -.6;
+  { const pts = [[PN[0] + .3, .08, PN[1] - .3], [10.5, .06, -5.6], [L[0] - 2.4, .4, L[1] + .6]].map(a => new T.Vector3(a[0], a[1], a[2])); const c = new T.CatmullRomCurve3(pts); add(new T.TubeGeometry(c, 24, .07, 6), M('#2b3036'), 0, 0, 0); }
+  const cableSp = glow(1.4, '#ffe9a0'); cableSp.visible = false; const CABLE = [[PN[0] + .3, .3, PN[1] - .3], [10.5, .3, -5.6], [L[0] - 2.3, .6, L[1] + .6], [L[0] - 1.9, GAL - .5, L[1] + .5], [LAMP[0], LAMP[1], LAMP[2]]]; let cableT = -1;
+  /* 도르래: 나무 틀과 굴대·손잡이. 줄은 전망대의 팔 끝 도르래로 올라가 바구니에 닿는다 */
+  const WG = new T.Group(); WG.position.set(WN[0], 0, WN[1]); WG.rotation.y = -.25; S.add(WG);
+  [-1, 1].forEach(k => { add(new T.BoxGeometry(.2, 1.4, .2), woodD, k * .7, .7, -.35, WG); add(new T.BoxGeometry(.2, 1.4, .2), woodD, k * .7, .7, .35, WG); add(new T.BoxGeometry(.2, .14, .9), wood, k * .7, 1.2, 0, WG); });
+  const drum = new T.Group(); drum.position.set(0, 1.15, 0); WG.add(drum); { const d = add(new T.CylinderGeometry(.32, .32, 1.25, 14), wood, 0, 0, 0, drum); d.rotation.z = Math.PI / 2; const rp = add(new T.CylinderGeometry(.35, .35, .8, 14), M('#d8c49a'), 0, 0, 0, drum); rp.rotation.z = Math.PI / 2; }
+  const crank = new T.Group(); crank.position.set(.85, 1.15, 0); WG.add(crank); { add(new T.BoxGeometry(.08, .7, .1), iron, 0, .3, 0, crank); const h = add(new T.CylinderGeometry(.06, .06, .4, 6), M('#a04a32'), .2, .62, 0, crank); h.rotation.z = Math.PI / 2; }
+  const PUL = [BK[0], GAL + 1.05, BK[1]];   /* 바구니 위 도르래 */
+  { const arm0 = [L[0] + 2.6, GAL + .9, L[1] + 1.1]; const dx = PUL[0] - arm0[0], dz = PUL[2] - arm0[2], len = Math.hypot(dx, dz); const a = add(new T.BoxGeometry(len + .4, .16, .16), iron, (PUL[0] + arm0[0]) / 2, GAL + 1.18, (PUL[2] + arm0[2]) / 2); a.rotation.y = -Math.atan2(dz, dx);
+    const br = add(new T.BoxGeometry(.1, 1, .1), iron, arm0[0], GAL + .65, arm0[2]); br.rotation.z = .3; const w = add(new T.TorusGeometry(.2, .06, 6, 14), iron, PUL[0], PUL[1], PUL[2]); w.rotation.y = -Math.atan2(dz, dx) + Math.PI / 2; }
+  const ropeM = M('#e3d2a6'), mkRope = () => { const e = add(new T.CylinderGeometry(.035, .035, 1, 5), ropeM, 0, 0, 0); e.castShadow = false; return e; };
+  const ropeA = mkRope(), ropeB = mkRope(), va = new T.Vector3(), vb = new T.Vector3(), vu = new T.Vector3(0, 1, 0);
+  const setRope = (e, a, b) => { va.set(a[0], a[1], a[2]); vb.set(b[0], b[1], b[2]); const d = vb.clone().sub(va), L1 = d.length(); e.position.copy(va).addScaledVector(d, .5); e.scale.set(1, L1, 1); e.quaternion.setFromUnitVectors(vu, d.normalize()); };
+  const basket = new T.Group(); S.add(basket); { const bm = M('#b78a4e'); add(new T.CylinderGeometry(.55, .45, .55, 12, 1, true), bm, 0, .28, 0, basket).material.side = T.DoubleSide; add(new T.CylinderGeometry(.45, .45, .06, 12), bm, 0, .02, 0, basket); const h = add(new T.TorusGeometry(.5, .04, 6, 16, Math.PI), iron, 0, .56, 0, basket); h.castShadow = false; }
+  let bY = .12, bYT = .12;
+  /* 갈매기 말뚝(요요가 처음에 앉아 있는 곳)과 둘레 장식 */
+  { add(new T.CylinderGeometry(.28, .34, 1.15, 10), woodD, GP[0], .57, GP[1]); add(new T.TorusGeometry(.3, .05, 6, 12), M('#d8c49a'), GP[0], .9, GP[1]).rotation.x = Math.PI / 2; }
+  /* 울타리(절벽 끝), 의자, 돌무더기, 풀 덤불, 깃발, 길가 등(불이 켜질 때 함께 켜진다) */
+  { const P = [], Rl = []; for (let x = -56; x <= 50; x += 2.2) { P.push({p: [x, .55, ZB + 2.2], s: 1}); Rl.push({p: [x + 1.1, .85, ZB + 2.2], s: 1}); } inst(new T.BoxGeometry(.16, 1.1, .16), woodD, P, true); inst(new T.BoxGeometry(2.2, .07, .07), M('#d8c49a'), Rl); }
+  { const bn = new T.Group(); bn.position.set(-6, 0, -5.2); S.add(bn); add(new T.BoxGeometry(2, .12, .55), wood, 0, .55, 0, bn); add(new T.BoxGeometry(2, .5, .1), wood, 0, .9, -.25, bn); [-.8, .8].forEach(x => add(new T.BoxGeometry(.1, .55, .5), woodD, x, .27, 0, bn)); }
+  { const ST = [], BU = [], FL = [], TU = []; for (let i = 0; i < 70; i++) { const x = -60 + rnd() * 115, z = ZB + 2 + rnd() * 26; if (!free(x, z, .3)) continue; ST.push({p: [x, .2, z], r: [rnd(), rnd() * 3, rnd()], s: [.3 + rnd() * .5, .25 + rnd() * .3, .3 + rnd() * .4], c: ['#9aa0a6', '#878d93', '#a8adb2'][i % 3]}); }
+    for (let i = 0; i < 110; i++) { const x = -60 + rnd() * 115, z = ZB + 3 + rnd() * 10; if (!free(x, z, .4)) continue; const s = .45 + rnd() * .45; [[0, .5, 0, .7], [.55, .38, .2, .55], [-.55, .36, -.1, .5]].forEach(a => BU.push({p: [x + a[0] * s, a[1] * s, z + a[2] * s], s: a[3] * s, c: ['#557a45', '#4d7040', '#628651'][i % 3]})); }
+    for (let i = 0; i < 700; i++) { const x = -60 + rnd() * 115, z = ZB + 2 + rnd() * 28; if (!free(x, z, -.8)) continue; const h = .25 + rnd() * .3; TU.push({p: [x, h / 2, z], r: [0, 0, -.35 - rnd() * .3], s: [1, h, 1], c: ['#8fb06a', '#7ea05c', '#9fbd77', '#b7c784'][i % 4]}); }
+    for (let i = 0; i < 120; i++) { const x = -60 + rnd() * 115, z = ZB + 2 + rnd() * 26; if (!free(x, z, -1)) continue; FL.push({p: [x, .12, z], s: .7 + rnd() * .5, c: ['#f2f0e6', '#f5d76e', '#b7a6e8', '#9fd0f0'][i % 4]}); }
+    const offRd = L0 => L0.filter(o => !(o.p[0] > 22 && Math.abs(o.p[2] - 1.6) < 2.6));   /* 5-3 새 길 위의 돌·덤불은 뺀다(난수 차례는 그대로라 5-1·5-2 모습은 안 바뀜) */
+    inst(new T.DodecahedronGeometry(1, 0), WM(), offRd(ST), true); inst(new T.IcosahedronGeometry(1, 0), WM(), offRd(BU), true); inst(new T.BoxGeometry(.05, 1, .05), WM(), offRd(TU)); inst(new T.IcosahedronGeometry(.08, 0), WM(), offRd(FL)); }
+  const FLAGS = []; { const flag = (x, z, col) => { add(new T.CylinderGeometry(.05, .05, 3, 6), iron, x, 1.5, z); const g = new T.PlaneGeometry(1.4, .8, 10, 3); g.translate(.7, 0, 0); const e = new T.Mesh(g, new T.MeshStandardMaterial({color: col, roughness: .8, side: T.DoubleSide})); e.position.set(x, 2.6, z); S.add(e); FLAGS.push({e, base: g.attributes.position.array.slice(), o: rnd() * 6}); };
+    flag(-30, -2.2, '#e8553f'); flag(-27, -2.6, '#3f8fe8'); flag(25.5, -3.8, '#f2b632'); }
+  const PLM = new T.MeshStandardMaterial({color: '#3a3f46', emissive: '#ffcf6a', emissiveIntensity: 0, roughness: .4}), PLG = [];
+  [[-24, -.6], [-12, -.6], [1, -.6], [26, -.6]].forEach(a => { add(new T.CylinderGeometry(.08, .1, 2.2, 6), iron, a[0], 1.1, a[1]); add(new T.BoxGeometry(.4, .45, .4), PLM, a[0], 2.4, a[1]); add(new T.ConeGeometry(.32, .25, 4), iron, a[0], 2.75, a[1]).rotation.y = Math.PI / 4; const g = glow(1.8, '#ffd98a'); g.position.set(a[0], 2.4, a[1]); g.material.opacity = 0; PLG.push(g); });
+  /* 절벽으로 올라온 돌계단(시작 자리) */
+  { for (let i = 0; i < 7; i++) add(new T.BoxGeometry(1.4, .35, 2.6), stone, -38.5 - i * 1.3, -.2 - i * .6, 1.6); add(new T.BoxGeometry(.3, 1.3, .3), woodD, -37.6, .65, -.1); add(new T.BoxGeometry(.3, 1.3, .3), woodD, -37.6, .65, 3.3); }
+  /* ══ 5-3 구름다리: 절벽 오른쪽 끝에서 나무 널빤지 다리가 구름 덩이 위로 끝 섬까지 이어진다. 끝 섬 너머는 다리가 끊겨 있다(도둑이 몰리는 곳) ══ */
+  { let sd = 7; const rr = () => (sd = (sd * 16807) % 2147483647) / 2147483647;   /* 다리만 쓰는 난수(뒤쪽 장식의 난수 차례를 바꾸지 않게) */
+    const PL = [], PO = []; for (let x = BR0; x < BR1 + .3; x += .55) PL.push({p: [x, -.07, 1.6 + (rr() - .5) * .06], s: [.48, .12, 3.3], r: [0, (rr() - .5) * .05, 0], c: ['#a57449', '#946640', '#b07c4e'][Math.floor(rr() * 3)]});
+    inst(new T.BoxGeometry(1, 1, 1), WM(), PL, true);
+    for (let x = BR0; x <= BR1 + .1; x += 3) [-.05, 3.25].forEach(z => PO.push({p: [x, .55, z], s: [.16, 1.25, .16]})); inst(new T.BoxGeometry(1, 1, 1), woodD, PO, true);
+    [-.05, 3.25].forEach(z => { const pts = []; for (let x = BR0; x <= BR1 + .1; x += 1) { const k = ((x - BR0) % 3) / 3; pts.push(new T.Vector3(x, 1.08 - Math.sin(k * Math.PI) * .18, z)); } add(new T.TubeGeometry(new T.CatmullRomCurve3(pts), 60, .04, 5), M('#e3d2a6'), 0, 0, 0).castShadow = false; });
+    [BR0 - .4, BR0 + .2].forEach((x, i) => [-.25, 3.45].forEach(z => add(new T.BoxGeometry(.3, 1.9 - i * .5, .3), woodD, x, (1.9 - i * .5) / 2, z)));   /* 다리 머리 기둥 */
+    const CL = [], cm = new T.MeshStandardMaterial({color: '#f3f4f8', roughness: 1}); for (let x = BR0 + 1; x < BR1 + 2; x += 1.6) for (let k = 0; k < 3; k++) { const s2 = 1.1 + rr() * 1.1; CL.push({p: [x + (rr() - .5) * 1.4, -1.1 - rr() * .7, 1.6 + (k - 1) * 1.3 + (rr() - .5) * .6], s: [s2 * 1.3, s2 * .7, s2]}); }
+    inst(new T.IcosahedronGeometry(1, 2), cm, CL);   /* 다리를 받치는 구름 덩이 */
+    /* 끝 섬: 풀밭 윗면, 아래로 뾰족한 바위, 둘레 돌, 끊긴 다리 조각 */
+    const IG = new T.Group(); IG.position.set(ISL5[0], 0, ISL5[1]); S.add(IG);
+    const top = add(new T.CylinderGeometry(ISR, ISR - .7, .9, 16), M('#7b9a5a'), 0, -.45, 0, IG); top.receiveShadow = true;
+    const rk = add(new T.ConeGeometry(ISR - .6, 6.5, 12), M('#7b7f86'), 0, -4.1, 0, IG); rk.rotation.x = Math.PI; rk.castShadow = false;
+    for (let k = 0; k < 9; k++) { const a = k / 9 * 6.283 + .3; if (Math.cos(a) < -.6) continue; const r2 = add(new T.DodecahedronGeometry(.45 + rr() * .3, 0), M('#8f959b'), Math.cos(a) * (ISR - .5), .1, Math.sin(a) * (ISR - .5), IG); r2.rotation.set(rr(), rr(), rr()); }
+    [[ISR + .3, -.1, 0], [ISR + 1.2, -.45, .3]].forEach((a, i) => { const b = add(new T.BoxGeometry(.5, .12, 3), M('#946640'), a[0], a[1], a[2] - .1, IG); b.rotation.z = -.25 - i * .35; });   /* 너머로 끊긴 다리 */
+    add(new T.CylinderGeometry(.13, .15, 1.2, 6), woodD, ISR - .3, .55, -1.5, IG); add(new T.CylinderGeometry(.13, .15, .7, 6), woodD, ISR - .3, .3, 1.5, IG); }
+  /* 구름다리 달리기 출발선·결승선(바둑판 띠, 결승 깃발) */
+  const chk = canvasTex(64, 64, x => { for (let i = 0; i < 4; i++) for (let j = 0; j < 4; j++) { x.fillStyle = (i + j) % 2 ? '#222' : '#fafafa'; x.fillRect(i * 16, j * 16, 16, 16); } }); chk.wrapS = chk.wrapT = T.RepeatWrapping; chk.repeat.set(1, 4);
+  const raceMk = [];
+  [[RPATH[0][0] + .6, RPATH[0][1]], RFIN].forEach((p, i) => { const g = new T.Group(); g.position.set(p[0], 0, p[1]); S.add(g); g.visible = false; raceMk.push(g); const st = new T.Mesh(new T.PlaneGeometry(.8, 3.6), new T.MeshStandardMaterial({map: chk, roughness: 1})); st.rotation.x = -Math.PI / 2; st.position.y = .05; g.add(st);
+    if (i) [-1.9, 1.9].forEach(z => { add(new T.CylinderGeometry(.08, .1, 3.2, 8), woodD, 0, 1.6, z, g); const f = new T.Mesh(new T.PlaneGeometry(1.1, .7), new T.MeshStandardMaterial({map: chk, side: T.DoubleSide, roughness: 1})); f.position.set(.58, 2.8, z); g.add(f); FLAGS2.push({f, z}); }); });
+  /* 하늘을 나는 갈매기들(멀리) */
+  const BIRDS = []; { const bm = new T.MeshBasicMaterial({color: '#f4f6f8', side: T.DoubleSide, fog: false}); for (let i = 0; i < 7; i++) { const g = new T.Group(); S.add(g); [-1, 1].forEach(k => { const w = new T.Mesh(new T.PlaneGeometry(.9, .22), bm); w.position.x = k * .45; g.add(w); }); BIRDS.push({g, r: 18 + rnd() * 22, c: [-10 + rnd() * 40, 13 + rnd() * 6, -40 - rnd() * 20], sp: .12 + rnd() * .1, o: rnd() * 6}); } }
+
+  /* 먹구름 부하: 렌즈를 안고 등실에서 날아가 버린다(5-3에서 쫓는다) */
+  const TH = new T.Group(); S.add(TH);
+  { const cm = new T.MeshStandardMaterial({color: '#4d5263', roughness: 1, flatShading: true}); [[0, 0, 0, .8], [.7, -.1, .1, .6], [-.7, -.15, 0, .55], [.25, .45, -.1, .55]].forEach(a => add(new T.IcosahedronGeometry(a[3], 1), cm, a[0], a[1], a[2], TH));
+    [-.25, .25].forEach(x => { add(new T.SphereGeometry(.13, 10, 8), new T.MeshStandardMaterial({color: '#ffe066', emissive: '#ffcc33', emissiveIntensity: .8}), x, .12, .7, TH); add(new T.SphereGeometry(.06, 8, 6), M('#222'), x, .1, .8, TH); }); }
+  const thLens = mkLens(.55); S.remove(thLens); TH.add(thLens); thLens.position.set(0, -.55, .5); thLens.visible = true;
+  let thT = -1; const TH0 = [LAMP[0] + .4, LAMP[1] + .3, LAMP[2] + 1.6];
+  let thMode = null, thX = 0, thU = .3, thP = [0, 0, 0], thFl = -1;   /* 5-3 도둑: rest(쉬거나 몰림) / chase(쫓기며 달아남) / flee(멀리 날아감) */
+  let spareT = -1, bigT = -1, bigK = 0; const SPR = [L[0] - 1.2, GAL + .3, L[1] + 1.9];   /* 예비 렌즈를 빼서 두는 전망대 바닥, 진짜 렌즈로 길어지는 빛줄기 */
+
+  /* ── 등대지기 갈매기 요요: 흰 몸, 잿빛 날개, 노란 부리, 남색 등대지기 모자 ── */
+  const GU = new T.Group(); S.add(GU); const gb = new T.Group(); GU.add(gb);
+  const white = M('#f6f5f1', {flatShading: false}), grey = M('#a9b3bc', {flatShading: false}), dark = M('#3b4148'), yel = M('#f2b632'), org = M('#ee8a3a');
+  { const bd = add(new T.SphereGeometry(.5, 18, 14), white, 0, .78, 0, gb); bd.scale.set(.9, 1, 1.25);
+    add(new T.SphereGeometry(.36, 16, 12), white, 0, 1.35, .32, gb);
+    const tl = add(new T.ConeGeometry(.22, .55, 4), grey, 0, .78, -.7, gb); tl.rotation.x = -Math.PI / 2 - .3;
+    [-1, 1].forEach(k => { const e = add(new T.SphereGeometry(.075, 10, 8), M('#ffffff'), k * .19, 1.44, .58, gb); add(new T.SphereGeometry(.045, 8, 6), M('#1d2228'), k * .2, 1.45, .64, gb); });
+    const bk = add(new T.ConeGeometry(.1, .42, 8), yel, 0, 1.3, .82, gb); bk.rotation.x = Math.PI / 2; add(new T.SphereGeometry(.04, 6, 5), M('#d9423a'), 0, 1.24, .9, gb);
+    const cap = new T.Group(); cap.position.set(0, 1.66, .28); cap.rotation.x = -.15; gb.add(cap); add(new T.CylinderGeometry(.3, .32, .2, 16), M('#2c3e6b'), 0, 0, 0, cap); add(new T.CylinderGeometry(.33, .33, .04, 16), M('#1f2d50'), 0, -.1, 0, cap); const vz = add(new T.BoxGeometry(.38, .04, .22), M('#1f2d50'), 0, -.1, .27, cap); vz.rotation.x = .2; add(new T.BoxGeometry(.14, .08, .03), yel, 0, .02, .31, cap);
+    [-1, 1].forEach(k => { add(new T.CylinderGeometry(.03, .03, .35, 5), org, k * .16, .2, .05, gb); add(new T.BoxGeometry(.18, .03, .22), org, k * .16, .03, .12, gb); }); }
+  const wings = [-1, 1].map(k => { const p = new T.Group(); p.position.set(k * .38, 1, -.05); gb.add(p); const w = add(new T.BoxGeometry(.75, .07, .55), grey, k * .37, 0, 0, p); w.castShadow = true; add(new T.BoxGeometry(.3, .06, .5), dark, k * .82, -.01, -.03, p); return p; });
+  GU.scale.setScalar(1.05);
+  const Gu = {x: GP[0], y: 1.15, z: GP[1], yaw: 0, flap: 0, fly: null, panic: -1, bob: 0, look: null, hold: false, ruff: 0, follow: false, sw: 0};   /* follow: 5-3에서 모아 뒤 위를 날며 따라옴, sw: 도둑 쪽으로 휙 날아갔다 옴 */
+  const actors = {gull: {group: GU, h: 2.15}, thief: {group: TH, h: 1.7}};
+  GF = () => [Gu.x, Gu.y + 2.4, Gu.z];
+  const gullFly = (to, dur, arc) => new Promise(res => { Gu.fly = {a: [Gu.x, Gu.y, Gu.z], b: to, t: 0, dur: dur || 1.6, arc: arc == null ? 1.6 : arc, res}; });
+
+  /* 밝기: 어두운 저녁 → 등대 불이 켜진 맑은 해 질 녘(굽힌 곡선, 1장·4장과 같은 방식) */
+  const SKY0 = {bg: S.background.clone(), fog: S.fog.color.clone(), hemi: E.hemi.intensity, sun: E.sun.intensity, sea: seaM.color.clone(), puff: puffM.color.clone()};
+  const SKY1 = {bg: new T.Color('#9fb6d8'), fog: new T.Color('#b2c2db'), hemi: E.hemi.intensity * 1.45, sun: E.sun.intensity * 1.5, sea: new T.Color('#f2eadf'), puff: new T.Color('#f6ece4')};
+  let lit = 0, litT = -1;
+  const litSet = k => { const e = 1 - Math.pow(1 - k, 2.2); lit = e; S.background.copy(SKY0.bg).lerp(SKY1.bg, e); S.fog.color.copy(SKY0.fog).lerp(SKY1.fog, e); E.hemi.intensity = sm(SKY0.hemi, SKY1.hemi, e); E.sun.intensity = sm(SKY0.sun, SKY1.sun, e); seaM.color.copy(SKY0.sea).lerp(SKY1.sea, e); puffM.color.copy(SKY0.puff).lerp(SKY1.puff, e);
+    lampM.emissiveIntensity = 2.2 * e; lampG.material.opacity = e; lampL.intensity = 2 * e; beamM.opacity = .32 * e; winM.emissiveIntensity = 1.4 * e; winM.color.set(e > .05 ? '#ffe7a8' : '#2c3540'); PLM.emissiveIntensity = 1.6 * e; PLG.forEach(g => { g.material.opacity = e * .9; }); };
+  let doorK = 0, doorA = 0, drawK = 0, drawA = 0, lensT = -1, lensMode = null, hintT = -1, logT = -1, leverK = 0, leverA = 0, spin = 0, crankA = 0, crankV = 0;
+  const cam0 = () => {};   /* (중간부터: 카메라는 장면의 cam 걸음이 정한다) */
+  let runePass = 1, projT = -1, projAB = null, blinkK = 0, doorSpd = 3, sparkOn = 0;
+  const projSp = glow(1.6, '#9ff4ff'); projSp.visible = false;   /* 🚦에서 문으로 날아가는 신호 빛 */
+  const panSp = SYM.map((s, i) => { const sp = new T.Sprite(new T.SpriteMaterial({map: symTex(s), transparent: true, depthWrite: false, depthTest: false, fog: false})); sp.renderOrder = 7; sp.scale.set(1.3, 1.3, 1); sp.position.set(PN[0] - 1.35 + i * 1.35, 4.1, PN[1] + .2); sp.visible = false; S.add(sp); return sp; });   /* 📡로 떠오르는 차례 무늬 */
+  const hintSp = SYM.map(s => { const sp = new T.Sprite(new T.SpriteMaterial({map: symTex(s), transparent: true, depthWrite: false, fog: false})); sp.scale.set(1.3, 1.3, 1); sp.position.set(LAMP[0], LAMP[1] + .1, LAMP[2] + 2.2); sp.visible = false; S.add(sp); return sp; });
+  const v3 = new T.Vector3();
+  const moaHand = () => [MG.position.x, MG.position.y + 2.6, MG.position.z];
+  const lensPath = (from, to, dur, mode, s0, s1) => new Promise(res => { lensMode = {from, to, dur, s0, s1, res, mode}; lensT = 0; lens.visible = true; });
+  const fx = {
+    async thiefFly() { thT = 0; E.beep(330, .2, 'sawtooth', .03); setTimeout(() => E.beep(250, .3, 'sawtooth', .03), 160); await sleep(500); },
+    async gullPanic() { Gu.panic = 0; E.beep(1250, .09, 'square', .03); setTimeout(() => E.beep(1100, .12, 'square', .03), 120); },
+    gullLook() { Gu.panic = 0; },
+    logGlow() { logT = 0; },
+    rune(n) { const i = Math.min(3, n - 1); RUNE[i].emissive.set(runePass === 2 ? '#ffd257' : '#7ff0ff'); RUNE[i].emissiveIntensity = 1.6; E.beep(520 + i * 120 + (runePass === 2 ? 200 : 0), .08, 'triangle', .04); },
+    async signalProject() { const a = [MG.position.x, MG.position.y + 2.6, MG.position.z], b = [L[0] + 1.25, 1.95, L[1] + DZ + .2]; projT = 0; projAB = [a, b]; projSp.visible = true;
+      for (let i = 0; i < 4; i++) { await sleep(330); RUNE[i].emissive.set('#7ff0ff'); RUNE[i].emissiveIntensity = 1.8; E.beep(520 + i * 120, .12, 'triangle', .05); burst(b[0], 2.4 - i * .3, b[2], 5, '#9ff4ff', 1.2); }
+      await sleep(300); projSp.visible = false; projT = -1; blinkK = 1.6; E.beep(392, .3, 'sine', .05); setTimeout(() => E.beep(523, .4, 'sine', .05), 260); runePass = 2; await sleep(900); },
+    async doorHeavy() { RUNE.forEach(m => { m.emissiveIntensity = 1.2; }); sfx.done(); doorSpd = .7; for (let i = 0; i < 4; i++) { E.beep(110 + i * 12, .22, 'sawtooth', .035); await sleep(260); } doorK = 1; await sleep(1400); doorSpd = 3; },
+    async symbolsFloat() { for (let i = 0; i < 3; i++) { panSp[i].visible = true; panSp[i].userData.t = 0; E.beep([660, 880, 1100][i], .14, 'sine', .045); await sleep(520); } },
+    async panelSpark() { burst(PN[0], 1.6, PN[1] + .2, 22, '#ffb347', 3.6); burst(PN[0] + .5, 1.8, PN[1], 10, '#fff2a0', 2.6); E.beep(90, .5, 'sawtooth', .06); pLampM.emissiveIntensity = 0; BTN.forEach(q => { q.cap.material.emissiveIntensity = 0; }); sparkOn = 1; await sleep(500); },
+    async panelBack() { await sleep(1500); sparkOn = 0; pLampM.emissiveIntensity = .25; E.beep(300, .12, 'square', .03); },
+    async runeHalf() { RUNE.forEach(m => { m.emissiveIntensity = .5; }); await sleep(250); RUNE.forEach(m => { m.emissiveIntensity = 0; }); },
+    async doorOpen() { RUNE.forEach(m => { m.emissiveIntensity = 1.8; }); sfx.win(); burst(L[0] + 1.25, 2, L[1] + DZ + .3, 12, '#9ff4ff', 2.4); burst(L[0], 2, L[1] + DZ + .5, 26, '#fff2a8', 4); blinkK = 1; await sleep(400); doorK = 1; E.beep(260, .35, 'triangle', .05); await sleep(700); },
+    async lensOut() { drawK = 1; await sleep(450); sfx.win(); const a = [L[0], 1.3, L[1] + DZ + .1]; await lensPath(a, [L[0], 2.9, L[1] + DZ + .9], .7, 'up', .6, 1); burst(L[0], 2.9, L[1] + DZ + .9, 14, '#e6f6ff', 2.6); },
+    async lensPocket() { await lensPath([lens.position.x, lens.position.y, lens.position.z], moaHand(), .5, 'pocket', 1, .1); lens.visible = false; drawK = 0; },
+    btn(i) { if (panSp[i].visible) { panSp[i].visible = false; burst(PN[0] - 1.35 + i * 1.35, 4.1, PN[1], 12, '#fff2a8', 2.4); } const b = BTN[i]; b.t = 0; b.cap.material.emissiveIntensity = 1.4; E.beep([660, 880, 1100][i], .12, 'triangle', .05); burst(PN[0] - .62 + i * .62, 1.5, PN[1] + .3, 6, '#ffe8a0', 1.4); },
+    async btnWrong(i) { const b = BTN[i]; b.t = 0; b.cap.material.emissiveIntensity = 1.4; await sleep(250); E.beep(150, .35, 'sawtooth', .05); pLampM.emissiveIntensity = 1.6; for (let k = 0; k < 3; k++) { BTN.forEach(q => { q.cap.material.emissiveIntensity = 0; }); pLampM.emissiveIntensity = k % 2 ? 1.6 : .2; await sleep(160); } pLampM.emissiveIntensity = .25; },
+    async blinkHint() { hintT = 0; await sleep(4300); },
+    async panelOk() { BTN.forEach(q => { q.cap.material.emissiveIntensity = 1.1; }); pLampM.color.set('#2f6b3a'); pLampM.emissive.set('#5cff7a'); pLampM.emissiveIntensity = 1.4; sfx.win(); cableT = 0; cableSp.visible = true; await sleep(600); },
+    async lensToBasket() { setSt('throw'); await lensPath(moaHand(), [BK[0], bY + .45, BK[1]], .8, 'arc', .1, .7); lensMode = {hold: true}; E.beep(700, .1, 'triangle', .04); },
+    async gullUp() { Gu.follow = false; await gullFly([TOPG[0], TOPG[1], TOPG[2]], 2.2, 2.4); },
+    crank() { crankV = 1; E.beep(300 + rnd() * 60, .06, 'square', .025); },
+    async lift(i) { bYT = [3.4, 6.6, GAL - .1][i]; E.beep(440 + i * 110, .15, 'triangle', .04); await sleep(i === 2 ? 1400 : 900); },
+    async gullCatch() { Gu.panic = 0; E.beep(1250, .09, 'square', .03); setTimeout(() => E.beep(1400, .1, 'square', .03), 120); await gullFly([(L[0] + 2.6 + BK[0]) / 2, GAL + 1.26, (L[1] + 1.1 + BK[1]) / 2], .6, .4); },
+    async lensFit() { Gu.hold = true; await lensPath([BK[0], bY + .45, BK[1]], [LAMP[0], LAMP[1] - .2, LAMP[2] + .2], 1.6, 'fit', .7, 1.15); Gu.hold = false; burst(LAMP[0], LAMP[1], LAMP[2] + 1, 14, '#e6f6ff', 2.4); E.beep(900, .12, 'triangle', .05); await gullFly([TOPG[0], TOPG[1], TOPG[2]], .7, .4); },
+    async leverGrab() { leverK = .35; E.beep(420, .08, 'square', .03); await sleep(300); },
+    async leverDown() { leverK = 1; E.beep(200, .25, 'square', .04); await sleep(500); },
+    async lightOn() { litT = 0; spin = 0; E.beep(523, .3, 'triangle', .05); setTimeout(() => E.beep(659, .3, 'triangle', .05), 220); setTimeout(() => E.beep(784, .5, 'triangle', .05), 440); burst(LAMP[0], LAMP[1], LAMP[2] + 1, 24, '#ffe8a0', 4); await sleep(2600); },
+    async gullDown() { await gullFly([12.6, .05, -1.4], 2, 1.4); },
+    aimPond() { aim = 'pond'; }, aimForest() { aim = 'forest'; },
+    async flashPond() { flashK = 1; E.beep(880, .12, 'triangle', .05); setTimeout(() => E.beep(660, .12, 'triangle', .04), 120); await sleep(500); },
+    async flashForest() { flashK = 1; E.beep(880, .12, 'triangle', .05); setTimeout(() => E.beep(660, .12, 'triangle', .04), 120); await sleep(500); },
+    async answer(k) { await sleep(700); ansT[k] = 0; for (let i = 0; i < 3; i++) { E.beep(k === 'pond' ? 523 : 784, .14, 'sine', .04); await sleep(520); } },
+    aimOff() { aim = null; },
+    msgFly(k) { MS = MSG[k]; actors.msg.group = MS.g; actors.msg.h = MS.h; const a = ISP[k]; Object.assign(MS, {x: a[0], y: a[1] + 1, z: a[2], on: true}); MS.g.visible = true; const m = MS, wp = WAY[k]; m.going = true; (async () => { await msgGo(m, wp, 3.6, 3); await msgGo(m, [PERCH[0] + 1.6, 4.2, PERCH[2] + .4], 1.1, .3); m.going = false; })(); },   /* 등대 옆 들르는 곳을 거쳐 온다(등대를 뚫고 지나가지 않게) */
+    async msgLand() { while (MS && (MS.fly || MS.going)) await sleep(100); await msgGo(MS, PERCH, .8, .3); E.beep(1000, .08, 'square', .03); },
+    async giftTo() { giftK = route(); giftT = 0; GIFT[giftK].visible = true; sfx.win(); await sleep(1300); },
+    msgPoint() { if (MS) { MS.point = 1.6; } },
+    /* ── 5-3 렌즈 도둑 쫓기 ── */
+    gullJoin() { Gu.panic = 0; Gu.follow = true; E.beep(1250, .09, 'square', .03); },
+    async thiefSpot() { TH.visible = true; thLens.visible = true; TH.scale.setScalar(1); thMode = 'rest'; thP = [BR0 + 1.7, 1.2, 1.6]; thX = thP[0]; E.beep(330, .2, 'sawtooth', .03); await sleep(300); },
+    thiefNotice() { thU = .3; thMode = 'chase'; E.beep(500, .08, 'square', .03); setTimeout(() => E.beep(380, .12, 'square', .03), 110); },
+    chaseStep(i, n) { const x0 = 57, x1 = TC[0] - 2.6; E.go(x0 + (x1 - x0) * i / n, 1.6, undefined, true); burst(MG.position.x, .3, 1.6, 4, '#e6eefc', 1.6); if (i === 6) { Gu.sw = 1.1; E.beep(1250, .09, 'square', .03); } },   /* 여섯째 낱말(요요야): 요요가 도둑 쪽으로 휙 */
+    thiefGap(u) { thU = u; },
+    thiefAway() { setSt('oops'); E.bubble('앗, 멀어졌어! 더 빨리!', 1600); sfx.bad(); },
+    async thiefCorner() { thMode = 'rest'; thP = [TC[0], 1.25, TC[1]]; for (let i = 0; i < 30 && Math.abs(thX - TC[0]) > .3; i++) await sleep(100); setSt('cheer'); E.bubble('막다른 곳이야!', 1600); sfx.win(); await sleep(1300); },
+    async thiefDrop() { thLens.visible = false; lens = lensR; thP = [TC[0], 2.1, TC[1]]; E.beep(700, .1, 'triangle', .04); await lensPath([TH.position.x, TH.position.y - .55, TH.position.z + .5], [LD[0], .5, LD[1]], .6, 'drop', 1, 1); burst(LD[0], .5, LD[1], 14, '#e6f6ff', 2.4); E.beep(900, .12, 'triangle', .05); },
+    async thiefFlee() { thMode = 'flee'; thFl = 0; E.beep(330, .2, 'sawtooth', .03); setTimeout(() => E.beep(250, .3, 'sawtooth', .03), 160); await sleep(1400); },
+    async lensPick() { await lensPath([lens.position.x, lens.position.y, lens.position.z], moaHand(), .5, 'pocket', 1, .1); lens.visible = false; sfx.win(); },
+    basketDown() { bYT = .12; },
+    async spareOut() { await gullFly([LAMP[0] - .2, LAMP[1] - 1.3, LAMP[2] + .8], .5, .2); Gu.hold = true; spareT = 0; E.beep(600, .1, 'triangle', .04); await sleep(1100); Gu.hold = false; await gullFly([BK[0] - .2, bY + .45 - 1.1, BK[1] + .6], .7, .4); },   /* v14.6: 렌즈 쪽으로 날아가서 잡고, 다 둔 뒤 바구니 렌즈 자리로 날아간다(순간이동 없이) */
+    async bigBeam() { bigT = 0; aim = 'far'; burst(LAMP[0], LAMP[1], LAMP[2] + 1, 30, '#fff2b0', 5); E.beep(523, .3, 'triangle', .05); setTimeout(() => E.beep(659, .3, 'triangle', .05), 200); setTimeout(() => E.beep(784, .3, 'triangle', .05), 400); setTimeout(() => E.beep(1047, .6, 'triangle', .05), 600); await sleep(2600); },
+    farLook() { Gu.panic = 0; }
+  };
+  const route = () => (MS === MSG.forest ? 'forest' : 'pond');
+
+  /* ══ 5-2: 섬의 대답 불빛, 심부름 새(나루 = 사공의 갈매기, 숲 = 부엉이), 선물(🧭 나침반 / 🪶 깃털) ══ */
+  const ISP = {pond: [-25, 4.3, -59], forest: [34, 7.2, -63], far: [88, 9, -104]}, PERCH = [GP[0], 1.15, GP[1]];
+  const farG = glow(16, '#ffe9a8'); farG.position.set(ISP.far[0], ISP.far[1], ISP.far[2]); farG.material.opacity = 0; farG.material.fog = false;   /* 5-3: 빛이 닿은 먼 섬 */
+  const AIM = {pond: Math.atan2(-(ISP.pond[0] - LAMP[0]), -(ISP.pond[2] - LAMP[2])), forest: Math.atan2(-(ISP.forest[0] - LAMP[0]), -(ISP.forest[2] - LAMP[2])), far: Math.atan2(-(ISP.far[0] - LAMP[0]), -(ISP.far[2] - LAMP[2]))};
+  const ANS = {pond: glow(9, '#ffc65a'), forest: glow(9, '#b8ff9a')}; Object.keys(ANS).forEach(k => { ANS[k].position.set(ISP[k][0], ISP[k][1], ISP[k][2]); ANS[k].material.opacity = 0; });
+  let aim = null, flashK = 0; const ansT = {pond: -1, forest: -1};
+  const mkWing = (par, k, col, tip) => { const p = new T.Group(); p.position.set(k * .3, .85, -.05); par.add(p); add(new T.BoxGeometry(.62, .06, .45), col, k * .3, 0, 0, p); if (tip) add(new T.BoxGeometry(.24, .05, .4), tip, k * .68, -.01, -.03, p); return p; };
+  const mkMsgGull = () => { const g = new T.Group(), b = new T.Group(); g.add(b); S.add(g); const bd = add(new T.SphereGeometry(.42, 16, 12), white, 0, .65, 0, b); bd.scale.set(.9, 1, 1.25); add(new T.SphereGeometry(.3, 14, 10), white, 0, 1.12, .27, b);
+    [-1, 1].forEach(k => add(new T.SphereGeometry(.04, 8, 6), M('#1d2228'), k * .16, 1.2, .52, b)); const bk = add(new T.ConeGeometry(.08, .34, 8), yel, 0, 1.08, .66, b); bk.rotation.x = Math.PI / 2;
+    const bag = add(new T.BoxGeometry(.32, .26, .12), M('#8a5a32'), .3, .55, .2, b); bag.rotation.y = .4; add(new T.BoxGeometry(.06, .5, .04), M('#5f3a1c'), .12, .8, .12, b).rotation.z = .7;
+    [-1, 1].forEach(k => add(new T.CylinderGeometry(.025, .025, .3, 5), org, k * .13, .15, .04, b)); const tl = add(new T.ConeGeometry(.18, .45, 4), grey, 0, .65, -.58, b); tl.rotation.x = -Math.PI / 2 - .3;
+    return {g, b, wings: [-1, 1].map(k => mkWing(b, k, grey, dark)), h: 1.75}; };
+  const mkOwl = () => { const g = new T.Group(), b = new T.Group(); g.add(b); S.add(g); const br = M('#8a5c34', {flatShading: false}), lt = M('#e8d2a8', {flatShading: false});
+    const bd = add(new T.SphereGeometry(.5, 18, 14), br, 0, .7, 0, b); bd.scale.set(1, 1.1, .95); const bl = add(new T.SphereGeometry(.38, 16, 12), lt, 0, .62, .2, b); bl.scale.set(1, 1.1, .6);
+    const hd = add(new T.SphereGeometry(.42, 18, 14), br, 0, 1.3, .05, b); hd.scale.set(1.1, .95, 1); [-1, 1].forEach(k => { const t = add(new T.ConeGeometry(.12, .32, 6), br, k * .3, 1.68, 0, b); t.rotation.z = -k * .35;
+      add(new T.CircleGeometry(.17, 18), lt, k * .17, 1.34, .44, b); add(new T.SphereGeometry(.1, 12, 10), M('#ffcf3a', {emissive: '#ffb300', emissiveIntensity: .35}), k * .17, 1.34, .47, b); add(new T.SphereGeometry(.05, 8, 6), M('#1a1a1a'), k * .17, 1.34, .55, b);
+      add(new T.CylinderGeometry(.03, .03, .2, 5), M('#d9a441'), k * .14, .12, .1, b); });
+    const bk = add(new T.ConeGeometry(.06, .16, 6), M('#d9a441'), 0, 1.2, .5, b); bk.rotation.x = Math.PI / 2 + .4;
+    return {g, b, wings: [-1, 1].map(k => mkWing(b, k, br, M('#5e3d22'))), h: 1.95}; };
+  const MSG = {pond: mkMsgGull(), forest: mkOwl()}; Object.keys(MSG).forEach(k => { const m = MSG[k]; m.g.scale.setScalar(1); Object.assign(m, {x: 0, y: 0, z: 0, yaw: 0, fly: null, on: false, flap: 0}); m.g.visible = false; });
+  const WAY = {pond: [5, 6.5, -2.5], forest: [21.5, 6.5, -1.5]};   /* 나루 쪽은 등대 왼쪽 앞, 숲 쪽은 등대 오른쪽 앞을 거친다 */
+  let MS = null; actors.msg = {group: MSG.pond.g, h: 1.75};
+  const msgGo = (m, to, dur, arc) => new Promise(res => { m.fly = {a: [m.x, m.y, m.z], b: to, t: 0, dur, arc, res}; });
+  /* 선물: 🧭 나침반(놋쇠 테, 흰 판, 빨간 바늘) / 🪶 깃털 */
+  const GIFT = {pond: new T.Group(), forest: new T.Group()};
+  { const c = GIFT.pond; add(new T.TorusGeometry(.32, .07, 8, 20), brass, 0, 0, 0, c); add(new T.CylinderGeometry(.3, .3, .05, 20), M('#f4efe2'), 0, 0, 0, c).rotation.x = Math.PI / 2; const n = add(new T.ConeGeometry(.06, .4, 4), M('#d9423a'), 0, .1, .05, c); n.castShadow = false;
+    const f = GIFT.forest; const q = add(new T.ConeGeometry(.16, 1, 8), M('#f2ead8', {flatShading: false}), 0, 0, 0, f); q.scale.set(1, 1, .25); add(new T.CylinderGeometry(.02, .02, 1.1, 5), M('#8a5c34'), 0, -.05, .02, f); f.rotation.z = .5;
+    [c, f].forEach(g => { const sp = glow(1.6, '#fff4c8'); S.remove(sp); g.add(sp); g.visible = false; S.add(g); }); }
+  let giftT = -1, giftK = null;
+  const reset = () => { lens = lens0; lensR.visible = false; lens0.scale.setScalar(1); thMode = null; thLens.visible = true; spareT = -1; bigT = -1; bigK = 0; BEAMS.forEach(e => { e.scale.y = 1; }); farG.material.opacity = 0; if (FARB) FARB.visible = false; raceMk.forEach(g => { g.visible = false; });
+    Object.assign(Gu, {x: GP[0], y: 1.15, z: GP[1], yaw: .4, flap: 0, fly: null, panic: -1, bob: 0, hold: false, ruff: 0, follow: false, sw: 0});
+    thT = -1; TH.visible = true; TH.position.set(TH0[0], TH0[1], TH0[2]); TH.scale.setScalar(1);
+    doorK = doorA = drawK = drawA = 0; lensT = -1; lensMode = null; lens.visible = false; hintT = -1; logT = -1; logM.emissiveIntensity = 0; leverK = leverA = 0; spin = 0; crankA = crankV = 0;
+    RUNE.forEach(m => { m.emissiveIntensity = 0; m.emissive.set('#7ff0ff'); }); runePass = 1; projT = -1; projSp.visible = false; blinkK = 0; doorSpd = 3; sparkOn = 0; panSp.forEach(q => { q.visible = false; }); BTN.forEach(b => { b.t = -1; b.cap.material.emissiveIntensity = 0; b.b.position.z = .09; }); pLampM.color.set('#6c2a26'); pLampM.emissive.set('#ff5544'); pLampM.emissiveIntensity = .25;
+    cableT = -1; cableSp.visible = false; bY = bYT = .12; hintSp.forEach(s => { s.visible = false; }); litT = -1; litSet(0); BEAM.rotation.y = 0; aim = null; flashK = 0; ansT.pond = ansT.forest = -1; Object.values(ANS).forEach(a => { a.material.opacity = 0; }); Object.values(MSG).forEach(m => { m.g.visible = false; m.on = false; m.fly = null; m.point = 0; }); MS = null; giftT = -1; giftK = null; Object.values(GIFT).forEach(g => { g.visible = false; }); tick(0, 0); };
+  /* 5-2부터(선생님 점검): 등대는 이미 켜져 있고, 렌즈는 등실에, 요요는 아래로 내려와 있다 */
+  const jumpTo = m => { TH.visible = false; if (m === 'dr' || m === 'pn') { cam0(); if (m === 'pn') { doorK = doorA = 1; } return; } doorK = doorA = 1; lensMode = {fit: true}; lens.visible = true; BTN.forEach(q => { q.cap.material.emissiveIntensity = 1.1; }); pLampM.color.set('#2f6b3a'); pLampM.emissive.set('#5cff7a'); pLampM.emissiveIntensity = 1.4; bY = bYT = GAL - .1; leverK = leverA = 1; litSet(1); spin = 1; Object.assign(Gu, {x: 12.6, y: .05, z: -1.4}); };
+  const tick = (t, dt) => {
+    FLAGS.forEach(f => { const a = f.e.geometry.attributes.position, b = f.base; for (let i = 0; i < a.count; i++) { const x = b[i * 3]; a.array[i * 3 + 2] = Math.sin(x * 3.2 - t * 7 + f.o) * .15 * x; a.array[i * 3 + 1] = b[i * 3 + 1] + Math.sin(x * 2 - t * 5) * .04 * x; } a.needsUpdate = true; f.e.geometry.computeVertexNormals(); });
+    PUFF.forEach(m => { m.position.x = Math.sin(t * .05) * 3; }); FLAGS2.forEach(o => { o.f.rotation.y = Math.sin(t * 3 + o.z) * .25; });
+    seaTex.offset.x = t * .004; ISL.forEach(o => { o.g.position.y = o.y + Math.sin(t * .4 + o.o) * .5; o.g.rotation.y = t * .02 + o.o; });
+    BIRDS.forEach(b => { const a = t * b.sp + b.o; b.g.position.set(b.c[0] + Math.cos(a) * b.r, b.c[1] + Math.sin(a * 2) * .8, b.c[2] + Math.sin(a) * b.r * .4); b.g.rotation.y = -a; const f = Math.sin(t * 6 + b.o) * .45; b.g.children[0].rotation.z = f; b.g.children[1].rotation.z = -f; });
+    /* 도둑 구름: 등실 옆에 숨어 있다가 렌즈를 안고 먼 하늘로 */
+    if (TH.visible && thMode) { const bob = Math.sin(t * 5) * .15;
+      if (thMode === 'chase') { const tx = Math.min(TC[0], MG.position.x + 4 + thU * 9); thX = sm(thX, tx, Math.min(1, dt * 3)); TH.position.set(thX, 1.6 + bob, 1.6 + Math.sin(t * 1.7) * .35); TH.rotation.y = Math.PI / 2 + Math.sin(t * 2.3) * .5; }
+      else if (thMode === 'rest') { thX = sm(thX, thP[0], Math.min(1, dt * 3)); TH.position.set(thX, sm(TH.position.y, thP[1], Math.min(1, dt * 3)) + bob * .3, thP[2]); TH.rotation.y = sm(TH.rotation.y, -Math.PI / 2, Math.min(1, dt * 4)); }
+      else if (thMode === 'flee') { thFl += dt; const k = Math.min(1, thFl / 3), e = k * k; TH.position.set(sm(TC[0], 130, e), sm(2.1, 22, e) + Math.sin(k * Math.PI) * 2, sm(TC[1], -70, e)); TH.rotation.y = .9; TH.scale.setScalar(1 - k * .4); if (k >= 1) { TH.visible = false; thMode = null; } } }
+    else if (TH.visible) { if (thT < 0) { TH.position.set(TH0[0] + Math.sin(t * 1.3) * .2, TH0[1] + Math.sin(t * 2.1) * .15, TH0[2]); TH.rotation.y = Math.sin(t) * .3; }
+      else { thT += dt; const k = Math.min(1, thT / 4.4), e = k * k; TH.position.set(sm(TH0[0], 92, e), sm(TH0[1], 21, e) + Math.sin(k * Math.PI) * 3, sm(TH0[2], -118, e)); TH.rotation.y = .9; TH.scale.setScalar(1 - k * .3); if (rnd() < .5) { const g = glow(.6 + rnd() * .4, '#d6f0ff'); g.position.copy(TH.position); g.position.y -= .5; setTimeout(() => S.remove(g), 900); } if (k >= 1) { TH.visible = false; thT = -1; } } }
+    /* 문, 서랍, 일지, 단추, 레버 */
+    doorA = sm(doorA, doorK, Math.min(1, dt * doorSpd));
+    if (projT >= 0 && projAB) { projT += dt; const k = Math.min(1, projT / .5), e = ease(k), a = projAB[0], b = projAB[1]; projSp.position.set(sm(a[0], b[0], e), sm(a[1], b[1], e) + Math.sin(e * Math.PI) * .8, sm(a[2], b[2], e)); projSp.material.opacity = .6 + Math.sin(t * 25) * .4; if (k >= 1) projT = 0; }
+    if (blinkK > 0 && lit < .5) { blinkK = Math.max(0, blinkK - dt); const on = (blinkK % .4) > .2 ? 1 : 0; lampG.material.opacity = on * .9; lampM.emissiveIntensity = on * 1.8; if (!blinkK) { lampG.material.opacity = lit; lampM.emissiveIntensity = 2.2 * lit; } }
+    panSp.forEach((q, i) => { if (!q.visible) return; q.userData.t = (q.userData.t || 0) + dt; const k = Math.min(1, q.userData.t / .3); q.scale.setScalar(1.3 * (k < 1 ? k * (1 + .3 * Math.sin(k * Math.PI)) : 1)); q.position.y = 4.1 + Math.sin(t * 3 + i) * .08; });
+    if (sparkOn && rnd() < .3) burst(PN[0] + (rnd() - .5) * 1.6, 1.4 + rnd() * .5, PN[1] + .2, 2, '#ffb347', 2); door.rotation.y = -doorA * 1.9; drawA = sm(drawA, drawK, Math.min(1, dt * 4)); drawer.position.z = DZ - .2 + drawA * .45;
+    if (logT >= 0) { logT += dt; logM.emissiveIntensity = (Math.sin(logT * 6) * .5 + .5) * .9; if (logT > 6) { logT = -1; logM.emissiveIntensity = .3; } }
+    BTN.forEach(b => { if (b.t < 0) return; b.t += dt; b.b.position.z = .09 - Math.sin(Math.min(1, b.t / .3) * Math.PI) * .06; if (b.t > .3) b.t = -1; });
+    leverA = sm(leverA, leverK, Math.min(1, dt * 6)); lever.rotation.x = -.6 + leverA * 1.25;
+    /* 신호판 → 등대로 흐르는 빛 */
+    if (cableT >= 0) { cableT += dt; const n = CABLE.length - 1, k = Math.min(1, cableT / 2.6) * n, i = Math.min(n - 1, Math.floor(k)), f = k - i, a = CABLE[i], c = CABLE[i + 1]; cableSp.position.set(sm(a[0], c[0], f), sm(a[1], c[1], f), sm(a[2], c[2], f)); cableSp.material.opacity = .7 + Math.sin(t * 30) * .3; if (cableT > 2.6) { cableSp.visible = false; cableT = -1; lampM.emissiveIntensity = .25; burst(LAMP[0], LAMP[1], LAMP[2] + 1, 10, '#ffe8a0', 2); } }
+    /* 등대 깜박임 힌트(📡가 없을 때): 해 → 별 → 세모 */
+    if (hintT >= 0) { hintT += dt; const i = Math.floor(hintT / 1.3), f = hintT % 1.3; hintSp.forEach((s, k) => { s.visible = k === i && f < 1.05; s.material.opacity = Math.min(1, f * 5) * (1 - Math.max(0, f - .8) * 4); }); lampG.material.opacity = i < 3 && f < .8 ? .9 : lit; lampM.emissiveIntensity = i < 3 && f < .8 ? 1.8 : 2.2 * lit; if (i >= 3) { hintT = -1; hintSp.forEach(s => { s.visible = false; }); lampG.material.opacity = lit; lampM.emissiveIntensity = Math.max(lampM.emissiveIntensity, 2.2 * lit); } }
+    /* 도르래와 바구니 */
+    const prevY = bY; bY = sm(bY, bYT, Math.min(1, dt * 1.6)); drum.rotation.x -= (bY - prevY) * 4; crankV = Math.max(0, crankV - dt * 3); crankA += crankV * dt * 9 + (bY - prevY) * 4; crank.rotation.x = -crankA;
+    basket.position.set(BK[0], bY + Math.sin(t * 2) * .03 * Math.min(1, bY), BK[1]); basket.rotation.y = Math.sin(t * .8) * .1 * Math.min(1, bY / 3);
+    setRope(ropeA, [PUL[0], PUL[1] - .2, PUL[2]], [BK[0], bY + .58, BK[1]]); WG.updateMatrixWorld(true); v3.set(0, 1.5, 0); WG.localToWorld(v3); setRope(ropeB, [v3.x, v3.y, v3.z], [PUL[0], PUL[1] + .2, PUL[2]]);
+    /* 렌즈 움직임 */
+    if (lensMode && lensMode.hold) { lens.visible = true; lens.position.set(BK[0], bY + .45, BK[1]); lens.rotation.set(Math.PI / 2 - .3, t, 0); lens.scale.setScalar(.7); }
+    else if (lensT >= 0 && lensMode) { lensT += dt; const m = lensMode, k = Math.min(1, lensT / m.dur), e = ease(k); const p = [sm(m.from[0], m.to[0], e), sm(m.from[1], m.to[1], e), sm(m.from[2], m.to[2], e)];
+      if (m.mode === 'arc') p[1] += Math.sin(e * Math.PI) * 2.4; if (m.mode === 'fit') { p[1] += Math.sin(e * Math.PI) * 1.2; Gu.x = p[0] - .2; Gu.y = p[1] - 1.1; Gu.z = p[2] + .6; Gu.flap = 1; }
+      lens.position.set(p[0], p[1], p[2]); lens.rotation.set(m.mode === 'fit' ? sm(1.2, 0, e) : 0, t * (m.mode === 'fit' ? 1 : 3), 0); lens.scale.setScalar(sm(m.s0, m.s1, e));
+      if (k >= 1) { lensT = -1; const r = m.res; lensMode = m.mode === 'fit' ? {fit: true} : m.mode === 'pocket' ? null : {rest: true, at: m.to}; if (r) r(); } }
+    else if (lensMode && lensMode.fit) { lens.visible = true; lens.position.set(LAMP[0], LAMP[1] - .2, LAMP[2] + .2); lens.rotation.set(0, t * .4 + BEAM.rotation.y, 0); lens.scale.setScalar(1.15); }
+    else if (lensMode && lensMode.rest) { lens.position.y = lensMode.at[1] + Math.sin(t * 3) * .08; lens.rotation.y = t * 2; }
+    /* 5-3: 예비 렌즈를 빼서 전망대 바닥에 둠, 진짜 렌즈로 빛줄기가 길어지고 먼 섬이 보임 */
+    if (spareT >= 0) { spareT += dt; const k = Math.min(1, spareT / 1), e = ease(k), a = [LAMP[0], LAMP[1] - .2, LAMP[2] + .2]; lens0.position.set(sm(a[0], SPR[0], e), sm(a[1], SPR[1], e) + Math.sin(e * Math.PI) * .9, sm(a[2], SPR[2], e)); lens0.rotation.set(sm(0, 1.35, e), 0, 0); lens0.scale.setScalar(sm(1.15, .8, e)); { const q = Math.min(1, dt * 9); Gu.x = sm(Gu.x, lens0.position.x - .2, q); Gu.y = sm(Gu.y, lens0.position.y - 1.1, q); Gu.z = sm(Gu.z, lens0.position.z + .6, q); } Gu.flap = 1; if (k >= 1) spareT = -2; }
+    if (bigT >= 0) { bigT += dt; bigK = ease(Math.min(1, bigT / 2.2)); if (bigT > 2.2) bigT = -1; }
+    BEAMS.forEach(e => { e.scale.y = 1 + bigK * 1.6; }); farG.material.opacity = bigK > .5 ? (bigK - .5) * 1.7 * (.85 + Math.sin(t * 2) * .15) : 0; if (FARB) FARB.visible = bigK > .6;
+    /* 빛줄기 */
+    if (litT >= 0) { litT += dt; litSet(Math.min(1, litT / 2.6)); if (litT > 2.6) litT = -1; }
+    spin = sm(spin, lit, Math.min(1, dt)); { const sw = Math.sin(t * .45) * 1.05 * spin; BEAM.userData.a = sm(BEAM.userData.a == null ? sw : BEAM.userData.a, aim ? AIM[aim] : sw, aim ? Math.min(1, dt * 3) : Math.min(1, dt * 1.5)); BEAM.rotation.y = BEAM.userData.a; }
+    flashK = Math.max(0, flashK - dt * 2.2); if (lit > .5) beamM.opacity = .32 * lit + flashK * .5 + bigK * .1;
+    Object.keys(ansT).forEach(k => { if (ansT[k] < 0) return; ansT[k] += dt; const on = ansT[k] < 1.6 ? (ansT[k] % .52 < .3 ? 1 : .15) : .55; ANS[k].material.opacity = on; });
+    Object.values(MSG).forEach(m => { if (!m.on) return; if (m.fly) { const f = m.fly; f.t += dt; const k = Math.min(1, f.t / f.dur), e = ease(k); m.x = sm(f.a[0], f.b[0], e); m.y = sm(f.a[1], f.b[1], e) + Math.sin(e * Math.PI) * f.arc; m.z = sm(f.a[2], f.b[2], e); const dx = f.b[0] - f.a[0], dz = f.b[2] - f.a[2]; m.yaw = Math.atan2(dx, dz); m.flap = 1; if (k >= 1) { m.fly = null; const r = f.res; if (r) r(); } }
+      else { m.point = Math.max(0, (m.point || 0) - dt); const want = m.point ? Math.PI / 2 : Math.atan2(MG.position.x - m.x, MG.position.z - m.z); let d = want - m.yaw; d = Math.atan2(Math.sin(d), Math.cos(d)); m.yaw += d * Math.min(1, dt * 4); m.flap = Math.max(m.point ? .6 : 0, m.flap - dt * 2); }
+      m.g.position.set(m.x, m.y, m.z); m.g.rotation.y = m.yaw; m.b.position.y = m.fly ? Math.sin(t * 12) * .05 : Math.sin(t * 2.4) * .02; m.b.rotation.x = m.fly ? .25 : 0; const wa = m.flap ? Math.sin(t * (m.fly ? 15 : 18)) * .9 * m.flap - .2 * m.flap : .05; m.wings.forEach((w, i) => { w.rotation.z = (i ? 1 : -1) * wa; }); });
+    if (giftT >= 0 && giftK) { giftT += dt; const g = GIFT[giftK], k = Math.min(1, giftT / 1.1), e = ease(k), a = [PERCH[0], PERCH[1] + 1.4, PERCH[2]], b = moaHand(); g.position.set(sm(a[0], b[0], e), sm(a[1], b[1], e) + Math.sin(e * Math.PI) * 1.6, sm(a[2], b[2], e)); g.rotation.y = t * 3; g.scale.setScalar(k > .8 ? 1 - (k - .8) * 4.5 : 1); if (k >= 1) { g.visible = false; g.scale.setScalar(1); giftT = -1; burst(b[0], b[1], b[2], 12, '#fff4c8', 2.2); } }
+    /* 갈매기 */
+    if (Gu.follow && !Gu.fly) { const sw = Gu.sw > 0 && TH.visible; Gu.sw = Math.max(0, Gu.sw - dt); const tg = sw ? [TH.position.x - .8, TH.position.y + 1.1, TH.position.z - .5] : [MG.position.x - 1.6, MG.position.y + 3.3, MG.position.z - 1.3], q = Math.min(1, dt * (sw ? 5 : 2.4));
+      const vx = tg[0] - Gu.x, vz = tg[2] - Gu.z; Gu.x = sm(Gu.x, tg[0], q); Gu.y = sm(Gu.y, tg[1], Math.min(1, dt * 2.5)); Gu.z = sm(Gu.z, tg[2], q); Gu.flap = 1; if (Math.hypot(vx, vz) > .4) Gu.yaw = sm(Gu.yaw, Math.atan2(vx, vz), Math.min(1, dt * 5)); else { let d = Math.atan2(MG.position.x - Gu.x, MG.position.z - Gu.z) - Gu.yaw; d = Math.atan2(Math.sin(d), Math.cos(d)); Gu.yaw += d * Math.min(1, dt * 3); } }
+    else if (Gu.fly) { const f = Gu.fly; f.t += dt; const k = Math.min(1, f.t / f.dur), e = ease(k); Gu.x = sm(f.a[0], f.b[0], e); Gu.y = sm(f.a[1], f.b[1], e) + Math.sin(e * Math.PI) * f.arc; Gu.z = sm(f.a[2], f.b[2], e); Gu.flap = 1; const dx = f.b[0] - f.a[0], dz = f.b[2] - f.a[2]; if (Math.hypot(dx, dz) > .3) Gu.yaw = sm(Gu.yaw, Math.atan2(dx, dz), Math.min(1, dt * 6)); if (k >= 1) { Gu.fly = null; const r = f.res; if (r) r(); } }
+    else if (!(lensMode && lensT >= 0 && lensMode.mode === 'fit')) { const want = Math.atan2(MG.position.x - Gu.x, MG.position.z - Gu.z); let d = want - Gu.yaw; d = Math.atan2(Math.sin(d), Math.cos(d)); Gu.yaw += d * Math.min(1, dt * 4); Gu.flap = Math.max(0, Gu.flap - dt * 2); }
+    if (Gu.panic >= 0) { Gu.panic += dt; if (Gu.panic > 1.6) Gu.panic = -1; }
+    const pn = Gu.panic >= 0 ? Math.max(0, 1 - Gu.panic / 1.6) : 0, hop = pn ? Math.abs(Math.sin(Gu.panic * 9)) * .3 * pn : 0;
+    GU.position.set(Gu.x, Gu.y + hop, Gu.z); GU.rotation.y = Gu.yaw; gb.position.y = Gu.fly ? Math.sin(t * 14) * .05 : Math.sin(t * 2.2) * .025; gb.rotation.x = Gu.fly ? .25 : Gu.hold ? -.2 : 0;
+    const fl = Math.max(Gu.flap, pn), wa = fl ? Math.sin(t * (Gu.fly ? 16 : 20)) * .9 * fl - .2 * fl : .05 + Math.sin(t * .7) * .03;
+    wings.forEach((w, i) => { w.rotation.z = (i ? 1 : -1) * wa; });
+    actors.gull.h = 2.15;
+  };
+  /* 자동 확인용: 모아가 등대·신호판·도르래·말뚝을 뚫고 지나가면 알린다 */
+  const wet = (x, z) => Math.hypot(x - L[0], z - L[1]) < 3.1 || (Math.abs(x - PN[0]) < 1.25 && Math.abs(z - PN[1]) < .9) || Math.hypot(x - WN[0], z - WN[1]) < 1.15 || Math.hypot(x - GP[0], z - GP[1]) < .55 || Math.hypot(x - BK[0], z - BK[1]) < .7 || z < ZB + 1.5 || (x > 68 && !(x < BR1 + .5 && Math.abs(z - 1.6) < 1.6) && Math.hypot(x - ISL5[0], z - ISL5[1]) > ISR - .3);   /* 5-3: 구름다리·끝 섬 밖은 하늘 */
+  /* 구름다리 달리기(5장을 끝낸 학생의 반복 놀이): 등대는 진짜 렌즈로 켜져 있고, 요요는 결승 섬에서 기다린다 */
+  const raceSet = () => { jumpTo('p3'); lens = lensR; lens0.visible = true; lens0.position.set(SPR[0], SPR[1], SPR[2]); lens0.rotation.set(1.35, 0, 0); lens0.scale.setScalar(.8); bY = bYT = .12; bigK = 1; raceMk.forEach(g => { g.visible = true; }); Object.assign(Gu, {x: RFIN[0] + 2.4, y: .05, z: RFIN[1] - 1.8, follow: false}); };
+  const raceDone = () => { Gu.panic = 0; E.talk('끼룩! 잘 달렸어!', 'gull', 2600); burst(RFIN[0], 2, RFIN[1], 20, '#ffe066', 4); };
+  return {fx, actors, reset, tick, wet, jumpTo, raceSet, raceDone, follow: {moa: () => [MG.position.x, MG.position.y + 4.3, MG.position.z], thief: () => [TH.position.x, TH.position.y + 2.3, TH.position.z], gull: GF, msg: () => MS ? [MS.x, MS.y + 2.2, MS.z] : GF()}, dbg: () => ({riding: false, gull: [Gu.x.toFixed(1), Gu.y.toFixed(1), Gu.z.toFixed(1)], bY: +bY.toFixed(2), lit: +lit.toFixed(2)})};
+}
+};
+})();
+</script>
 <script>
-/* ================= 모험 3D (1·2·3·4장) — 처음 열 때만 3D 엔진과 그 장을 만든다 ================= */
-const ADV_SOON = {5: '5장 하늘 등대', 6: '6장 무너진 다리', 7: '7장 쌍둥이 봉우리', 8: '8장 기억의 섬', 9: '9장 편지 도서관', 10: '10장 먹구름의 성'};
+/* ================= 모험 3D (1~5장) — 처음 열 때만 3D 엔진과 그 장을 만든다 ================= */
+const ADV_SOON = {6: '6장 무너진 다리', 7: '7장 쌍둥이 봉우리', 8: '8장 기억의 섬', 9: '9장 편지 도서관', 10: '10장 먹구름의 성'};
 COURSES.ko.levels.forEach(L => { if (L.game.type !== 'adv') L.game.soon = (ADV_SOON[L.n] || '새 모험') + ' 공사 중'; });
 COURSES.en.levels.forEach(L => { L.game.soon = '영어 모험 공사 중'; });
 /* 모험 기록: 학생 기록의 새 칸 u.adv (기존 칸은 건드리지 않음). 반 기록 backup 과 함께 올라간다 */
@@ -6503,7 +7059,8 @@ const AdvMusic = {
   T: {1: {bpm: 100, lead: 'triangle', MEL: [72,0,74,76,0,79,76,0, 74,0,72,74,0,76,72,0, 69,0,72,74,0,76,74,72, 74,0,76,79,0,81,79,0, 76,0,79,81,0,84,81,79, 76,0,74,72,0,74,76,0, 77,0,76,74,0,72,69,0, 72,0,74,72,0,67,72,0], CH: [[48,64,67], [45,64,69], [41,65,69], [43,62,67]]},
       2: {bpm: 84, lead: 'sine', MEL: [77,0,81,0,84,0,81,0, 79,0,77,0,76,0,74,0, 72,0,74,0,77,0,79,0, 81,0,0,0,79,0,0,0, 77,0,81,0,84,0,86,0, 84,0,81,0,79,0,77,0, 76,0,77,0,79,0,74,0, 77,0,0,0,0,0,0,0], CH: [[41,65,69], [38,62,69], [46,65,70], [48,64,67]]},
       3: {bpm: 90, lead: 'sine', MEL: [69,0,72,0,76,0,74,72, 71,0,0,72,74,0,0,0, 67,0,71,0,74,0,72,71, 69,0,0,0,64,0,0,0, 69,0,72,76,0,79,0,76, 74,0,72,71,0,72,74,0, 76,0,74,72,0,71,67,0, 69,0,0,0,0,0,0,0], CH: [[45,60,64], [43,59,62], [41,60,65], [40,59,64]]},
-      4: {bpm: 96, lead: 'triangle', MEL: [67,0,71,74,0,71,72,74, 76,0,74,0,72,0,71,0, 69,0,72,76,0,72,74,76, 74,0,0,0,71,0,0,0, 67,0,71,74,0,79,76,74, 72,0,76,74,0,72,71,69, 71,0,72,74,0,71,67,0, 67,0,0,0,0,0,0,0], CH: [[43,59,62], [40,59,64], [48,64,67], [50,62,66]]}},   /* 4장 풍차 공장: 통통 튀는 작업장 느낌(사장조). 공장에 불이 켜지기 전(💡)은 어두운 장면으로 낮고 둥글게 */
+      4: {bpm: 96, lead: 'triangle', MEL: [67,0,71,74,0,71,72,74, 76,0,74,0,72,0,71,0, 69,0,72,76,0,72,74,76, 74,0,0,0,71,0,0,0, 67,0,71,74,0,79,76,74, 72,0,76,74,0,72,71,69, 71,0,72,74,0,71,67,0, 67,0,0,0,0,0,0,0], CH: [[43,59,62], [40,59,64], [48,64,67], [50,62,66]]},
+      5: {bpm: 88, lead: 'sine', MEL: [74,0,0,78,81,0,0,0, 79,0,78,0,76,0,0,0, 74,0,76,78,0,81,0,83, 81,0,0,0,78,0,0,0, 86,0,0,83,81,0,79,0, 78,0,79,81,0,76,0,0, 74,0,78,0,76,0,73,0, 74,0,0,0,0,0,0,0], CH: [[50,62,66], [47,62,66], [43,59,62], [45,61,64]]}},   /* 5장 하늘 등대: 높고 넓은 하늘(라장조, 긴 음). 등대에 불이 켜지기 전(🔆)은 어둡게 */   /* 4장 풍차 공장: 통통 튀는 작업장 느낌(사장조). 공장에 불이 켜지기 전(💡)은 어두운 장면으로 낮고 둥글게 */
   on: false, ch: 0, api: null, step: 0, next: 0, timer: 0, out: null, lp: null, mood: {dark: 0, tense: false},
   want() { return !!DB.sound && DB.music !== false && !document.hidden && !!this.api; },
   start(ch, api) { this.ch = this.T[ch] ? ch : 1; this.api = api; this.sync(); },
@@ -6534,18 +7091,20 @@ document.addEventListener('visibilitychange', () => AdvMusic.sync());
    도전 목표: 장마다 셋. 한 번 이룬 목표(별)는 남는다(u.adv.goals). 공개 순위·점수 경쟁은 없다(기획안 §9) */
 const ADV_BAG_SVG = '<svg viewBox="0 0 40 40" width="100%" height="100%" aria-hidden="true"><path d="M14.5 10 C14.5 3, 25.5 3, 25.5 10" fill="none" stroke="#5f3715" stroke-width="3" stroke-linecap="round"/><rect x="6" y="8.5" width="28" height="28.5" rx="7.5" fill="#ffc21f" stroke="#a8670a" stroke-width="1.6"/><path d="M6 20 V15.5 a7 7 0 0 1 7-7 h14 a7 7 0 0 1 7 7 V20 Q20 25.5 6 20 Z" fill="#dd9a0c" stroke="#a8670a" stroke-width="1.4"/><rect x="17" y="12" width="6" height="6" rx="1.2" fill="#fff" stroke="#c9a24a" stroke-width=".6"/><path d="M18.6 13.6 h2.6 v2.8" fill="none" stroke="#8f5527" stroke-width=".9"/><rect x="8.5" y="26" width="23" height="8.5" rx="2.6" fill="#8f5527" stroke="#5f3715" stroke-width="1"/><path d="M12.2 20.5 V29" stroke="#5f3715" stroke-width="2" stroke-linecap="round"/><path d="M27.8 20.5 V29" stroke="#5f3715" stroke-width="2" stroke-linecap="round"/><rect x="10.8" y="27" width="2.8" height="2.6" rx=".5" fill="#ffe27a" stroke="#a8670a" stroke-width=".6"/><rect x="26.4" y="27" width="2.8" height="2.6" rx=".5" fill="#ffe27a" stroke="#a8670a" stroke-width=".6"/></svg>';   /* 모아 가방 그림(v12.9): 노란 몸통·짙은 금색 덮개·금빛 버클·흰 열쇠 표시·갈색 주머니·멜빵 고리 */
 setTimeout(() => { const b = document.getElementById('btn-bag'); if (b) b.innerHTML = ADV_BAG_SVG; }, 0);
-const ADV_NAMES = {1: '시작 마을', 2: '연못 나루', 3: '동물의 숲', 4: '풍차 공장'};
+const ADV_NAMES = {1: '시작 마을', 2: '연못 나루', 3: '동물의 숲', 4: '풍차 공장', 5: '하늘 등대'};
 const ADV_BAG = {
   1: [['🧰', '연장', '마을 회로를 먼저 고쳤을 때'], ['📡', '신호 무늬', '등대 회로를 먼저 고쳤을 때'], ['🚦', '등대 신호', '신호 장치에서 등대에 신호를 보냈을 때']],
   2: [['🐚', '소라 나팔', '수문을 먼저 열었을 때'], ['🏮', '등불', '배를 먼저 고쳤을 때'], ['✉️', '병 속 편지', '배를 타고 연못을 건널 때']],
   3: [['🌊', '빠른 물길', '물길로 갔을 때'], ['🐿️', '아기 다람쥐', '숲길에서 구해 줬을 때'], ['🦉', '부엉이', '숲의 수호자와 싸울 때 함께'], ['💠', '글쇠 돌 조각', '빈터의 큰 나무를 지켰을 때'], ['💎', '글쇠 돌', '숲의 수호자에게서 되찾았을 때']],
-  4: [['🦿', '튼튼한 다리', '로봇 다리를 먼저 고쳤을 때'], ['🦾', '힘센 팔', '로봇 팔을 먼저 고쳤을 때'], ['🤖', '로봇 동료', '풍차를 다시 돌렸을 때'], ['💡', '공장 불빛', '공장에 불을 켰을 때']]};
+  4: [['🦿', '튼튼한 다리', '로봇 다리를 먼저 고쳤을 때'], ['🦾', '힘센 팔', '로봇 팔을 먼저 고쳤을 때'], ['🤖', '로봇 동료', '풍차를 다시 돌렸을 때'], ['💡', '공장 불빛', '공장에 불을 켰을 때']],
+  5: [['🔆', '등대 불', '하늘 등대에 불을 켰을 때'], ['🧭', '뱃길 나침반', '연못 나루에 먼저 신호를 보냈을 때'], ['🪶', '하늘길 깃털', '동물의 숲에 먼저 신호를 보냈을 때']]};
 const ADV_FINDS = [['🍄', '빛 버섯', 3, '어두운 길'], ['🦔', '고슴도치', 3, '어두운 길'], ['🪺', '새 둥지', 3, '어두운 길'], ['📜', '풍차 설계도', 4, '공장 창고']];
 const AdvGoals = {
   L: {1: [['정확도 90% 넘기', r => r.acc >= 90], ['신호 암호를 틀림 없이 보내기', r => !!r.sigClean], ['갈래 선물 둘 다 모으기', r => ['🧰', '📡'].every(x => (r.items || []).includes(x))]],
       2: [['정확도 90% 넘기', r => r.acc >= 90], ['꼬마 구름을 한 번에 막기', r => (r.flags || {}).ch2_dock_reach === 0], ['갈래 선물 둘 다 모으기', r => ['🐚', '🏮'].every(x => (r.items || []).includes(x))]],
       3: [['정확도 90% 넘기', r => r.acc >= 90], ['금빛 열매를 하나도 안 잃기', r => (r.flags || {}).ch3_glade_leaks === 0], ['두 길을 다 가고 숨은 것 셋 찾기', r => !!r.both && ['🍄', '🦔', '🪺'].every(x => (r.found || []).includes(x))]],
-      4: [['정확도 90% 넘기', r => r.acc >= 90], ['톱니를 하나도 안 잃기', r => (r.flags || {}).ch4_mill_leaks === 0], ['두 갈래를 다 하고 숨은 것 찾기', r => !!r.both && (r.found || []).includes('📜')]]},
+      4: [['정확도 90% 넘기', r => r.acc >= 90], ['톱니를 하나도 안 잃기', r => (r.flags || {}).ch4_mill_leaks === 0], ['두 갈래를 다 하고 숨은 것 찾기', r => !!r.both && (r.found || []).includes('📜')]],
+      5: [['정확도 90% 넘기', r => r.acc >= 90], ['렌즈 도둑을 한 번도 안 놓치기', r => (r.flags || {}).ch5_bridge_caught === 0], ['섬 소식 둘 다 모으기', r => ['🧭', '🪶'].every(x => (r.items || []).includes(x))]]},
   adv() { const u = user(); if (!u) return null; u.adv = u.adv || {}; return u.adv; },
   get(ch) { const a = this.adv() || {}; return ((a.goals || {})['ch' + ch] || [false, false, false]).slice(); },
   count(ch) { return this.get(ch).filter(Boolean).length; },
@@ -6584,7 +7143,7 @@ const AdvBag = {on: false, game: false, el: null,
 /* 가방이 열려 있으면 글쇠는 모험에 가지 않는다(이 듣기는 모험보다 먼저 등록되므로 먼저 받음). Esc·Enter로 닫기 */
 window.addEventListener('keydown', e => { if (!AdvBag.on) return; e.preventDefault(); e.stopImmediatePropagation(); if (e.key === 'Escape' || e.key === 'Enter') AdvBag.close(); }, true);
 /* ================= 🗺️ 모험 지도: 한글 섬 10개 = 장 10개 (v12.7, 선생님 "시작") =================
-   1~4섬은 장 무대 모습(마을·연못·숲·풍차), 5~10섬은 안개 낀 "준비 중". 아직 되찾지 못한 섬 위엔 먹구름이 떠 있고, 장을 끝내면 먹구름이 걷히고 섬이 반짝인다(기획안 §11).
+   1~5섬은 장 무대 모습(마을·연못·숲·풍차·등대), 6~10섬은 안개 낀 "준비 중". 아직 되찾지 못한 섬 위엔 먹구름이 떠 있고, 장을 끝내면 먹구름이 걷히고 섬이 반짝인다(기획안 §11).
    영어 지도는 그대로. 섬 = 레벨(연습과 그 장 모험이 함께 있음)은 전과 같다 */
 const ADV_ALL = {1: '시작 마을', 2: '연못 나루', 3: '동물의 숲', 4: '풍차 공장', 5: '하늘 등대', 6: '무너진 다리', 7: '쌍둥이 봉우리', 8: '기억의 섬', 9: '편지 도서관', 10: '먹구름의 성'};
 function advIsland(n, A) { const G = G3, T = G.T, L = [];
@@ -6597,6 +7156,11 @@ function advIsland(n, A) { const G = G3, T = G.T, L = [];
     L.push(big, G.tree(.55, '#37b24d').translateX(-.8).translateZ(-.2), G.tree(.45, '#2f9e44').translateX(.85).translateZ(.3), G.m(G.cyl(.05, .06, .14, 6), '#fff4e6', .55, .07, .6), G.m(G.sph(.1, 8), '#fa5252', .55, .16, .6), sq, G.m(G.sph(.05, 6), '#fff3bf', -.3, .9, .5, {emissive: '#ffe066', emissiveIntensity: 1.5})); }
   else if (n === 4) { const rot = new T.Group(); rot.position.set(-.15, 1.38, .3); for (let i = 0; i < 4; i++) { const h = new T.Group(); h.rotation.z = i * Math.PI / 2; h.add(G.m(G.box(.1, .6, .03), '#fff4e6', 0, .36, 0)); rot.add(h); } rot.add(G.m(G.sph(.07, 8), '#a9713f', 0, 0, .02)); A.push((t0, dt) => { rot.rotation.z = t0 * 1.6; });
     L.push(G.m(G.cyl(.24, .38, 1.3, 8), '#f8f1e4', -.15, .65, 0, {flatShading: true}), G.m(G.cone(.32, .38, 8), '#c92a2a', -.15, 1.48, 0, {flatShading: true}), rot, G.m(G.box(.62, .44, .5), '#868e96', .58, .22, -.25), G.m(G.box(.66, .06, .54), '#495057', .58, .47, -.25), G.m(G.box(.16, .12, .03), '#ffe066', .58, .26, .01, {emissive: '#ffd43b', emissiveIntensity: .5}), G.m(G.box(.22, .3, .2), '#f08c00', .5, .15, .45), G.m(G.box(.16, .12, .03), '#74c0fc', .5, .24, .56)); }
+  else if (n === 5) { const beam = new T.Group(); beam.position.set(0, 1.62, -.1); const bm = G.m(G.cone(.32, 1.9, 12), '#fff3bf', 0, 0, 0, {transparent: true, opacity: .38, depthWrite: false, emissive: '#ffe066', emissiveIntensity: 1.2}); bm.castShadow = false; bm.rotation.z = Math.PI / 2; bm.position.x = 1.05; beam.add(bm); A.push(t0 => { beam.rotation.y = t0 * 1.1; });   /* 5섬 하늘 등대(v14.7): 구름 위 절벽의 줄무늬 등대, 빛줄기가 돈다 */
+    const lamp = G.m(G.sph(.17, 10), '#fff9db', 0, 1.62, -.1, {emissive: '#ffd43b', emissiveIntensity: 1.4}); A.push(t0 => { lamp.material.emissiveIntensity = 1.2 + Math.sin(t0 * 3) * .3; });
+    L.push(G.m(G.cone(.95, .7, 7), '#868e96', 0, .35, 0, {flatShading: true}), ...[[-.75, .12, .45, .34], [.7, .1, .5, .3], [.1, .08, .75, .28]].map(([x, y, z, r]) => G.m(G.sph(r, 9), '#f8f9fa', x, y, z)),
+      G.m(G.cyl(.2, .28, .32, 10), '#fff', 0, .86, -.1), G.m(G.cyl(.17, .2, .3, 10), '#e03131', 0, 1.17, -.1), G.m(G.cyl(.14, .17, .14, 10), '#fff', 0, 1.39, -.1), lamp, G.m(G.cone(.2, .2, 10), '#c92a2a', 0, 1.88, -.1), beam,
+      G.m(G.box(.36, .05, .14), '#a9713f', .72, .72, .35), G.m(G.box(.36, .05, .14), '#a9713f', 1.02, .7, .5)); }
   else { const fog = [[-.45, .55, -.1, .42], [.3, .7, .15, .48], [0, .95, -.35, .4], [.55, .45, -.4, .32], [-.6, .35, .4, .3]].map(([x, y, z, r]) => G.m(G.sph(r, 10), '#eef2f6', x, y, z, {transparent: true, opacity: .82, depthWrite: false}));
     fog.forEach((f, i) => { f.castShadow = false; A.push(t0 => { f.position.y = [.55, .7, .95, .45, .35][i] + Math.sin(t0 * .9 + i * 1.4) * .06; f.scale.setScalar(1 + Math.sin(t0 * .7 + i) * .05); }); });
     L.push(G.m(G.cone(.5, .8, 6), '#ced4da', .1, .4, -.15, {flatShading: true}), G.m(G.box(.05, .5, .05), '#8b5e34', -.55, .25, .55), G.m(G.box(.46, .26, .04), '#ffe066', -.55, .55, .57), ...fog); }
@@ -6620,7 +7184,7 @@ function advFresh(u, C) { if (!u || !C || C !== COURSES.ko) return null; const a
   if (out.some(Boolean)) { a.cleared = cl.concat(C.levels.filter((L, i) => out[i]).map(L => L.n)); u.adv = a; save(); } return out; }
 
 const Adv3D = {apis: {}, L: null, ch: 0, libs: false,
-  raceOpen(ch) { return ch === 3 && (LOCAL_CHECK || !!(((user() || {}).adv || {}).ch3 || {}).done); },
+  raceOpen(ch) { return (ch === 3 || ch === 5) && (LOCAL_CHECK || !!(((user() || {}).adv || {})['ch' + ch] || {}).done); },   /* 🏁 3장 숲길 달리기 · 5장 구름다리 달리기 */
   defOpen(ch) { return ch === 4 && (LOCAL_CHECK || !!(((user() || {}).adv || {}).ch4 || {}).done); },   /* 4장을 끝낸 학생의 방어 기록 반복 놀이(🛡️ 풍차 지키기) */
   host(ch) { return document.getElementById(ch === 1 ? 'adv3d' : 'advx' + ch); },
   boot(ch) { if (!this.libs) { if (!window.THREE) (0, eval)(document.getElementById('a3-lib-three').textContent); (0, eval)(document.getElementById('a3-lib-moa').textContent); this.libs = true; }
@@ -6645,7 +7209,8 @@ const Adv3D = {apis: {}, L: null, ch: 0, libs: false,
     const tip = ch === 1 ? (r.both ? '두 회로를 모두 먼저 고쳐 봤어요!' : '다른 회로를 먼저 고치면 다른 일이 있어요')
       : ch === 2 ? (r.both ? '수문과 배를 모두 먼저 고쳐 봤어요!' : '다른 것을 먼저 고치면 다른 선물이 있어요')
       : ch === 3 ? (r.both ? '두 갈래 길을 모두 가 봤어요!' : '🏁 숲길 달리기가 열렸어요 · 다른 갈래 길도 있어요')
-      : (r.both ? '다리 먼저와 팔 먼저를 모두 해 봤어요!' : '🛡️ 풍차 지키기가 열렸어요 · 다른 쪽을 먼저 고치면 다른 일이 있어요');
+      : ch === 4 ? (r.both ? '다리 먼저와 팔 먼저를 모두 해 봤어요!' : '🛡️ 풍차 지키기가 열렸어요 · 다른 쪽을 먼저 고치면 다른 일이 있어요')
+      : (r.both ? '두 섬 모두 먼저 보내 봤어요!' : '🏁 구름다리 달리기가 열렸어요 · 다른 섬에 먼저 보내면 다른 손님이 와요');
     finishGame(this.L, G.count, `얻은 것 <b style="font-size:22px">${(r.got || []).join(' ')}</b><br>정확도 ${r.acc}%</p>${AdvGoals.html(ch, G.fresh)}<p><span class="muted" style="font-size:13px">${tip}</span>`, 0); }
 };
 </script>
