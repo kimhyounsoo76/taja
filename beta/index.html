@@ -1440,7 +1440,7 @@ function validateContent() {
 <script>
 /* ================= 저장 ================= */
 const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
-const APP_VERSION = '13.6', APP_DATE = '2026-11-21';
+const APP_VERSION = '13.7', APP_DATE = '2026-11-21';
 /* ===== 우리 반 공유(선택) : Firebase 설정 =====
    Firebase 콘솔 → 프로젝트 설정 → 내 앱(웹) → SDK 설정의 firebaseConfig 값을 아래에 그대로 붙여 넣으세요.
    Realtime Database를 만들고 databaseURL까지 넣어야 켜집니다. 비워 두면 혼자 쓰는 앱으로 돌아갑니다. */
@@ -4883,7 +4883,7 @@ return {open, stop, mood: () => ({dark: active ? dark : 0, tense: false})};   /*
 window.__advChapters = window.__advChapters || {};
 window.__advBoot2 = function (HOOK, chId, rootSel) {
 const CH = window.__advChapters[chId]; if (!CH) throw new Error('장 자료가 없음: ' + chId);
-const VER = 'v13.6', T = THREE, ROOT = document.querySelector(rootSel || '#advx');
+const VER = 'v13.7', T = THREE, ROOT = document.querySelector(rootSel || '#advx');
 const $ = s => ROOT.querySelector(s);
 let active = false, runId = 0;
 
@@ -6601,7 +6601,7 @@ function advIsland(n, A) { const G = G3, T = G.T, L = [];
     fog.forEach((f, i) => { f.castShadow = false; A.push(t0 => { f.position.y = [.55, .7, .95, .45, .35][i] + Math.sin(t0 * .9 + i * 1.4) * .06; f.scale.setScalar(1 + Math.sin(t0 * .7 + i) * .05); }); });
     L.push(G.m(G.cone(.5, .8, 6), '#ced4da', .1, .4, -.15, {flatShading: true}), G.m(G.box(.05, .5, .05), '#8b5e34', -.55, .25, .55), G.m(G.box(.46, .26, .04), '#ffe066', -.55, .55, .57), ...fog); }
   return G.grp(L); }
-[G3.map, G3.cmap].forEach(M => { const lm0 = M.landmark; M.landmark = function (n, A) { if (typeof n === 'number' && curCourse === 'ko' && n >= 1 && n <= 10) return advIsland(n, A); return lm0.call(this, n, A); }; });
+[G3.map, G3.cmap].forEach(M => { const lm0 = M.landmark; M.landmark = function (n, A) { if (typeof n === 'number' && curCourse === 'ko' && n >= 1 && n <= 10) return advIsland(n, A); if (typeof n === 'number' && curCourse === 'en') return advIsland(0, A);   /* 영어 섬(v13.7): 영어 모험이 생길 때까지 안개 낀 공사 중 섬 */ return lm0.call(this, n, A); }; });
 { const b0 = G3.map.build; G3.map.build = function (st, cols, rows) { b0.call(this, st, cols, rows); if (st.course !== 'ko' || !st.adv) return; const G = G3, T = G.T, W = this.world, A = this.anim;
   this.pts.forEach((p, i) => { if (st.lv[i] === 0) return;
     const fresh = !!(st.fresh && st.fresh[i]);
@@ -6611,7 +6611,7 @@ function advIsland(n, A) { const G = G3, T = G.T, L = [];
       let t1 = null; if (fresh) { ring.visible = false; A.push(t0 => { if (t1 === null) t1 = t0 + 2.3; if (t0 >= t1 && !ring.visible) { ring.visible = true; sp.forEach(o => { o.visible = true; }); if (typeof Snd !== 'undefined' && Snd.tone) { Snd.tone(988, .12, 'triangle', .06); Snd.tone(1319, .2, 'triangle', .06, .1); Snd.tone(1568, .3, 'triangle', .05, .22); } } }); }
       const sp = [0, 1, 2, 3].map(j => { const o = G.m(G.g('oct', () => new T.OctahedronGeometry(.11)), '#fff3bf', p.x, 1, p.z, {emissive: '#ffe066', emissiveIntensity: 1.4}); o.castShadow = false; o.visible = !fresh; W.add(o); return o; });
       A.push(t0 => { sp.forEach((o, j) => { const a = t0 * .8 + j * 1.57; o.position.set(p.x + Math.cos(a) * 1.3, 1.1 + Math.sin(t0 * 2 + j) * .25, p.z + Math.sin(a) * 1.1); o.rotation.y = t0 * 2; }); }); } }); }; }
-function advTtl(L, locked, info) { if (L.course !== 'ko' || !ADV_ALL[L.n]) return `<div class="ttl"><b class="n">${L.n}</b>${esc(L.title)}</div>${locked ? '' : `<div class="st">⭐ ${info.total}/${NEED_STARS}</div>`}`;
+function advTtl(L, locked, info) { if (L.course !== 'ko' || !ADV_ALL[L.n]) return `<div class="ttl"><b class="n">${L.n}</b>${esc(L.title)}</div>${locked ? '' : `<div class="st">⭐ ${info.total}/${NEED_STARS}</div>`}` + (L.game && L.game.soon ? `<div class="cs">🚧 공사 중</div>` : '');
   const ready = !!ADV_NAMES[L.n], g = ready ? AdvGoals.get(L.n) : null;
   return `<div class="ttl"><b class="n">${L.n}</b>${L.n}장 ${ADV_ALL[L.n]}</div><div class="st" style="font-size:11px">${esc(L.title)}${locked ? '' : ` · 연습 ⭐ ${info.total}/${NEED_STARS}`}</div>` + (!ready ? `<div class="cs">🚧 공사 중</div>` : locked ? '' : ready ? `<div class="st" title="모험 도전 목표">모험 ${g.map(x => x ? '⭐' : '<span style="filter:grayscale(1);opacity:.35">⭐</span>').join('')}</div>` : ''); }
 
