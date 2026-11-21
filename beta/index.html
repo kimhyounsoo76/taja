@@ -1440,7 +1440,7 @@ function validateContent() {
 <script>
 /* ================= 저장 ================= */
 const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
-const APP_VERSION = '16.7', APP_DATE = '2026-11-22';
+const APP_VERSION = '16.8', APP_DATE = '2026-11-22';
 /* ===== 우리 반 공유(선택) : Firebase 설정 =====
    Firebase 콘솔 → 프로젝트 설정 → 내 앱(웹) → SDK 설정의 firebaseConfig 값을 아래에 그대로 붙여 넣으세요.
    Realtime Database를 만들고 databaseURL까지 넣어야 켜집니다. 비워 두면 혼자 쓰는 앱으로 돌아갑니다. */
@@ -4629,7 +4629,68 @@ function makeCodeMoa(opt) { const SHIN = .2 * (opt && opt.shin || 1), DL = SHIN 
 }
 
 return makeCodeMoa;})();</script>
-<script type="text/plain" id="a3-lib-game">/* 타자 모험 · 1장 시작 마을 3D — 기획안 5.0의 1장: 신호기 두 회로의 수리 순서 선택 → 등대에 신호 전달 */
+<script type="text/plain" id="a3-lib-game">/* 타자 모험 · 먹구름의 흔적 (v16.8, 선생님 "시작") — 동화 「글쇠섬나라의 작은 수리공」의 흔적 일곱 개.
+   1~7장에 하나씩, 설명 대사 없이 물건으로 둔다. 8장 기억의 섬에서 한꺼번에 이어진다(기획안 §2 "동기는 편지·기록·행동으로").
+   모은 흔적은 각 장 기록의 found 에 들어가고, 모험 가방의 "🔍 수상한 흔적" 칸에 쌓인다.
+   그림은 캔버스로 그린다(글자 대신 그림·낙서가 중심이라 화면이 작아도 알아볼 수 있게). */
+if (!window.__axTrace) window.__axTrace = (() => {
+  const F = '"Noto Sans KR","Malgun Gothic","Apple SD Gothic Neo",sans-serif';
+  /* 손으로 그린 듯 떨리는 선 */
+  const wob = (x, pts, w, col, j) => { x.strokeStyle = col; x.lineWidth = w; x.lineCap = x.lineJoin = 'round'; x.beginPath();
+    pts.forEach((p, i) => { const a = p[0] + (Math.random() - .5) * (j || 3), b = p[1] + (Math.random() - .5) * (j || 3); i ? x.lineTo(a, b) : x.moveTo(a, b); }); x.stroke(); };
+  const ring = (cx, cy, r, n) => Array.from({length: (n || 24) + 1}, (_, i) => [cx + Math.cos(i / (n || 24) * 6.283) * r, cy + Math.sin(i / (n || 24) * 6.283) * r]);
+  const cloudPts = (cx, cy, s) => { const o = []; [[-1, 0, .55], [-.35, -.45, .6], [.4, -.35, .55], [.95, .05, .45]].forEach(c => { for (let i = 0; i <= 8; i++) { const a = Math.PI * (1 + i / 8); o.push([cx + (c[0] + Math.cos(a) * c[2]) * s, cy + (c[1] + Math.sin(a) * c[2]) * s]); } }); o.push([cx + 1.4 * s, cy + .45 * s], [cx - 1.55 * s, cy + .45 * s], o[0]); return o; };
+  const paper = (x, w, h, col) => { x.fillStyle = col || '#fbf3dc'; x.beginPath(); x.moveTo(8, 10); x.lineTo(w - 6, 4); x.lineTo(w - 10, h - 8); x.lineTo(5, h - 4); x.closePath(); x.fill(); x.strokeStyle = 'rgba(120,96,60,.35)'; x.lineWidth = 3; x.stroke(); };
+  const ART = {
+    /* 1장: 글자 없이 그림만 있는 쪽지(동그라미, 집, 구름 아이가 손을 흔듦) — 그림으로 쓴 편지 */
+    note(x, w, h) { paper(x, w, h); x.strokeStyle = 'rgba(150,120,80,.3)'; x.lineWidth = 2; x.beginPath(); x.moveTo(w / 2, 8); x.lineTo(w / 2 + 6, h - 6); x.stroke();
+      const g = '#5b5f6b'; wob(x, ring(70, 80, 34, 20), 5, g, 4); wob(x, ring(70, 80, 6, 10), 4, g, 2);
+      wob(x, [[40, 160], [40, 130], [62, 112], [84, 130], [84, 160], [40, 160]], 5, g, 3);
+      wob(x, cloudPts(180, 120, 34), 5, '#6d6a86', 3); x.fillStyle = '#6d6a86'; x.beginPath(); x.arc(168, 120, 4, 0, 7); x.arc(192, 120, 4, 0, 7); x.fill();
+      wob(x, [[222, 112], [238, 92]], 5, '#6d6a86', 2); wob(x, [[120, 136], [140, 128], [130, 146]], 4, g, 2); },
+    /* 2장: 글자가 다 지워진 나루 안내판, 귀퉁이에 삐뚤빼뚤 따라 쓴 ㅁ 하나 */
+    mm(x, w, h) { x.fillStyle = '#b98a57'; x.fillRect(0, 0, w, h); for (let i = 0; i < 7; i++) { x.fillStyle = `rgba(90,60,30,${.08 + Math.random() * .08})`; x.fillRect(0, i * h / 7, w, 3); }
+      x.strokeStyle = '#7a5530'; x.lineWidth = 10; x.strokeRect(5, 5, w - 10, h - 10);
+      for (let r = 0; r < 3; r++) for (let c = 0; c < 4; c++) { x.fillStyle = 'rgba(230,214,190,.45)'; x.beginPath(); x.ellipse(70 + c * 82, 60 + r * 62, 34, 15, (Math.random() - .5) * .3, 0, 7); x.fill(); }
+      const k = '#2b2018'; wob(x, [[w - 112, h - 96], [w - 46, h - 100], [w - 42, h - 34], [w - 114, h - 30], [w - 110, h - 98]], 9, k, 9); },
+    /* 3장: 큰 나무에 새긴 아이들 이름, 그 사이 이름 대신 새긴 구름 하나(바탕은 투명) */
+    tree(x, w, h) { const cut = (t, a, b, s) => { x.font = `900 ${s}px ${F}`; x.textAlign = 'center'; x.fillStyle = 'rgba(255,230,190,.55)'; x.fillText(t, a + 2, b + 2); x.fillStyle = '#3a2412'; x.fillText(t, a, b); };
+      cut('하나', 70, 60, 44); cut('도도', 210, 52, 40); cut('나리', 82, 140, 42); cut('보미', 226, 150, 44); cut('이안', 150, 232, 40);
+      x.save(); x.translate(2, 2); wob(x, cloudPts(170, 100, 26), 7, 'rgba(255,230,190,.55)', 2); x.restore(); wob(x, cloudPts(170, 100, 26), 7, '#3a2412', 2); },
+    /* 4장: 구겨진 설명서 — 톱니 그림 옆에 물음표만 가득 */
+    manual(x, w, h) { paper(x, w, h, '#eef1f4'); for (let i = 0; i < 6; i++) { x.strokeStyle = 'rgba(80,90,110,.18)'; x.lineWidth = 2; x.beginPath(); x.moveTo(Math.random() * w, 0); x.lineTo(Math.random() * w, h); x.stroke(); }
+      x.strokeStyle = '#4b5b73'; x.lineWidth = 5; x.beginPath(); x.arc(78, 90, 34, 0, 7); x.stroke(); for (let i = 0; i < 8; i++) { const a = i / 8 * 6.283; x.beginPath(); x.moveTo(78 + Math.cos(a) * 34, 90 + Math.sin(a) * 34); x.lineTo(78 + Math.cos(a) * 46, 90 + Math.sin(a) * 46); x.stroke(); }
+      x.font = `900 46px ${F}`; x.fillStyle = '#c0392b'; [[160, 70], [220, 96], [176, 150], [250, 160], [110, 180], [40, 178]].forEach((p, i) => { x.save(); x.translate(p[0], p[1]); x.rotate((Math.random() - .5) * .6); x.globalAlpha = .65 + (i % 2) * .3; x.fillText('?', 0, 0); x.restore(); }); },
+    /* 5장: 등대 우편함 — 섬마다 칸, 칸마다 편지. "받는 이 없음" 한 칸만 텅 비었다 */
+    mailbox(x, w, h) { x.fillStyle = '#8c5a33'; x.fillRect(0, 0, w, h); const cw = (w - 30) / 3, ch = (h - 30) / 2;
+      [['마을', 1], ['나루', 1], ['숲', 1], ['공장', 1], ['받는 이 없음', 0], ['다리', 1]].forEach((d, i) => { const a = 10 + (i % 3) * (cw + 5), b = 10 + Math.floor(i / 3) * (ch + 5);
+        x.fillStyle = '#2d1c10'; x.fillRect(a, b, cw, ch); if (d[1]) { x.fillStyle = '#fff8e6'; x.fillRect(a + 14, b + 26, cw - 28, ch - 58); x.strokeStyle = '#c9a86b'; x.lineWidth = 3; x.beginPath(); x.moveTo(a + 14, b + 26); x.lineTo(a + cw / 2, b + ch / 2 - 4); x.lineTo(a + cw - 14, b + 26); x.stroke(); }
+        x.fillStyle = d[1] ? '#ffe9b8' : '#ffd0c8'; x.fillRect(a + 6, b + ch - 28, cw - 12, 24); x.fillStyle = '#3a2410'; x.font = `800 ${d[1] ? 18 : 15}px ${F}`; x.textAlign = 'center'; x.fillText(d[0], a + cw / 2, b + ch - 10); }); },
+    /* 7장: 찢어진 공책 — 글자를 따라 쓰다 지운 자국투성이 */
+    book(x, w, h) { x.fillStyle = '#fbf7ec'; x.fillRect(4, 6, w / 2 - 6, h - 12); x.beginPath(); x.moveTo(w / 2 + 2, 6); x.lineTo(w - 30, 6); for (let y = 6; y < h - 6; y += 14) x.lineTo(w - 30 + (Math.random() * 22 - 4), y); x.lineTo(w / 2 + 2, h - 6); x.closePath(); x.fill();
+      x.strokeStyle = 'rgba(90,130,200,.35)'; x.lineWidth = 2; for (let y = 36; y < h - 10; y += 30) { x.beginPath(); x.moveTo(10, y); x.lineTo(w - 40, y); x.stroke(); }
+      x.strokeStyle = '#8a8a8a'; x.lineWidth = 2; x.beginPath(); x.moveTo(w / 2, 6); x.lineTo(w / 2, h - 6); x.stroke();
+      const g = '#55565e'; [[24, 30], [74, 30], [124, 30], [24, 90], [74, 90], [174, 30], [174, 90]].forEach(p => wob(x, [[p[0], p[1]], [p[0] + 30, p[1]], [p[0] + 30, p[1] + 34]], 4, g, 5));
+      [[34, 150], [100, 150], [180, 120], [60, 190]].forEach(p => { x.fillStyle = 'rgba(160,160,170,.45)'; x.beginPath(); x.ellipse(p[0] + 10, p[1], 30, 11, .2, 0, 7); x.fill(); }); }
+  };
+  const SIZE = {note: [256, 200], mm: [400, 260], tree: [300, 260], manual: [300, 220], mailbox: [360, 280], book: [300, 220]};
+  const tex = (T, k) => { const s = SIZE[k], c = document.createElement('canvas'); c.width = s[0]; c.height = s[1]; ART[k](c.getContext('2d'), s[0], s[1]); const t = new T.CanvasTexture(c); t.encoding = T.sRGBEncoding; t.anisotropy = 4; return t; };
+  /* 만들기: o = {at:[x,y,z], rot:[rx,ry,rz], w(너비, 높이는 그림 비율), post(나무 기둥), box(상자 몸통 깊이)} */
+  const make = (T, S, k, o) => { const s = SIZE[k], w = o.w || 1, h = w * s[1] / s[0], g = new T.Group(), mat = new T.MeshStandardMaterial({map: tex(T, k), transparent: true, alphaTest: .05, side: T.DoubleSide, roughness: .9});
+    const p = new T.Mesh(new T.PlaneGeometry(w, h), mat); p.castShadow = !o.flat; g.add(p);
+    const wood = new T.MeshStandardMaterial({color: '#6e4a2a', roughness: .9, flatShading: true});
+    if (o.post) { const ps = new T.Mesh(new T.BoxGeometry(.14, o.post, .14), wood); ps.position.set(0, -o.post / 2 - h / 2 + .1, -.09); ps.castShadow = true; g.add(ps); p.position.z = .005; }
+    if (o.box) { const b = new T.Mesh(new T.BoxGeometry(w + .08, h + .08, o.box), wood); b.position.z = -o.box / 2 - .01; b.castShadow = true; g.add(b); const r = new T.Mesh(new T.BoxGeometry(w + .24, .1, o.box + .2), new T.MeshStandardMaterial({color: '#b03a2e', roughness: .8})); r.position.set(0, h / 2 + .08, -o.box / 2); g.add(r);
+      if (o.legs) { const l = new T.Mesh(new T.BoxGeometry(.14, o.legs, .14), wood); l.position.set(0, -h / 2 - o.legs / 2, -o.box / 2); g.add(l); } }
+    g.position.set(o.at[0], o.at[1], o.at[2]); if (o.rot) g.rotation.set(o.rot[0] || 0, o.rot[1] || 0, o.rot[2] || 0); S.add(g); g.userData.home = {p: g.position.clone(), r: g.rotation.clone(), s: g.scale.clone()}; return g; };
+  const restore = g => { const h = g.userData.home; g.position.copy(h.p); g.rotation.copy(h.r); g.scale.copy(h.s); g.visible = true; };
+  /* 집기: 모아 쪽으로 날아가 작아지며 사라진다(가방에 들어감). to = () => [x, y, z] */
+  const take = async (g, to, sleep, beep) => { const a = g.position.clone(), n = 22; if (beep) beep(880, .08, 'triangle', .05);
+    for (let i = 1; i <= n; i++) { const t = i / n, e = t * t * (3 - 2 * t), q = to(); g.position.set(a.x + (q[0] - a.x) * e, a.y + (q[1] - a.y) * e + Math.sin(t * Math.PI) * .9, a.z + (q[2] - a.z) * e); g.rotation.y += .25; g.scale.setScalar(Math.max(.05, 1 - e * .9)); await sleep(28); }
+    g.visible = false; if (beep) setTimeout(() => beep(1175, .12, 'triangle', .05), 60); };
+  return {make, restore, take};
+})();
+/* 타자 모험 · 1장 시작 마을 3D — 기획안 5.0의 1장: 신호기 두 회로의 수리 순서 선택 → 등대에 신호 전달 */
 window.__advBoot = function (HOOK) {
 const ROOT = document.querySelector('#adv3d'); let active = false, runId = 0;
 const VER = 'v0.6', T = THREE, $ = s => document.querySelector(s);
@@ -4775,6 +4836,8 @@ const mk = new T.Group(); S.add(mk); { const dark = M('#4a4458', {flatShading: f
   [-.55, .55].forEach(x => { add(new T.SphereGeometry(.34, 14, 12), M('#fff', {flatShading: false, emissive: '#fff', emissiveIntensity: .25}), x, .15, 1.55, mk); add(new T.SphereGeometry(.15, 10, 10), M('#111', {flatShading: false}), x - .06, .1, 1.84, mk); });
   const grin = add(new T.TorusGeometry(.42, .07, 6, 14, Math.PI), M('#fff', {flatShading: false}), 0, -.45, 1.62, mk); grin.rotation.z = Math.PI; }
 { const st = add(new T.OctahedronGeometry(.55, 0), new T.MeshStandardMaterial({color: '#ffe680', emissive: '#ffc21f', emissiveIntensity: 1.2, roughness: .25, flatShading: true}), 0, -1.9, .9, mk); st.castShadow = false; const g = glow(3.4); S.remove(g); g.position.set(0, -1.9, .9); mk.add(g); }
+/* v16.8 먹구름의 흔적: 먹구름이 떨어뜨린 그림 쪽지(글자 없이 그림만) — traces.js */
+const NOTE = window.__axTrace.make(T, S, 'note', {at: [-12, .05, 3.1], w: .8, rot: [-1.5708, 0, .4]}); NOTE.visible = false;
 mk.scale.setScalar(.8); mk.position.set(-34, 8, 1); const mkTo = {x: -34, y: 8, z: 1, s: .8, k: 3};
 /* 반딧불 */
 const fly = glow(1.6, '#fff3a0'); fly.visible = false; const flyHint = glow(1.1, '#fff3a0'); flyHint.visible = false;
@@ -4807,11 +4870,15 @@ const GIFT1 = ['🧰', '📡'];   /* 갈래 선물: 다시 해도 가진 것으�
 const where = t => { $('#a3-where').textContent = t; }; const got = []; const inv = () => { $('#a3-inv').textContent = got.join(' '); window.__axGot = got.slice(); };   /* 모험 가방이 이번 판에 받은 것을 바로 보여 줌(v12.9) */
 /* ── 한 판 ── */
 let dark = 0, darkT = 0, flash = 0; const bgDay = new T.Color('#f3b98a'), bgNight = new T.Color('#171e48'), fogDay = new T.Color('#f0b58a'), skyDay = new T.Color('#ffe2bd'), skyNight = new T.Color('#7f98e8');
-const reset = () => { dark = darkT = flash = 0; Stat.ok = Stat.bad = 0; got.length = 0; got.push(...(((Save.get().ch1 || {}).items) || []).filter(x => GIFT1.includes(x))); inv(); plates.slice().forEach(p => p.kill()); handler = null; lamps.forEach(l => l.set(true)); setWin(true); planks.forEach(p => p.visible = false); ghosts.forEach(g => g.visible = false); slots.forEach(m => m.emissiveIntensity = 0); piece.visible = false; LH.on = 0; LH.blink = 0; vil.visible = false; sig.visible = false; sig.userData.t = -1;
+const reset = () => { window.__axTrace.restore(NOTE); NOTE.visible = false; dark = darkT = flash = 0; Stat.ok = Stat.bad = 0; got.length = 0; got.push(...(((Save.get().ch1 || {}).items) || []).filter(x => GIFT1.includes(x))); inv(); plates.slice().forEach(p => p.kill()); handler = null; lamps.forEach(l => l.set(true)); setWin(true); planks.forEach(p => p.visible = false); ghosts.forEach(g => g.visible = false); slots.forEach(m => m.emissiveIntensity = 0); piece.visible = false; LH.on = 0; LH.blink = 0; vil.visible = false; sig.visible = false; sig.userData.t = -1;
   MG.position.set(-22, 0, 2); Mo.tx = -22; Mo.tz = 2; Mo.moving = false; Mo.yaw = Math.PI / 2; setSt('idle'); mk.position.set(-34, 8, 1); Object.assign(mkTo, {x: -34, y: 8, z: 1, s: .8, k: 3}); camP.x = -20; };
-const main = async () => { const myRun = ++runId; const sv = Save.get(), c1 = sv.ch1 || (sv.ch1 = {}); c1.first = c1.first || {}; reset(); where('글쇠 도둑'); await sleep(500);
+const found1 = []; const main = async () => { const myRun = ++runId; const sv = Save.get(), c1 = sv.ch1 || (sv.ch1 = {}); c1.first = c1.first || {}; reset(); found1.length = 0; where('글쇠 도둑'); await sleep(500);
   /* 사건 도입: 먹구름이 글쇠 돌을 들고 달아나고 신호기가 꺼진다 */
-  Object.assign(mkTo, {x: 6, y: 7.5, z: 0, k: .7}); bubble('먹구름이 글쇠 돌을 가져가!', 2600); for (let i = 0; i < 4; i++) { await sleep(650); lamps[i].set(false); burst(LX[i], 4.6, LZ, 6, '#b9c2c8', 2); darkT = .25 * (i + 1); } setWin(false); setSt('surprise'); bubble('신호기가 꺼졌어!'); Object.assign(mkTo, {x: 80, y: 20, z: -12, k: .5}); await sleep(1400);
+  Object.assign(mkTo, {x: 6, y: 7.5, z: 0, k: .7}); bubble('먹구름이 글쇠 돌을 가져가!', 2600); for (let i = 0; i < 4; i++) { await sleep(650); lamps[i].set(false); burst(LX[i], 4.6, LZ, 6, '#b9c2c8', 2); darkT = .25 * (i + 1); } setWin(false); setSt('surprise'); bubble('신호기가 꺼졌어!'); Object.assign(mkTo, {x: 80, y: 20, z: -12, k: .5});
+  NOTE.visible = true; for (let i = 1; i <= 40; i++) { const t = i / 40; NOTE.position.set(-12 + Math.sin(t * 8) * .7, .05 + 7 * (1 - t), 3.1 - (1 - t) * 2); NOTE.rotation.set(-1.5708 + Math.sin(t * 11) * .7 * (1 - t), 0, .4 + Math.sin(t * 7) * .5); await sleep(30); } window.__axTrace.restore(NOTE);
+  setSt('surprise'); bubble('뭔가 떨어졌어!', 1600); await sleep(900);
+  where('떨어진 쪽지'); await go(-12, 1.9); face(-12, 3.4); setSt('inspect'); bubble('글씨가 없네? 그림만 있어', 2200); await sleep(2100);
+  await window.__axTrace.take(NOTE, () => [MG.position.x, MG.position.y + 1.5, MG.position.z], sleep, beep); found1.push('🗒️'); window.__axFound = found1.slice(); setSt('idle'); await sleep(300);
   /* 탐험 선택(장치 수리): 어느 회로부터 고칠까 — 고르기 전에 결과를 알려 준다 */
   where('회로 고르기'); await go(-5, 1.6); face(-5, -4); setSt('idle'); bubble('어느 회로부터 고칠까?', 0);
   const r = await choose([{id: 'village', x: -11, y: 6.3, z: LZ, text: CH1.pick[0], tag: '🏠 마을 회로<br>집에 불이 먼저 켜져요'}, {id: 'lighthouse', x: 1, y: 6.3, z: LZ, text: CH1.pick[1], tag: '🗼 등대 회로<br>등대가 먼저 알아봐요'}]); bubble('');
@@ -4830,8 +4897,8 @@ const main = async () => { const myRun = ++runId; const sv = Save.get(), c1 = sv
   await typeOn(25, 5.5, 1, CH1.signal[0], n => { slots[n - 1].emissiveIntensity = 1.4; }); burst(25, 4.1, 1, 10); bubble('신호등이 켜졌어! 이제 쏘자');
   await typeOn(25, 5.5, 1, CH1.signal[1], n => { slots[n - 1].emissiveIntensity = 3; }); sig.visible = true; sig.userData.t = 0; sfx.win(); setSt('cheer'); await sleep(1000);
   LH.on = 1; LH.blink = 1.2; darkT = 0; flash = 1; bubble('등대가 답했어!', 2200); got.push('🚦'); inv(); setSt('cheer'); await sleep(1900);
-  const acc = Stat.acc(), stars = acc >= 95 ? 3 : acc >= 85 ? 2 : 1; c1.done = true; c1.first[r] = true; c1.lastFirst = r; c1.stars = Math.max(c1.stars || 0, stars); c1.items = [...new Set((c1.items || []).concat(got.filter(x => GIFT1.includes(x) || x === '🚦')))]; Save.set(sv); const both = !!(c1.first.village && c1.first.lighthouse);
-  if (HOOK) { HOOK.finish({chapter: 1, stars, acc, got: got.slice(), items: (c1.items || []).slice(), route: r, both, sigClean: Stat.bad === sb0}); return; }
+  const acc = Stat.acc(), stars = acc >= 95 ? 3 : acc >= 85 ? 2 : 1; c1.done = true; c1.first[r] = true; c1.lastFirst = r; c1.stars = Math.max(c1.stars || 0, stars); c1.items = [...new Set((c1.items || []).concat(got.filter(x => GIFT1.includes(x) || x === '🚦')))]; c1.found = [...new Set((c1.found || []).concat(found1))]; Save.set(sv); const both = !!(c1.first.village && c1.first.lighthouse);
+  if (HOOK) { HOOK.finish({chapter: 1, stars, acc, got: got.slice(), items: (c1.items || []).slice(), route: r, both, sigClean: Stat.bad === sb0, found: (c1.found || []).slice()}); return; }
   $('#a3-end-stars').innerHTML = '⭐'.repeat(stars) + '<span>' + '⭐'.repeat(3 - stars) + '</span>'; $('#a3-end-got').textContent = got.join(' '); $('#a3-end-acc').textContent = '정확도 ' + acc + '%'; $('#a3-end-tip').textContent = both ? '두 회로를 모두 먼저 고쳐 봤어요!' : '다른 회로를 먼저 고치면 다른 일이 있어요'; $('#a3-end').classList.add('on'); };
 /* ── 입력 ── */
 addEventListener('keydown', e => { if (!active) return; if (HOOK) e.stopImmediatePropagation(); if (e.ctrlKey || e.metaKey || e.altKey || e.repeat) return; const ch = KEYMAP[e.code] || (JAMO.includes(e.key) ? e.key : (/^(Key|Digit|Semicolon|Quote|Comma|Period|Slash|Space|Bracket)/.test(e.code) ? '×' : null)); if (ch) { e.preventDefault(); press(ch); flashKey(ch); } }, true);
@@ -4878,12 +4945,73 @@ if (!HOOK) open(); window.__g = {Mo, MG, press, plates, Stat, cam, mk, get dark(
 return {open, stop, mood: () => ({dark: active ? dark : 0, tense: false})};   /* mood: 배경음악용(어두운 정도) */
 };
 </script>
-<script type="text/plain" id="a3-lib-core">/* 타자 모험 · 장면 틀 — 기획안 5.0 §3 탐험 틀 3종(갈림길·장치 수리·단서 조사), §5 방어(한 길·한 적), §12 장면은 자료로 짠다.
+<script type="text/plain" id="a3-lib-core">/* 타자 모험 · 먹구름의 흔적 (v16.8, 선생님 "시작") — 동화 「글쇠섬나라의 작은 수리공」의 흔적 일곱 개.
+   1~7장에 하나씩, 설명 대사 없이 물건으로 둔다. 8장 기억의 섬에서 한꺼번에 이어진다(기획안 §2 "동기는 편지·기록·행동으로").
+   모은 흔적은 각 장 기록의 found 에 들어가고, 모험 가방의 "🔍 수상한 흔적" 칸에 쌓인다.
+   그림은 캔버스로 그린다(글자 대신 그림·낙서가 중심이라 화면이 작아도 알아볼 수 있게). */
+if (!window.__axTrace) window.__axTrace = (() => {
+  const F = '"Noto Sans KR","Malgun Gothic","Apple SD Gothic Neo",sans-serif';
+  /* 손으로 그린 듯 떨리는 선 */
+  const wob = (x, pts, w, col, j) => { x.strokeStyle = col; x.lineWidth = w; x.lineCap = x.lineJoin = 'round'; x.beginPath();
+    pts.forEach((p, i) => { const a = p[0] + (Math.random() - .5) * (j || 3), b = p[1] + (Math.random() - .5) * (j || 3); i ? x.lineTo(a, b) : x.moveTo(a, b); }); x.stroke(); };
+  const ring = (cx, cy, r, n) => Array.from({length: (n || 24) + 1}, (_, i) => [cx + Math.cos(i / (n || 24) * 6.283) * r, cy + Math.sin(i / (n || 24) * 6.283) * r]);
+  const cloudPts = (cx, cy, s) => { const o = []; [[-1, 0, .55], [-.35, -.45, .6], [.4, -.35, .55], [.95, .05, .45]].forEach(c => { for (let i = 0; i <= 8; i++) { const a = Math.PI * (1 + i / 8); o.push([cx + (c[0] + Math.cos(a) * c[2]) * s, cy + (c[1] + Math.sin(a) * c[2]) * s]); } }); o.push([cx + 1.4 * s, cy + .45 * s], [cx - 1.55 * s, cy + .45 * s], o[0]); return o; };
+  const paper = (x, w, h, col) => { x.fillStyle = col || '#fbf3dc'; x.beginPath(); x.moveTo(8, 10); x.lineTo(w - 6, 4); x.lineTo(w - 10, h - 8); x.lineTo(5, h - 4); x.closePath(); x.fill(); x.strokeStyle = 'rgba(120,96,60,.35)'; x.lineWidth = 3; x.stroke(); };
+  const ART = {
+    /* 1장: 글자 없이 그림만 있는 쪽지(동그라미, 집, 구름 아이가 손을 흔듦) — 그림으로 쓴 편지 */
+    note(x, w, h) { paper(x, w, h); x.strokeStyle = 'rgba(150,120,80,.3)'; x.lineWidth = 2; x.beginPath(); x.moveTo(w / 2, 8); x.lineTo(w / 2 + 6, h - 6); x.stroke();
+      const g = '#5b5f6b'; wob(x, ring(70, 80, 34, 20), 5, g, 4); wob(x, ring(70, 80, 6, 10), 4, g, 2);
+      wob(x, [[40, 160], [40, 130], [62, 112], [84, 130], [84, 160], [40, 160]], 5, g, 3);
+      wob(x, cloudPts(180, 120, 34), 5, '#6d6a86', 3); x.fillStyle = '#6d6a86'; x.beginPath(); x.arc(168, 120, 4, 0, 7); x.arc(192, 120, 4, 0, 7); x.fill();
+      wob(x, [[222, 112], [238, 92]], 5, '#6d6a86', 2); wob(x, [[120, 136], [140, 128], [130, 146]], 4, g, 2); },
+    /* 2장: 글자가 다 지워진 나루 안내판, 귀퉁이에 삐뚤빼뚤 따라 쓴 ㅁ 하나 */
+    mm(x, w, h) { x.fillStyle = '#b98a57'; x.fillRect(0, 0, w, h); for (let i = 0; i < 7; i++) { x.fillStyle = `rgba(90,60,30,${.08 + Math.random() * .08})`; x.fillRect(0, i * h / 7, w, 3); }
+      x.strokeStyle = '#7a5530'; x.lineWidth = 10; x.strokeRect(5, 5, w - 10, h - 10);
+      for (let r = 0; r < 3; r++) for (let c = 0; c < 4; c++) { x.fillStyle = 'rgba(230,214,190,.45)'; x.beginPath(); x.ellipse(70 + c * 82, 60 + r * 62, 34, 15, (Math.random() - .5) * .3, 0, 7); x.fill(); }
+      const k = '#2b2018'; wob(x, [[w - 112, h - 96], [w - 46, h - 100], [w - 42, h - 34], [w - 114, h - 30], [w - 110, h - 98]], 9, k, 9); },
+    /* 3장: 큰 나무에 새긴 아이들 이름, 그 사이 이름 대신 새긴 구름 하나(바탕은 투명) */
+    tree(x, w, h) { const cut = (t, a, b, s) => { x.font = `900 ${s}px ${F}`; x.textAlign = 'center'; x.fillStyle = 'rgba(255,230,190,.55)'; x.fillText(t, a + 2, b + 2); x.fillStyle = '#3a2412'; x.fillText(t, a, b); };
+      cut('하나', 70, 60, 44); cut('도도', 210, 52, 40); cut('나리', 82, 140, 42); cut('보미', 226, 150, 44); cut('이안', 150, 232, 40);
+      x.save(); x.translate(2, 2); wob(x, cloudPts(170, 100, 26), 7, 'rgba(255,230,190,.55)', 2); x.restore(); wob(x, cloudPts(170, 100, 26), 7, '#3a2412', 2); },
+    /* 4장: 구겨진 설명서 — 톱니 그림 옆에 물음표만 가득 */
+    manual(x, w, h) { paper(x, w, h, '#eef1f4'); for (let i = 0; i < 6; i++) { x.strokeStyle = 'rgba(80,90,110,.18)'; x.lineWidth = 2; x.beginPath(); x.moveTo(Math.random() * w, 0); x.lineTo(Math.random() * w, h); x.stroke(); }
+      x.strokeStyle = '#4b5b73'; x.lineWidth = 5; x.beginPath(); x.arc(78, 90, 34, 0, 7); x.stroke(); for (let i = 0; i < 8; i++) { const a = i / 8 * 6.283; x.beginPath(); x.moveTo(78 + Math.cos(a) * 34, 90 + Math.sin(a) * 34); x.lineTo(78 + Math.cos(a) * 46, 90 + Math.sin(a) * 46); x.stroke(); }
+      x.font = `900 46px ${F}`; x.fillStyle = '#c0392b'; [[160, 70], [220, 96], [176, 150], [250, 160], [110, 180], [40, 178]].forEach((p, i) => { x.save(); x.translate(p[0], p[1]); x.rotate((Math.random() - .5) * .6); x.globalAlpha = .65 + (i % 2) * .3; x.fillText('?', 0, 0); x.restore(); }); },
+    /* 5장: 등대 우편함 — 섬마다 칸, 칸마다 편지. "받는 이 없음" 한 칸만 텅 비었다 */
+    mailbox(x, w, h) { x.fillStyle = '#8c5a33'; x.fillRect(0, 0, w, h); const cw = (w - 30) / 3, ch = (h - 30) / 2;
+      [['마을', 1], ['나루', 1], ['숲', 1], ['공장', 1], ['받는 이 없음', 0], ['다리', 1]].forEach((d, i) => { const a = 10 + (i % 3) * (cw + 5), b = 10 + Math.floor(i / 3) * (ch + 5);
+        x.fillStyle = '#2d1c10'; x.fillRect(a, b, cw, ch); if (d[1]) { x.fillStyle = '#fff8e6'; x.fillRect(a + 14, b + 26, cw - 28, ch - 58); x.strokeStyle = '#c9a86b'; x.lineWidth = 3; x.beginPath(); x.moveTo(a + 14, b + 26); x.lineTo(a + cw / 2, b + ch / 2 - 4); x.lineTo(a + cw - 14, b + 26); x.stroke(); }
+        x.fillStyle = d[1] ? '#ffe9b8' : '#ffd0c8'; x.fillRect(a + 6, b + ch - 28, cw - 12, 24); x.fillStyle = '#3a2410'; x.font = `800 ${d[1] ? 18 : 15}px ${F}`; x.textAlign = 'center'; x.fillText(d[0], a + cw / 2, b + ch - 10); }); },
+    /* 7장: 찢어진 공책 — 글자를 따라 쓰다 지운 자국투성이 */
+    book(x, w, h) { x.fillStyle = '#fbf7ec'; x.fillRect(4, 6, w / 2 - 6, h - 12); x.beginPath(); x.moveTo(w / 2 + 2, 6); x.lineTo(w - 30, 6); for (let y = 6; y < h - 6; y += 14) x.lineTo(w - 30 + (Math.random() * 22 - 4), y); x.lineTo(w / 2 + 2, h - 6); x.closePath(); x.fill();
+      x.strokeStyle = 'rgba(90,130,200,.35)'; x.lineWidth = 2; for (let y = 36; y < h - 10; y += 30) { x.beginPath(); x.moveTo(10, y); x.lineTo(w - 40, y); x.stroke(); }
+      x.strokeStyle = '#8a8a8a'; x.lineWidth = 2; x.beginPath(); x.moveTo(w / 2, 6); x.lineTo(w / 2, h - 6); x.stroke();
+      const g = '#55565e'; [[24, 30], [74, 30], [124, 30], [24, 90], [74, 90], [174, 30], [174, 90]].forEach(p => wob(x, [[p[0], p[1]], [p[0] + 30, p[1]], [p[0] + 30, p[1] + 34]], 4, g, 5));
+      [[34, 150], [100, 150], [180, 120], [60, 190]].forEach(p => { x.fillStyle = 'rgba(160,160,170,.45)'; x.beginPath(); x.ellipse(p[0] + 10, p[1], 30, 11, .2, 0, 7); x.fill(); }); }
+  };
+  const SIZE = {note: [256, 200], mm: [400, 260], tree: [300, 260], manual: [300, 220], mailbox: [360, 280], book: [300, 220]};
+  const tex = (T, k) => { const s = SIZE[k], c = document.createElement('canvas'); c.width = s[0]; c.height = s[1]; ART[k](c.getContext('2d'), s[0], s[1]); const t = new T.CanvasTexture(c); t.encoding = T.sRGBEncoding; t.anisotropy = 4; return t; };
+  /* 만들기: o = {at:[x,y,z], rot:[rx,ry,rz], w(너비, 높이는 그림 비율), post(나무 기둥), box(상자 몸통 깊이)} */
+  const make = (T, S, k, o) => { const s = SIZE[k], w = o.w || 1, h = w * s[1] / s[0], g = new T.Group(), mat = new T.MeshStandardMaterial({map: tex(T, k), transparent: true, alphaTest: .05, side: T.DoubleSide, roughness: .9});
+    const p = new T.Mesh(new T.PlaneGeometry(w, h), mat); p.castShadow = !o.flat; g.add(p);
+    const wood = new T.MeshStandardMaterial({color: '#6e4a2a', roughness: .9, flatShading: true});
+    if (o.post) { const ps = new T.Mesh(new T.BoxGeometry(.14, o.post, .14), wood); ps.position.set(0, -o.post / 2 - h / 2 + .1, -.09); ps.castShadow = true; g.add(ps); p.position.z = .005; }
+    if (o.box) { const b = new T.Mesh(new T.BoxGeometry(w + .08, h + .08, o.box), wood); b.position.z = -o.box / 2 - .01; b.castShadow = true; g.add(b); const r = new T.Mesh(new T.BoxGeometry(w + .24, .1, o.box + .2), new T.MeshStandardMaterial({color: '#b03a2e', roughness: .8})); r.position.set(0, h / 2 + .08, -o.box / 2); g.add(r);
+      if (o.legs) { const l = new T.Mesh(new T.BoxGeometry(.14, o.legs, .14), wood); l.position.set(0, -h / 2 - o.legs / 2, -o.box / 2); g.add(l); } }
+    g.position.set(o.at[0], o.at[1], o.at[2]); if (o.rot) g.rotation.set(o.rot[0] || 0, o.rot[1] || 0, o.rot[2] || 0); S.add(g); g.userData.home = {p: g.position.clone(), r: g.rotation.clone(), s: g.scale.clone()}; return g; };
+  const restore = g => { const h = g.userData.home; g.position.copy(h.p); g.rotation.copy(h.r); g.scale.copy(h.s); g.visible = true; };
+  /* 집기: 모아 쪽으로 날아가 작아지며 사라진다(가방에 들어감). to = () => [x, y, z] */
+  const take = async (g, to, sleep, beep) => { const a = g.position.clone(), n = 22; if (beep) beep(880, .08, 'triangle', .05);
+    for (let i = 1; i <= n; i++) { const t = i / n, e = t * t * (3 - 2 * t), q = to(); g.position.set(a.x + (q[0] - a.x) * e, a.y + (q[1] - a.y) * e + Math.sin(t * Math.PI) * .9, a.z + (q[2] - a.z) * e); g.rotation.y += .25; g.scale.setScalar(Math.max(.05, 1 - e * .9)); await sleep(28); }
+    g.visible = false; if (beep) setTimeout(() => beep(1175, .12, 'triangle', .05), 60); };
+  return {make, restore, take};
+})();
+/* 타자 모험 · 장면 틀 — 기획안 5.0 §3 탐험 틀 3종(갈림길·장치 수리·단서 조사), §5 방어(한 길·한 적), §12 장면은 자료로 짠다.
    장마다 __advChapters[n] = {무대 build(E), 장면 자료 scenes, 입력 과제 tasks}만 새로 쓰고, 이 파일은 그대로 쓴다. 1장(game.js)은 이 틀을 쓰지 않는다. */
 window.__advChapters = window.__advChapters || {};
 window.__advBoot2 = function (HOOK, chId, rootSel) {
 const CH = window.__advChapters[chId]; if (!CH) throw new Error('장 자료가 없음: ' + chId);
-const VER = 'v16.6', T = THREE, ROOT = document.querySelector(rootSel || '#advx');
+const VER = 'v16.8', T = THREE, ROOT = document.querySelector(rootSel || '#advx');
 const $ = s => ROOT.querySelector(s);
 let active = false, runId = 0;
 
@@ -5016,7 +5144,10 @@ const where = t => { $('.ax-where').textContent = t; }; const got = []; const in
 
 /* ── 무대: 장 자료가 만든다 ── */
 const talk = (t, by, ms) => { bubBy = by ? stage.actors[by] : null; bub.classList.toggle('by', !!bubBy); bubble(t, ms); };
-const E = {talk, beep: (f, d, t, v) => beep(f, d, t, v), get ctx() { return ctx; }, T, S, R, cam, hemi, sun, fill, rnd, M, WM, add, flat, disc, glow, glowTex, inst, FONT, ANIM, MG, Mo, moa, go, face, setSt, sleep, burst, bubble, sfx, got, inv, get now() { return now; }};
+/* v16.8 먹구름의 흔적(traces.js): 장 자료가 E.trace(이름, 자리)로 두고, 장면의 {trace: 이름, take: 집을지, find: 가방 기호}로 본다 */
+const TRC = {}, trace = (k, o) => { const g = window.__axTrace.make(T, S, k, o); TRC[o.id || k] = g; return g; };
+const traceStep = async s => { const g = TRC[s.trace]; if (!g) return; if (s.take) await window.__axTrace.take(g, () => [MG.position.x, MG.position.y + 1.5, MG.position.z], sleep, beep); else { burst(g.position.x, g.position.y + .3, g.position.z + .2, 10, '#fff2a8', 2); beep(784, .1, 'triangle', .05); await sleep(300); } };
+const E = {trace, talk, beep: (f, d, t, v) => beep(f, d, t, v), get ctx() { return ctx; }, T, S, R, cam, hemi, sun, fill, rnd, M, WM, add, flat, disc, glow, glowTex, inst, FONT, ANIM, MG, Mo, moa, go, face, setSt, sleep, burst, bubble, sfx, got, inv, get now() { return now; }};
 const stage = CH.build(E);
 
 /* ── 방어: 한 길, 한 적(1~2장). 과제를 하나 칠 때마다 적이 밀려나고, 다 치면 물러간다. 적이 끝까지 오면 처음 자리로 돌아가 다시 온다(벌점 없음) ── */
@@ -5094,6 +5225,7 @@ const step = async s => {
   if (s.pose) setSt(s.pose);
   if (s.fx) await stage.fx[s.fx](s.arg);
   if (s.get && !got.includes(s.get)) { got.push(s.get); inv(); }
+  if (s.trace) await traceStep(s);
   if (s.find && !ctx.found.includes(s.find)) { ctx.found.push(s.find); window.__axFound = ctx.found.slice(); if ((CH.keepFinds || []).includes(s.find) && !got.includes(s.find)) { got.push(s.find); inv(); } }
   if (s.say !== undefined) { bubBy = s.by ? stage.actors[s.by] : null; bub.classList.toggle('by', !!bubBy); bubble(s.say, s.ms); }
   if (s.type) { setSt(s.as || 'fix'); await typeOn(s.follow ? stage.follow[s.follow] : s.at, TX(s.type), s.each ? n => stage.fx[s.each](n) : null, s.tag, WD(s.type)); if (s.done) await stage.fx[s.done](s.arg); }
@@ -5122,7 +5254,7 @@ const clue = async s => { let it = s.items[0]; const again = ctx.seen.includes(i
 
 /* ── 한 판 ── */
 const camP = {x: 0, z: 2}, camV = {k: 1, kt: 1, up: 0, ut: 0};   // 장면이 화면을 뒤로 물리고 올려다보게 할 때 쓴다(step의 cam: [배율, 올려다보는 높이])
-const reset = () => { RC = null; if (RP) rUI(false); Stat.ok = Stat.bad = 0; got.length = 0; ctx.seen = (Save.get()['ch' + CH.n] || {}).collectedClues || []; ctx.owned = ownedOf().filter(x => !tcar || tcar.has(x)); ctx.carry = tcar ? [...tcar].filter(x => !ctx.owned.includes(x)) : carryOf(); ctx.found = []; window.__axFound = []; ctx.used = []; ctx.foundOld = tcar ? [] : (Save.get()['ch' + CH.n] || {}).found || []; bubBy = null; bub.classList.remove('by'); CHS = null; DF = null; got.push(...ctx.owned, ...ctx.carry.filter(x => ((CH.uses || []).includes(x) || (CH.keepFinds || []).includes(x)) && !ctx.owned.includes(x)), ...ctx.foundOld.filter(x => (CH.keepFinds || []).includes(x)));   /* 들고 다니는 발견물도 오른쪽 위 소품 줄에 보인다 */ PK = null; BS = null; inv(); plates.slice().forEach(p => p.kill()); handler = null; G = null; ctx.flags = {}; ctx.clues = []; ctx.route = null; const s = CH.start; MG.position.set(s[0], 0, s[1]); Mo.tx = s[0]; Mo.tz = s[1]; Mo.moving = false; Mo.yaw = Math.PI / 2; setSt('idle'); stage.reset(ctx.owned, ctx.carry); camV.k = camV.kt = 1; camV.up = camV.ut = 0; camP.x = s[0] + 2; camP.z = s[1] * .5 + 1; where(CH.name); };
+const reset = () => { Object.values(TRC).forEach(g => window.__axTrace.restore(g)); RC = null; if (RP) rUI(false); Stat.ok = Stat.bad = 0; got.length = 0; ctx.seen = (Save.get()['ch' + CH.n] || {}).collectedClues || []; ctx.owned = ownedOf().filter(x => !tcar || tcar.has(x)); ctx.carry = tcar ? [...tcar].filter(x => !ctx.owned.includes(x)) : carryOf(); ctx.found = []; window.__axFound = []; ctx.used = []; ctx.foundOld = tcar ? [] : (Save.get()['ch' + CH.n] || {}).found || []; bubBy = null; bub.classList.remove('by'); CHS = null; DF = null; got.push(...ctx.owned, ...ctx.carry.filter(x => ((CH.uses || []).includes(x) || (CH.keepFinds || []).includes(x)) && !ctx.owned.includes(x)), ...ctx.foundOld.filter(x => (CH.keepFinds || []).includes(x)));   /* 들고 다니는 발견물도 오른쪽 위 소품 줄에 보인다 */ PK = null; BS = null; inv(); plates.slice().forEach(p => p.kill()); handler = null; G = null; ctx.flags = {}; ctx.clues = []; ctx.route = null; const s = CH.start; MG.position.set(s[0], 0, s[1]); Mo.tx = s[0]; Mo.tz = s[1]; Mo.moving = false; Mo.yaw = Math.PI / 2; setSt('idle'); stage.reset(ctx.owned, ctx.carry); camV.k = camV.kt = 1; camV.up = camV.ut = 0; camP.x = s[0] + 2; camP.z = s[1] * .5 + 1; where(CH.name); };
 let short = false, defOn = false;
 /* 방어 기록(4장부터, 기획안 §7 '방어 기록' 반복 도전): 잃은 톱니가 적을수록, 같으면 정확도가 높을수록 좋은 기록. 정확도 90% 아래는 기록에 안 올린다(경주와 같은 기준) */
 const defEnd = () => { const R = CH.shortcut.rec, sv = Save.get(), c = sv['ch' + CH.n] || (sv['ch' + CH.n] = {}), acc = Stat.acc(), lost = ctx.flags[R.defend + '_leaks'] || 0, ok = acc >= (R.minAcc || 90), rec = c.defRec || {runs: 0}, prev = rec.best, nb = ok && (!prev || lost < prev.lost || (lost === prev.lost && acc > prev.acc)), run = {lost, acc, shift: ctx.flags[R.defend + '_shift'] || 0, route: ctx.flags[R.flag] || null, date: Date.now()};
@@ -5265,6 +5397,8 @@ tasks: {
 scenes: [
   {where: '물 빠진 연못', go: [-15, 2]},
   {pose: 'surprise', say: '연못에 물이 없어!', ms: 2200, wait: 1700},
+  {go: [-9.5, 1.7], face: [-9, .3], pose: 'inspect', say: '안내판 글자가 다 지워졌네…', ms: 2200, wait: 2000},
+  {trace: 'mm', find: '🖍️', say: '어? 누가 ㅁ을 삐뚤빼뚤 따라 썼어', ms: 2400, wait: 2200},   /* v16.8 먹구름의 흔적 */
   {go: [-2.6, 1.6], face: [3, -4], say: '배가 바닥에 얹혔어!', ms: 1800, wait: 1500},
   /* 틀 1 — 장치 수리: 수문 먼저 / 배 먼저 */
   {repair: 'ch2_order', flag: 'repairedDevice', where: '먼저 고칠 것 고르기', look: [0, -4], ask: '무엇부터 고칠까?', choices: [
@@ -5299,6 +5433,7 @@ scenes: [
 
 /* ── 무대 ── */
 build(E) { const {T, S, rnd, M, WM, add, flat, disc, glow, glowTex, inst, FONT, ANIM, MG, burst, bubble, setSt, sleep, sfx} = E;
+  E.trace('mm', {at: [-9, 1.7, .3], w: 1.45, post: 1.5, rot: [0, .2, 0]});   /* v16.8 먹구름의 흔적: 글자가 다 지워진 나루 안내판, 귀퉁이에 삐뚤빼뚤한 ㅁ */
   const PC = [7, -8, 16.5, 7.5], BAY = [-7.5, -4, 4.5, 2.4];   // 연못: 가운데 x, z, 반지름 x, z / 수문 앞 작은 물목
   const inEl = (e, x, z, pad) => { const a = (x - e[0]) / (e[2] + pad), b = (z - e[1]) / (e[3] + pad); return a * a + b * b < 1; };
   const inPond = (x, z, pad) => inEl(PC, x, z, pad || 0) || inEl(BAY, x, z, pad || 0);
@@ -5585,6 +5720,8 @@ scenes: [
   ]},
   /* 숲 속 빈터: 두 길이 만난다. 여기부터 3-2(빈터 지키기) — 기획안 §5: 세 길, 세 차례, 적 3종(일반·빠른·갑옷), 끝에 소대장 */
   {mark: 'p2', where: '숲 속 빈터', cam: [1.35, 3], go: [31.6, -2.6], face: [37.5, -4]}, {pose: 'cheer', say: '숲 속 빈터에 왔어!', ms: 2000, wait: 1800},
+  {go: [35.4, -.9], face: [36.9, -2.1], pose: 'inspect', say: '큰 나무에 이름이 잔뜩 새겨져 있어', ms: 2200, wait: 2000},
+  {trace: 'tree', find: '☁️', say: '이건… 이름 대신 구름이네?', ms: 2200, wait: 2000},   /* v16.8 먹구름의 흔적 */
   {fx: 'owlFly', wait: 300}, {by: 'owl', say: '🦉 먹구름 무리가 큰 나무의 금빛 열매를 노려!', ms: 3200, wait: 3000}, {by: 'owl', say: '🦉 금빛 열매를 지켜 줘!', ms: 2400, wait: 2200},
   {go: [32.6, -1.2], face: TREE}, {pose: 'cheer', say: '내가 지킬게!', ms: 1600, wait: 1400}, {say: ''},
   {defend: 'ch3_glade', where: '빈터 지키기', waveNames: ['첫째 차례', '둘째 차례', '셋째 차례', '넷째 차례', '마지막 차례'], hp: 3, hpIcon: '🍋', plateY: 3.1,
@@ -5631,6 +5768,7 @@ scenes: [
 
 /* ── 무대 ── */
 build(E) { const {T, S, rnd, M, WM, add, flat, disc, glow, inst, FONT, ANIM, MG, Mo, burst, bubble, setSt, sleep, sfx} = E;
+  E.trace('tree', {at: [36.9, 2.4, -2.1], w: 1.6, rot: [0, -.27, 0], flat: 1});   /* v16.8 먹구름의 흔적: 큰 나무에 새긴 아이들 이름, 그 사이 이름 대신 구름 하나 */
   const wood = M('#8f6238'), woodD = M('#5f4226'), woodL = M('#c09560'), stone = M('#8f958c'), stone2 = M('#7b8279');
   let SKYX = null, FFK = 1;   /* 3-3에서 날이 밝을 때 쓴다 */
   const sm = (a, b, k) => a + (b - a) * k, sph = (c, o) => M(c, Object.assign({flatShading: false}, o || {}));
@@ -6105,6 +6243,8 @@ scenes: [
   {pose: 'surprise', say: '풍차가 멈춰 있어!', ms: 2000, wait: 1800},
   {say: '바람은 이렇게 부는데…', ms: 1800, wait: 1600},
   {where: '풍차 공장 마당', go: [-14, 1.6]}, {say: '공장도 깜깜해', ms: 1700, wait: 1500},
+  {go: [-11, 1.7], face: [-11, 3.2], pose: 'inspect', say: '구겨진 설명서야… 물음표만 가득해', ms: 2400, wait: 2000},
+  {trace: 'manual', take: true, find: '❓', wait: 300},   /* v16.8 먹구름의 흔적 */
   {go: [5.4, 1.4], face: R0}, {pose: 'surprise', say: '로봇이 쓰러져 있어!', ms: 2000, wait: 1800},
   {fx: 'botWake', by: 'bot', say: '🤖 삐… 먹구름 무리가 휩쓸고 갔어…', ms: 2800, wait: 2600},
   {by: 'bot', say: '🤖 부품이 상자 속에 흩어졌어…', ms: 2600, wait: 2400},
@@ -6194,6 +6334,7 @@ scenes: [
 
 /* ── 무대 ── */
 build(E) { const {T, S, rnd, M, WM, add, flat, disc, glow, inst, FONT, ANIM, MG, burst, setSt, sleep, sfx} = E;
+  E.trace('manual', {at: [-11, .06, 2.7], w: .75, rot: [-1.45, 0, .3]});   /* v16.8 먹구름의 흔적: 구겨진 설명서, 물음표만 가득 */
   const sm = (a, b, k) => a + (b - a) * k, ease = k => k * k * (3 - 2 * k);
   const wood = M('#9a6a3c'), woodD = M('#6b4626'), woodL = M('#c79b62'), stone = M('#9aa09a'), slate = M('#56616c'), slateD = M('#454f59');
   const label = (lines, w, h, bg, fg, px) => { const c = document.createElement('canvas'); c.width = w; c.height = h; const x = c.getContext('2d'); x.fillStyle = bg; x.fillRect(0, 0, w, h); x.strokeStyle = '#5f3715'; x.lineWidth = 10; x.strokeRect(5, 5, w - 10, h - 10); x.fillStyle = fg; x.font = '900 ' + px + 'px ' + FONT; x.textAlign = 'center'; x.textBaseline = 'middle'; lines.forEach((t, i) => x.fillText(t, w / 2, h / 2 + (i - (lines.length - 1) / 2) * px * 1.15 + 4)); const t = new T.CanvasTexture(c); t.encoding = T.sRGBEncoding; return t; };
@@ -6626,6 +6767,8 @@ scenes: [
   {by: 'gull', say: '그런데 예비 렌즈라 빛이 가까운 섬까지만 닿아', ms: 3000, wait: 2800},
   {by: 'gull', say: '먼 섬까지 비추려면 진짜 렌즈를 되찾아야 해', ms: 3000, wait: 2800},
   {pose: 'cheer', say: '먼저 가까운 섬에 소식을 전하자!', ms: 2400, wait: 2200},
+  {go: [11.3, 1.6], face: [12.9, 2.5], pose: 'inspect', say: '섬마다 편지 칸이 있어', ms: 2000, wait: 1800},
+  {trace: 'mailbox', find: '📭', say: "'받는 이 없음'… 이 칸만 텅 비었네", ms: 2600, wait: 2400},   /* v16.8 먹구름의 흔적 */
   /* ══ 5-2 신호 보내기: 먼저 보낼 섬을 고른다. 두 섬 모두 보내지만, 먼저 받은 섬에서 손님(심부름 새)이 와서 선물을 준다 ══ */
   {mark: 'p2', where: '하늘 등대', cam: CAM, go: [11, .6], face: [12, -40]},
   {by: 'gull', say: '두 섬도 렌즈 도둑을 봤을지 몰라. 물어보자!', ms: 2800, wait: 2600},
@@ -6687,6 +6830,7 @@ scenes: [
 
 /* ── 무대 ── */
 build(E) { const {T, S, rnd, M, WM, add, flat, disc, glow, inst, FONT, MG, burst, setSt, sleep, sfx} = E;
+  E.trace('mailbox', {at: [12.9, 1.25, 2.5], w: 1.1, box: .5, legs: .95, rot: [0, -.5, 0]});   /* v16.8 먹구름의 흔적: 등대 우편함, '받는 이 없음' 칸만 텅 빔 */
   const sm = (a, b, k) => a + (b - a) * k, ease = k => k * k * (3 - 2 * k);
   const dSeg = (x, z, a, b) => { const dx = b[0] - a[0], dz = b[1] - a[1], k = Math.max(0, Math.min(1, ((x - a[0]) * dx + (z - a[1]) * dz) / (dx * dx + dz * dz || 1))); return Math.hypot(x - a[0] - dx * k, z - a[1] - dz * k); };
   const canvasTex = (w, h, draw) => { const c = document.createElement('canvas'); c.width = w; c.height = h; draw(c.getContext('2d'), w, h); const t = new T.CanvasTexture(c); t.encoding = T.sRGBEncoding; return t; };
@@ -7254,6 +7398,8 @@ scenes: [
   {fx: 'gFree', wait: 1500},
   {by: 'giant', say: '…고맙다, 작은 손님.', ms: 2400, wait: 2200},
   {by: 'giant', say: '먹구름에 홀려 다리를 부쉈구나. 미안하다.', ms: 2800, wait: 2600},
+  {by: 'giant', say: '그 아이는… 늘 혼자 이 다리를 건너 봉우리로 갔지.', ms: 3200, wait: 3000, find: '💬'},   /* v16.8 먹구름의 흔적: 거인의 말 */
+  {pose: 'inspect', say: '그 아이…?', ms: 1600, wait: 1400},
   {fx: 'gHold', by: 'giant', say: '다리 끝은 이제 내가 받쳐 주마.', ms: 2600, wait: 400},
   {fx: 'holdDone', pose: 'cheer', say: '다리가 단단해졌어!', ms: 2000, wait: 1800},
   {has: '🤖', then: [{by: 'bot', say: '🤖 이제 건너편 길로 갈 수 있어!', ms: 2400, wait: 2200}]},
@@ -7837,11 +7983,14 @@ scenes: [
   {has: '📖', use: [GT[0], PH + 1.2, GT[1] - .2],
    then: [{fx: 'muralBook', pose: 'surprise', say: '기록장 마지막 장과 같은 글귀야!', ms: 2400, wait: 2200}, {say: '"모든 이야기는 기억의 섬에 모여 있다"', ms: 2800, wait: 2600}]},
   {fx: 'muralCloud', pose: 'inspect', say: '섬 옆에 작은 구름이 혼자 그려져 있어…', ms: 2800, wait: 2600},
+  {face: [49.6, -3.3], say: '벽 아래 찢어진 공책이 있어. 글자를 쓰다 지운 자국투성이야', ms: 3000, wait: 2600},
+  {trace: 'book', take: true, find: '📓', say: '찢겨 나간 장은… 어디 있을까?', ms: 2200, wait: 2000},   /* v16.8 먹구름의 흔적 */
   {pose: 'cheer', say: '기억의 섬에 가 보면 알 수 있을 거야!', ms: 2400, wait: 2200}   /* 이어서 묻는다(endAsk): 방패 구름 막기 / 다음 장으로 */
 ],
 
 /* ── 무대 ── */
 build(E) { const {T, S, rnd, M, add, flat, glow, inst, MG, burst, sleep, sfx} = E;
+  E.trace('book', {at: [49.6, PH + .3, -3.3], w: .85, rot: [-.55, -.15, .08]});   /* v16.8 먹구름의 흔적: 벽화 아래 찢어진 공책, 글자를 따라 쓰다 지운 자국투성이 */
   const sm = (a, b, k) => a + (b - a) * k, ease = k => k * k * (3 - 2 * k);
   const canvasTex = (w, h, draw) => { const c = document.createElement('canvas'); c.width = w; c.height = h; draw(c.getContext('2d'), w, h); const t = new T.CanvasTexture(c); t.encoding = T.sRGBEncoding; return t; };
   const rockC = ['#8f8a80', '#7c776e', '#a09a8e', '#6e6a62', '#b0a99b'];
@@ -8154,6 +8303,7 @@ const ADV_BAG = {
   5: [['🔆', '등대 불', '하늘 등대에 불을 켰을 때'], ['🧭', '뱃길 나침반', '연못 나루에 먼저 신호를 보냈을 때'], ['🪶', '하늘길 깃털', '동물의 숲에 먼저 신호를 보냈을 때']],
   6: [['🪨', '튼튼한 돌다리', '협곡에 돌다리를 놓았을 때'], ['🪢', '출렁 밧줄다리', '협곡에 밧줄다리를 놓았을 때']],
   7: [['🗺️', '옛 지도 조각', '파랑 방패를 먼저 풀었을 때'], ['📖', '낡은 기록장', '빨강 방패를 먼저 풀었을 때']]};
+const ADV_TRACES = [['🗒️', '글자 없는 그림 쪽지', 1, '먹구름이 떨어뜨림'], ['🖍️', '삐뚤빼뚤한 ㅁ', 2, '지워진 나루 안내판'], ['☁️', '이름 대신 새긴 구름', 3, '빈터의 큰 나무'], ['❓', '물음표 설명서', 4, '풍차 공장 마당'], ['📭', "'받는 이 없음' 빈칸", 5, '하늘 등대 우편함'], ['💬', '늘 혼자 건넌 아이', 6, '철갑 거인의 말'], ['📓', '찢어진 공책', 7, '요새 벽화 아래']];   /* v16.8 먹구름의 흔적(동화 「글쇠섬나라의 작은 수리공」) — 8장에서 이어진다 */
 const ADV_FINDS = [['🍄', '빛 버섯', 3, '어두운 길'], ['🦔', '고슴도치', 3, '어두운 길'], ['🪺', '새 둥지', 3, '어두운 길'], ['📜', '풍차 설계도', 4, '공장 창고']];
 const AdvGoals = {
   L: {1: [['정확도 90% 넘기', r => r.acc >= 90], ['신호 암호를 틀림 없이 보내기', r => !!r.sigClean], ['갈래 선물 둘 다 모으기', r => ['🧰', '📡'].every(x => (r.items || []).includes(x))]],
@@ -8196,6 +8346,7 @@ const AdvBag = {on: false, game: false, el: null,
       h += '<p class="bag-goals">' + AdvGoals.L[ch].map((d, i) => (g[i] ? '⭐ ' : '<i>⭐</i> ') + esc(d[0])).join(' · ') + '</p></section>'; });
     const fd = new Set(); Object.keys(ADV_BAG).forEach(ch => ((a['ch' + ch] || {}).found || []).forEach(x => fd.add(x)));
     h += '<section><h3>📖 발견 도감 <span class="st">' + ADV_FINDS.filter(f => fd.has(f[0])).length + '/' + ADV_FINDS.length + '</span></h3><div class="bag-row">' + ADV_FINDS.map(f => fd.has(f[0]) ? cell(f[0], f[1], f[2] + '장 ' + f[3], used[f[0]]) : live.has(f[0]) ? cell(f[0], f[1], f[2] + '장 ' + f[3], null, true) : q).join('') + '</div></section>';
+    h += '<section><h3>🔍 수상한 흔적 <span class="st">' + ADV_TRACES.filter(f => fd.has(f[0])).length + '/' + ADV_TRACES.length + '</span></h3><div class="bag-row">' + ADV_TRACES.map(f => fd.has(f[0]) ? cell(f[0], f[1], f[2] + '장 ' + f[3], used[f[0]]) : live.has(f[0]) ? cell(f[0], f[1], f[2] + '장 ' + f[3], null, true) : q).join('') + '</div></section>';
     return h + '<p class="bag-foot">' + (this.game ? '가방을 연 동안 모험이 멈춰요 · ' : '') + 'Esc 또는 ✕로 닫기</p></div>'; }
 };
 /* 가방이 열려 있으면 글쇠는 모험에 가지 않는다(이 듣기는 모험보다 먼저 등록되므로 먼저 받음). Esc·Enter로 닫기 */
