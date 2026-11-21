@@ -1275,7 +1275,7 @@ const LEVELS = [
     ],
     challenge:'토끼가 깡충깡충 아빠와 오빠 떡볶이 찌개 예쁜 꽃밭 시계가 똑딱똑딱',
     pool:['꽃','토끼','코끼리','떡볶이','딸기','빨강','짜장면','쌀','씨앗','아빠','오빠','까치','꿈','땅','뼈','꼬리','꿀벌','찌개','뚜껑','빵','짝꿍','똑똑','쌍둥이','계절','시계','계란','예절','세계','얘기','예의','지혜','혜성','계단','계획','기계','예술','꽃밭','꿀','꿩','떡','떡국','뚱뚱','빨리','뽑기','뿌리','쌓기','썰매','쓰기','씨름','깡충깡충','꼬꼬댁','꽥꽥','쨍쨍','쑥쑥','뚝딱','뽀뽀','빨래','쓰레기','쌀밥','찐빵','꼴찌','똑같이','뿔','예쁘다','깨끗이'],
-    game:{type:'fall', dir:'left', name:'성 지키기', icon:'🏰', unitName:'적', rule:'낱말을 든 적이 성으로 걸어와요. 낱말을 끝까지 치면 물리쳐요. 작은 적은 빠르고, 왕관 쓴 대장은 느리지만 점수가 2배예요. 누구부터 막을지 골라요!'}
+    game:{type:'adv', ch:7, name:'7장 쌍둥이 봉우리', icon:'🏔️', rule:'Shift로 쌍자음을 쳐서 봉우리를 오르고, 요새 문의 방패 자물쇠를 풀고, 열리는 문을 먹구름 무리에게서 지켜요! 글자판에 나온 글자를 차례대로 쳐요.'}
   },
   {
     n:8, title:'낱말 연습', keys:'배운 글자 모두', newJamo:[], target:150, free:true, grade:'4~5학년',
@@ -1440,7 +1440,7 @@ function validateContent() {
 <script>
 /* ================= 저장 ================= */
 const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
-const APP_VERSION = '15.8', APP_DATE = '2026-11-22';
+const APP_VERSION = '16.7', APP_DATE = '2026-11-22';
 /* ===== 우리 반 공유(선택) : Firebase 설정 =====
    Firebase 콘솔 → 프로젝트 설정 → 내 앱(웹) → SDK 설정의 firebaseConfig 값을 아래에 그대로 붙여 넣으세요.
    Realtime Database를 만들고 databaseURL까지 넣어야 켜집니다. 비워 두면 혼자 쓰는 앱으로 돌아갑니다. */
@@ -3381,7 +3381,7 @@ function openHub(n) {
       b.innerHTML = g.type === 'adv' ? `${open ? '▶ ' : '🔒 '}모험 떠나기<small hidden>` : `${open ? '' : '🔒 '}${k}단계 ${GAME_STAGES[k].name}<small>${'★'.repeat(ss)}${'☆'.repeat(3 - ss)}</small>`;
       b.title = open ? '' : `${k - 1}단계에서 별 2개 이상이면 열려요`; b.onclick = () => startGame(n, k); row.appendChild(b); });
     if (g.type === 'adv' && typeof Adv3D !== 'undefined' && Adv3D.raceOpen(g.ch)) { const b = document.createElement('button'); b.className = 'btn sm sec'; b.disabled = !gUnlocked; b.innerHTML = (g.ch === 5 ? '🏁 구름다리 달리기' : '🏁 숲길 달리기') + '<small>내 기록과 겨루기</small>'; b.onclick = () => Adv3D.open(L, 'race'); row.appendChild(b); }
-    if (g.type === 'adv' && typeof Adv3D !== 'undefined' && Adv3D.defOpen(g.ch)) { const b = document.createElement('button'); b.className = 'btn sm sec'; b.disabled = !gUnlocked; b.innerHTML = g.ch === 6 ? '⚔️ 거인과 다시<small>대장 기록 다시</small>' : '🛡️ 풍차 지키기<small>방어 기록 다시</small>'; b.onclick = () => Adv3D.open(L, 'def'); row.appendChild(b); }
+    if (g.type === 'adv' && typeof Adv3D !== 'undefined' && Adv3D.defOpen(g.ch)) { const b = document.createElement('button'); b.className = 'btn sm sec'; b.disabled = !gUnlocked; b.innerHTML = g.ch === 6 ? '⚔️ 거인과 다시<small>대장 기록 다시</small>' : g.ch === 7 ? '🛡️ 방패 구름 막기<small>방어 기록 다시</small>' : '🛡️ 풍차 지키기<small>방어 기록 다시</small>'; b.onclick = () => Adv3D.open(L, 'def'); row.appendChild(b); }
     body.appendChild(row); if (gUnlocked && g.type !== 'adv') { const t = document.createElement('div'); t.className = 'muted'; t.style.cssText = 'font-size:12px;margin-top:6px'; t.textContent = '별 2개 이상이면 다음 단계가 열려요'; body.appendChild(t); } }
   }
   // 도전
@@ -4387,7 +4387,7 @@ applyHands();
 <div class="a3-ov on" id="a3-start"><div class="a3-card"><h1>🏘️ 1장 시작 마을</h1><p>글쇠 도둑 먹구름이 글쇠 돌을 훔쳐 달아났어요.<br>마을 신호기가 꺼져 버렸어요.<br>글쇠 수리공 견습생 <b>모아</b>와 함께 신호기를 고치고<br>등대에 신호를 보내요!</p><p class="k">ㅁㄴㅇㄹ</p><p>네 글쇠만 써요. 글자판에 나온 글자를 차례대로 쳐요.</p><button id="a3-start-btn">시작</button> <button id="a3-exit">나가기</button><small class="a3-ver2"></small></div></div>
 <div class="a3-ov" id="a3-end"><div class="a3-card"><h1>1장을 마쳤어요!</h1><div id="a3-end-stars"></div><div id="a3-end-got"></div><p id="a3-end-acc"></p><p id="a3-end-tip"></p><button id="a3-again">다시 하기</button></div></div></div>
 
-<div id="advx2" class="axhost"></div><div id="advx3" class="axhost"></div><div id="advx4" class="axhost"></div><div id="advx5" class="axhost"></div><div id="advx6" class="axhost"></div>
+<div id="advx2" class="axhost"></div><div id="advx3" class="axhost"></div><div id="advx4" class="axhost"></div><div id="advx5" class="axhost"></div><div id="advx6" class="axhost"></div><div id="advx7" class="axhost"></div>
 <script type="text/plain" id="a3-lib-three">/**
  * @license
  * Copyright 2010-2023 Three.js Authors
@@ -4883,13 +4883,14 @@ return {open, stop, mood: () => ({dark: active ? dark : 0, tense: false})};   /*
 window.__advChapters = window.__advChapters || {};
 window.__advBoot2 = function (HOOK, chId, rootSel) {
 const CH = window.__advChapters[chId]; if (!CH) throw new Error('장 자료가 없음: ' + chId);
-const VER = 'v15.7', T = THREE, ROOT = document.querySelector(rootSel || '#advx');
+const VER = 'v16.6', T = THREE, ROOT = document.querySelector(rootSel || '#advx');
 const $ = s => ROOT.querySelector(s);
 let active = false, runId = 0;
 
 /* ── 입력 과제 검사(§10-4, 5): 배우지 않은 글쇠가 과제에 들어가면 켜지지 않게 한다 ── */
 /* 낱말 과제(inputMode: 'word'): 운영체제 한글 입력기에 기대지 않고, 낱말을 글쇠 차례(초성·중성·종성)로 풀어 놓고 물리 글쇠로 받는다. 화면에는 낱말과 글쇠 차례를 함께 보여 준다 */
 const CHO = 'ㄱㄲㄴㄷㄸㄹㅁㅂㅃㅅㅆㅇㅈㅉㅊㅋㅌㅍㅎ', JUNG = 'ㅏㅐㅑㅒㅓㅔㅕㅖㅗㅘㅙㅚㅛㅜㅝㅞㅟㅠㅡㅢㅣ', JONG = ' ㄱㄲㄳㄴㄵㄶㄷㄹㄺㄻㄼㄽㄾㄿㅀㅁㅂㅄㅅㅆㅇㅈㅊㅋㅌㅍㅎ';
+const SHN = {'ㅃ': 'ㅂ', 'ㅉ': 'ㅈ', 'ㄸ': 'ㄷ', 'ㄲ': 'ㄱ', 'ㅆ': 'ㅅ', 'ㅒ': 'ㅐ', 'ㅖ': 'ㅔ'};   /* 7장 Shift 글쇠(v15.9): 틀리면 칠 자모 옆에 'Shift + ㅂ'처럼 알려 준다 */
 const syl = c => { const k = c.charCodeAt(0) - 0xAC00; if (k < 0 || k > 11171) return [c]; const j = k % 28; return [CHO[Math.floor(k / 588)], JUNG[Math.floor(k % 588 / 28)]].concat(j ? [JONG[j]] : []); };
 const TK = {}; Object.keys(CH.tasks).forEach(id => { const t = CH.tasks[id], isW = t.inputMode === 'word', parts = isW ? [...t.text].map(syl) : null, keys = isW ? parts.map(q => q.join('')).join('') : t.text;
   [...t.allowedKeySet].forEach(c => { if (!CH.jamo.includes(c)) throw new Error('과제 ' + id + ': 이 장의 글쇠가 아님 ' + c); }); [...keys].forEach(c => { if (!t.allowedKeySet.includes(c)) throw new Error('과제 ' + id + ': 허용되지 않은 글쇠 ' + c); });
@@ -4985,7 +4986,7 @@ const place = (el, x, y, z) => { v3.set(x, y, z).project(cam); const out = v3.z 
 const compose = (keys, map) => { const g = []; [...keys].forEach((c, i) => { (g[map[i]] = g[map[i]] || []).push(c); }); return g.map(q => q.length < 2 ? q[0] : String.fromCharCode(0xAC00 + (CHO.indexOf(q[0]) * 21 + JUNG.indexOf(q[1])) * 28 + (q[2] ? JONG.indexOf(q[2]) : 0))).join(''); };
 const mkPlate = (pos, text, tag, wd) => { const e = document.createElement('div'); e.className = 'ax-plate'; $('.ax-ui').appendChild(e); const p = {e, pos: typeof pos === 'function' ? pos : () => pos, text, n: 0, tag, draw() { const sp = (arr, cur) => arr.map((c, i) => '<span class="' + (i < cur ? 'd' : i === cur ? 'c' : '') + '">' + c + '</span>').join('');
     /* 낱말 과제: 1·2장처럼 칠 낱말만 보인다(입력 칸 없음). 다 친 글자는 회색, 지금 칠 글자는 노랑. 틀린 글쇠를 쳤을 때만 칠 자모를 낱말 아래에 1.5초 보여 준다 */
-    e.innerHTML = (tag ? '<i>' + tag + '</i>' : '') + (wd ? '<b class="w">' + sp([...wd.word], p.n < text.length ? wd.map[p.n] : 99) + '</b>' + (p.hintN === p.n && p.n < text.length ? '<em>' + (p.wrong ? '<u>' + p.wrong + '</u>→ ' : '') + '<s>' + text[p.n] + '</s></em>' : '') : '<b>' + sp([...text], p.n) + '</b>'); }, kill() { e.remove(); plates.splice(plates.indexOf(p), 1); }, fin() { p.kill(); }, shake() { e.classList.remove('shake'); void e.offsetWidth; e.classList.add('shake'); if (wd) { p.hintN = p.n; p.draw(); clearTimeout(p.ht); p.ht = setTimeout(() => { p.hintN = -1; p.wrong = null; if (plates.includes(p)) p.draw(); }, 1500); } }}; p.draw(); plates.push(p); return p; };
+    e.innerHTML = (tag ? '<i>' + tag + '</i>' : '') + (wd ? '<b class="w">' + sp([...wd.word], p.n < text.length ? wd.map[p.n] : 99) + '</b>' + (p.hintN === p.n && p.n < text.length ? '<em>' + (p.wrong ? '<u>' + p.wrong + '</u>→ ' : '') + '<s>' + text[p.n] + '</s>' + (SHN[text[p.n]] ? '<small style="font-size:.62em;margin-left:.3em">Shift + ' + SHN[text[p.n]] + '</small>' : '') + '</em>' : '') : '<b>' + sp([...text], p.n) + '</b>'); }, kill() { e.remove(); plates.splice(plates.indexOf(p), 1); }, fin() { p.kill(); }, shake() { e.classList.remove('shake'); void e.offsetWidth; e.classList.add('shake'); if (wd) { p.hintN = p.n; p.draw(); clearTimeout(p.ht); p.ht = setTimeout(() => { p.hintN = -1; p.wrong = null; if (plates.includes(p)) p.draw(); }, 1500); } }}; p.draw(); plates.push(p); return p; };
 const Stat = {ok: 0, bad: 0, acc() { return this.ok + this.bad ? Math.round(this.ok / (this.ok + this.bad) * 100) : 100; }};
 let handler = null; const press = ch => { if (ch === '⌫' && !DF && !PK) return; if (handler) handler(ch); };
 const typeOn = (pos, text, onKey, tag, wd) => new Promise(res => { const p = mkPlate(pos, text, tag, wd); handler = ch => { if (text[p.n] !== ch) { Stat.bad++; if (HOOK) HOOK.bad(text[p.n]); p.shake(); sfx.bad(); return; } Stat.ok++; if (HOOK) HOOK.ok(ch); p.n++; sfx.ok(); if (onKey) onKey(p.n); if (p.n >= text.length) { handler = null; p.fin(); sfx.done(); res(); } else p.draw(); }; });
@@ -5029,7 +5030,7 @@ const guard = g => new Promise(res => { const a = stage.actors[g.enemy], from = 
 let DF = null;
 const dfEase = st => { const f = st.fails[st.wave] || 0; return f >= 2 ? Math.pow(.85, Math.min(3, f - 1)) : 1; };
 const dfHud = () => { const st = DF, s = st.s; where(s.where + ' · ' + s.waveNames[Math.min(st.wave, s.waveNames.length - 1)] + ' ' + (s.hpIcon || '🍃').repeat(Math.max(0, st.hp)) + (dfEase(st) < 1 ? ' · 조금 천천히' : '')); };
-const dfAssign = m => { const s = DF.s, pn = s.kinds[m.kind].pool, pool = s.pools[pn], used = DF.mobs.filter(x => x !== m).map(x => x.keys[0]); let k = DF.pi[pn] || 0, id = null; for (let i = 0; i < pool.length; i++) { const c = pool[(k + i) % pool.length]; if (!used.includes(TX(c)[0])) { id = c; k = k + i + 1; break; } } if (!id) { id = pool[k % pool.length]; k++; } DF.pi[pn] = k; m.keys = TX(id); if (m.lv === undefined) m.lv = (DF.seq = (DF.seq || 0) + 1) % 3; m.plate = mkPlate(() => [m.x, (s.plateY || 3.1) + m.lv * 1.05, m.z], m.keys, null, WD(id)); };   // 글자판 높이를 세 단으로 엇갈려, 가까이 붙어 오는 구름의 낱말이 겹치지 않게 한다
+const dfAssign = m => { const s = DF.s, K0 = s.kinds[m.kind], pn = K0.pools ? K0.pools[Math.min(K0.pools.length - 1, K0.n - m.left)] : K0.pool, pool = s.pools[pn], used = DF.mobs.filter(x => x !== m).map(x => x.keys[0]); let k = DF.pi[pn] || 0, id = null; for (let i = 0; i < pool.length; i++) { const c = pool[(k + i) % pool.length]; if (!used.includes(TX(c)[0])) { id = c; k = k + i + 1; break; } } if (!id) { id = pool[k % pool.length]; k++; } DF.pi[pn] = k; m.keys = TX(id); if (m.lv === undefined) m.lv = (DF.seq = (DF.seq || 0) + 1) % 3; m.plate = mkPlate(() => [m.x, (typeof s.plateY === 'function' ? s.plateY(m) : (s.plateY || 3.1)) + m.lv * 1.05, m.z], m.keys, null, WD(id)); };   // 글자판 높이를 세 단으로 엇갈려, 가까이 붙어 오는 구름의 낱말이 겹치지 않게 한다
 const dfXZ = m => { if (m.slide) { const L = DF.s.lanes[m.lane], k0 = Math.min(1, m.u), tx = L.from[0] + (L.to[0] - L.from[0]) * k0, tz = L.from[1] + (L.to[1] - L.from[1]) * k0, e = Math.min(1, m.slide.t / m.slide.d), q = e * e * (3 - 2 * e); m.x = m.slide.a[0] + (tx - m.slide.a[0]) * q; m.z = m.slide.a[1] + (tz - m.slide.a[1]) * q; m.obj.x = m.x; m.obj.z = m.z; if (e >= 1) m.slide = null; return; } const k = Math.min(1, m.u), dx = (m.to[0] - m.from[0]) / m.len, dz = (m.to[1] - m.from[1]) / m.len; m.x = m.from[0] + (m.to[0] - m.from[0]) * k - dz * m.off; m.z = m.from[1] + (m.to[1] - m.from[1]) * k + dx * m.off; m.obj.x = m.x; m.obj.z = m.z; };
 const dfShield = m => DF.mobs.some(u => u !== m && DF.s.kinds[u.kind].shield && !DF.s.kinds[m.kind].shield && Math.hypot(u.x - m.x, u.z - m.z) < DF.s.kinds[u.kind].shield);   // 우산 구름 곁의 구름은 우산 구름을 먼저 막아야 막을 수 있다
 const dfLanes = () => DF.s.lanes.map((L, i) => i).filter(i => i !== DF.block);   /* 막힌 길(로봇이 막아 줌)을 뺀 길들 */
@@ -5038,10 +5039,11 @@ const dfSpawn = (e, u0, off) => { const s = DF.s; if (s.kinds[e.kind].twin && !e
 const dfHop = m => { m.hopped = true; const o = dfLanes().filter(i => i !== m.lane); if (!o.length) return; const L0 = DF.s.lanes[m.lane], at = i => { const L = DF.s.lanes[i]; return [L.from[0] + (L.to[0] - L.from[0]) * m.u, L.from[1] + (L.to[1] - L.from[1]) * m.u]; }; const nl = o.sort((a, b) => Math.hypot(at(a)[0] - m.x, at(a)[1] - m.z) - Math.hypot(at(b)[0] - m.x, at(b)[1] - m.z))[0], L = DF.s.lanes[nl];
   m.slide = {a: [m.x, m.z], t: 0, d: 1.1}; m.lane = nl; m.off = 0; m.from = L.from; m.to = L.to; m.len = Math.hypot(L.to[0] - L.from[0], L.to[1] - L.from[1]); m.hold = Math.max(m.hold, 1.1); if (stage.mob.hop) stage.mob.hop(m.obj, nl); };
 const dfWave = say => { const st = DF; st.t = 0; st.q = st.s.waves[st.wave].slice().sort((a, b) => a.t - b.t); dfHud(); if (say && st.s.onWave) stage.fx[st.s.onWave](st.wave); };
+const SBASE = {'ㅃ': 'ㅂ', 'ㅉ': 'ㅈ', 'ㄸ': 'ㄷ', 'ㄲ': 'ㄱ', 'ㅆ': 'ㅅ', 'ㅒ': 'ㅐ', 'ㅖ': 'ㅔ'};   /* v16.2: Shift를 안 누르고 친 것(7장 Shift 무오타 기록) */
 const dfKey = ch => { const st = DF; if (!st || !st.mobs.length) return; const s0 = st.s;
   if (ch === '⌫') { if (st.lock) { const p = st.lock.plate; p.n = 0; p.e.classList.remove('lock'); p.draw(); st.lock = null; } return; }
-  if (!st.lock) { const m = st.mobs.find(x => x.keys[0] === ch); if (m && dfShield(m)) { m.plate.e.classList.remove('shake'); void m.plate.e.offsetWidth; m.plate.e.classList.add('shake'); sfx.bad(); if (s0.onShield) stage.fx[s0.onShield](); return; } if (!m) { Stat.bad++; if (HOOK) HOOK.bad(ch); st.mobs.forEach(x => x.plate.shake()); sfx.bad(); return; } st.lock = m; m.plate.e.classList.add('lock'); }
-  const m = st.lock, p = m.plate; if (m.keys[p.n] !== ch) { Stat.bad++; if (HOOK) HOOK.bad(m.keys[p.n]); p.shake(); sfx.bad(); return; }
+  if (!st.lock) { const m = st.mobs.find(x => x.keys[0] === ch); if (m && dfShield(m)) { m.plate.e.classList.remove('shake'); void m.plate.e.offsetWidth; m.plate.e.classList.add('shake'); sfx.bad(); if (s0.onShield) stage.fx[s0.onShield](); return; } if (!m) { if (st.mobs.some(x => SBASE[x.keys[0]] === ch)) st.shift = (st.shift || 0) + 1; Stat.bad++; if (HOOK) HOOK.bad(ch); st.mobs.forEach(x => x.plate.shake()); sfx.bad(); return; } st.lock = m; m.plate.e.classList.add('lock'); }
+  const m = st.lock, p = m.plate; if (m.keys[p.n] !== ch) { if (SBASE[m.keys[p.n]] === ch) st.shift = (st.shift || 0) + 1; Stat.bad++; if (HOOK) HOOK.bad(m.keys[p.n]); p.shake(); sfx.bad(); return; }
   Stat.ok++; if (HOOK) HOOK.ok(ch); p.n++; sfx.ok(); if (p.n < m.keys.length) { p.draw(); return; }
   p.kill(); st.lock = null; m.left--; setSt('throw'); sfx.done(); const K = st.s.kinds[m.kind];
   if (m.left <= 0) { st.mobs.splice(st.mobs.indexOf(m), 1); stage.mob.gone(m.obj, 'win'); if (m.pair && st.mobs.includes(m.pair)) { m.pair.boost = K.boost || 1.8; m.pair.pair = null; if (stage.mob.boost) stage.mob.boost(m.pair.obj); } if (K.split) [-1, 1].forEach(k => dfSpawn({lane: m.lane, kind: K.split}, m.u, k * 1.3)); } else { m.u = Math.max(0, m.u - (K.back || 0) / m.len); m.hold = .8; stage.mob.hit(m.obj, m.left); dfAssign(m); } };
@@ -5049,7 +5051,7 @@ const dfTick = dt => { const st = DF, s = st.s; if (st.pause > 0) { st.pause -= 
   const rate = ((s.rates || [])[st.wave] || 1) * tspd * dfEase(st); for (const m of st.mobs.slice()) { if (m.slide) m.slide.t += dt; if (m.hold > 0) m.hold -= dt; else m.u += s.kinds[m.kind].speed * (m.boost || 1) * rate / m.len * dt; const HK = s.kinds[m.kind].hop; if (HK && !m.hopped && m.u >= HK) dfHop(m); dfXZ(m); m.plate.e.classList.toggle('shield', st.lock !== m && dfShield(m));
     if (m.u >= 1) { m.plate.kill(); if (st.lock === m) st.lock = null; st.mobs.splice(st.mobs.indexOf(m), 1); stage.mob.gone(m.obj, 'reach'); st.hp--; st.leaks++; if (s.onReach) stage.fx[s.onReach](st.hp);
       if (st.hp <= 0) { st.mobs.forEach(x => { x.plate.kill(); stage.mob.gone(x.obj, 'clear'); }); st.mobs = []; st.lock = null; st.hp = s.hp; st.pause = 2.8; st.fails[st.wave] = (st.fails[st.wave] || 0) + 1; if (s.onFail) stage.fx[s.onFail](); dfWave(false); return; } dfHud(); } }
-  if (!st.q.length && !st.mobs.length) { st.wave++; if (st.wave >= s.waves.length) { handler = null; DF = null; ctx.flags[s.defend + '_leaks'] = st.leaks; ctx.flags[s.defend + '_retries'] = Object.values(st.fails).reduce((a, b) => a + b, 0); (async () => { if (s.onWin) await stage.fx[s.onWin](); st.res(st.leaks); })(); return; } st.pause = 2.6; dfWave(true); }
+  if (!st.q.length && !st.mobs.length) { st.wave++; if (st.wave >= s.waves.length) { handler = null; DF = null; ctx.flags[s.defend + '_leaks'] = st.leaks; ctx.flags[s.defend + '_shift'] = st.shift || 0; ctx.flags[s.defend + '_retries'] = Object.values(st.fails).reduce((a, b) => a + b, 0); (async () => { if (s.onWin) await stage.fx[s.onWin](); st.res(st.leaks); })(); return; } st.pause = 2.6; dfWave(true); }
   const tg = st.lock || st.mobs[0]; if (tg && !Mo.moving) face(tg.x, tg.z); };
 const defend = s => new Promise(res => { if (typeof s.hp === 'function' || typeof s.waves === 'function') s = Object.assign({}, s, {hp: typeof s.hp === 'function' ? s.hp(ctx.flags) : s.hp, waves: typeof s.waves === 'function' ? s.waves(ctx.flags) : s.waves}); if (s.where) where(s.where); const bl = s.blockLane && ctx.flags[s.blockLane.flag] === s.blockLane.is ? s.blockLane.lane : -1; DF = {s, block: bl, wave: 0, t: 0, q: [], mobs: [], lock: null, hp: s.hp, leaks: 0, pi: {}, seen: {}, fails: {}, pause: 2.2, res}; setSt('idle'); handler = dfKey; dfWave(true); });
 
@@ -5123,7 +5125,7 @@ const camP = {x: 0, z: 2}, camV = {k: 1, kt: 1, up: 0, ut: 0};   // 장면이 �
 const reset = () => { RC = null; if (RP) rUI(false); Stat.ok = Stat.bad = 0; got.length = 0; ctx.seen = (Save.get()['ch' + CH.n] || {}).collectedClues || []; ctx.owned = ownedOf().filter(x => !tcar || tcar.has(x)); ctx.carry = tcar ? [...tcar].filter(x => !ctx.owned.includes(x)) : carryOf(); ctx.found = []; window.__axFound = []; ctx.used = []; ctx.foundOld = tcar ? [] : (Save.get()['ch' + CH.n] || {}).found || []; bubBy = null; bub.classList.remove('by'); CHS = null; DF = null; got.push(...ctx.owned, ...ctx.carry.filter(x => ((CH.uses || []).includes(x) || (CH.keepFinds || []).includes(x)) && !ctx.owned.includes(x)), ...ctx.foundOld.filter(x => (CH.keepFinds || []).includes(x)));   /* 들고 다니는 발견물도 오른쪽 위 소품 줄에 보인다 */ PK = null; BS = null; inv(); plates.slice().forEach(p => p.kill()); handler = null; G = null; ctx.flags = {}; ctx.clues = []; ctx.route = null; const s = CH.start; MG.position.set(s[0], 0, s[1]); Mo.tx = s[0]; Mo.tz = s[1]; Mo.moving = false; Mo.yaw = Math.PI / 2; setSt('idle'); stage.reset(ctx.owned, ctx.carry); camV.k = camV.kt = 1; camV.up = camV.ut = 0; camP.x = s[0] + 2; camP.z = s[1] * .5 + 1; where(CH.name); };
 let short = false, defOn = false;
 /* 방어 기록(4장부터, 기획안 §7 '방어 기록' 반복 도전): 잃은 톱니가 적을수록, 같으면 정확도가 높을수록 좋은 기록. 정확도 90% 아래는 기록에 안 올린다(경주와 같은 기준) */
-const defEnd = () => { const R = CH.shortcut.rec, sv = Save.get(), c = sv['ch' + CH.n] || (sv['ch' + CH.n] = {}), acc = Stat.acc(), lost = ctx.flags[R.defend + '_leaks'] || 0, ok = acc >= (R.minAcc || 90), rec = c.defRec || {runs: 0}, prev = rec.best, nb = ok && (!prev || lost < prev.lost || (lost === prev.lost && acc > prev.acc)), run = {lost, acc, route: ctx.flags[R.flag] || null, date: Date.now()};
+const defEnd = () => { const R = CH.shortcut.rec, sv = Save.get(), c = sv['ch' + CH.n] || (sv['ch' + CH.n] = {}), acc = Stat.acc(), lost = ctx.flags[R.defend + '_leaks'] || 0, ok = acc >= (R.minAcc || 90), rec = c.defRec || {runs: 0}, prev = rec.best, nb = ok && (!prev || lost < prev.lost || (lost === prev.lost && acc > prev.acc)), run = {lost, acc, shift: ctx.flags[R.defend + '_shift'] || 0, route: ctx.flags[R.flag] || null, date: Date.now()};
   rec.last = run; if (nb) rec.best = run; rec.runs = (rec.runs || 0) + 1; c.defRec = rec; Save.set(sv); if (HOOK && HOOK.defend) HOOK.defend({chapter: CH.n, lost, acc, best: nb, runs: rec.runs}); defOn = true;
   const b = rec.best, tg = b ? b.lost : null, goal = !ok ? '정확도 ' + (R.minAcc || 90) + '% 넘기기' : tg > 1 ? R.icon + ' ' + R.unit + '를 ' + (tg - 1) + '개만 잃기' : tg === 1 ? R.icon + ' ' + R.unit + '를 하나도 잃지 않기' : acc < 100 ? '정확도 ' + Math.min(100, acc + 2) + '% 넘기기' : '오늘 기록 지키기';
   $('.ax-end h1').textContent = CH.shortcut.end; $('.ax-stars').innerHTML = nb ? '🏆' : '🛡️'; $('.ax-got').textContent = nb ? (prev ? '새 최고 기록!' : '첫 기록!') : b ? '최고 기록: ' + R.unit + ' ' + b.lost + '개 잃음 · 정확도 ' + b.acc + '%' : '';
@@ -5195,7 +5197,7 @@ const raceEnd = async () => { const r = RC, id = runId, rc = CH.race; r.done = t
 const home = () => { defOn = false; if (chEnd) { const f = chEnd; chEnd = null; short = false; ++runId; raceOn = false; RC = null; rUI(false); $('.ax-end').classList.remove('on'); f(); return; } ++runId; raceOn = false; short = false; reset(); shortBtn(); $('.ax-end').classList.remove('on'); $('.ax-start').classList.add('on'); };
 
 /* ── 입력 ── */
-addEventListener('keydown', e => { if (!active) return; if (HOOK) e.stopImmediatePropagation(); if (e.key === 'Enter' && (raceOn || defOn) && $('.ax-end').classList.contains('on')) { e.preventDefault(); $('.ax-again').click(); return; } if (e.ctrlKey || e.metaKey || e.altKey || e.repeat) return; const ch = (e.code === 'Backspace' && CH.backspace ? '⌫' : null) || CH.keymap[e.code] || (CH.jamo.includes(e.key) ? e.key : (/^(Key|Digit|Semicolon|Quote|Comma|Period|Slash|Space|Bracket)/.test(e.code) ? '×' : null)); if (ch) { e.preventDefault(); press(ch); flashKey(ch); } }, true);
+addEventListener('keydown', e => { if (!active) return; if (HOOK) e.stopImmediatePropagation(); if (e.key === 'Enter' && (raceOn || defOn) && $('.ax-end').classList.contains('on')) { e.preventDefault(); $('.ax-again').click(); return; } if (e.ctrlKey || e.metaKey || e.altKey || e.repeat) return; if (/^Shift/.test(e.code)) return; const ch = (e.code === 'Backspace' && CH.backspace ? '⌫' : null) || (e.shiftKey && CH.shiftmap && CH.shiftmap[e.code]) || CH.keymap[e.code] || (CH.jamo.includes(e.key) ? e.key : (/^(Key|Digit|Semicolon|Quote|Comma|Period|Slash|Space|Bracket)/.test(e.code) ? '×' : null)); if (ch) { e.preventDefault(); press(ch); flashKey(ch); } }, true);
 const flashKey = ch => { const b = ROOT.querySelector('.ax-keys button[data-k="' + ch + '"]'); if (b) { b.classList.add('hit'); setTimeout(() => b.classList.remove('hit'), 120); } };
 $('.ax-keys').style.setProperty('--n', CH.jamo.length + (CH.backspace ? 1 : 0)); $('.ax-keys').style.setProperty('--np', Math.min(4, CH.jamo.length));
 $('.ax-keys').innerHTML = [...CH.jamo].concat(CH.backspace ? ['⌫'] : []).map(c => '<button data-k="' + c + '">' + c + '</button>').join(''); $('.ax-keys').addEventListener('pointerdown', e => { const b = e.target.closest('button'); if (!b) return; e.preventDefault(); press(b.dataset.k); flashKey(b.dataset.k); });
@@ -7681,9 +7683,423 @@ build(E) { const {T, S, rnd, M, WM, add, flat, disc, glow, inst, MG, burst, setS
 };
 })();
 </script>
+<script type="text/plain" id="a3-lib-ch7">/* 타자 모험 · 7장 쌍둥이 봉우리 (7-1: 봉우리 오르기) — 기획안 5.0 §7의 7장:
+   쌍자음·쌍모음 ㅃ ㅉ ㄸ ㄲ ㅆ ㅒ ㅖ(Shift), 핵심 선택 = 방패 해제 암호 순서 결정, 결과 = 요새의 잠긴 문 열림·숨겨진 기록 발견, 이후 = 8장 기억 조각의 출처, 반복 = Shift 무오타·방패 적 처리.
+   7-1(v15.9, 선생님 "시작"): 거인이 받쳐 준 다리를 건너 산길 어귀 → 표지판에서 Shift 익히기(ㅂ→ㅃ처럼 짝으로) → 메아리 골짜기(쌍자음 낱말을 치면 맞은편 벼랑에서 메아리가 돌아와 돌탑에 불이 켜짐)
+   → 절벽: 🪢 출렁 밧줄다리(6장)의 남은 밧줄이 있으면 던져 걸고 곧장 오름, 없으면 앞쪽 비탈길로 돌아 오름 → 요새 문 앞(방패 자물쇠 둘) — 7-2 방패 암호(갈래)로 이어짐.
+   7-3(v16.2, 선생님 "7-3 줄거리 시작"): 요새 문 지키기 — 세 길(왼쪽·가운데 성벽 너머·오른쪽), 다섯 차례, 체력 = 문틈 빛 ✨ 셋. 새 구름 = 방패 구름(기획안 "Shift 방패 깨기"): 첫 낱말은 쌍자음으로 시작하는 낱말(Shift)로 방패를 깨고, 다음 낱말로 물리친다.
+   차례를 막을 때마다 큰 문이 조금씩 더 열린다 → 다 열리면 문 안 벽화(숨겨진 기록): 🗺️ 옛 지도 조각이 찢긴 자리에 맞고, 📖 낡은 기록장 마지막 장과 같은 글귀 → 8장 기억의 섬 고리. 끝에 고르기(🛡️ 방패 구름 막기 / 다음 장으로).
+   기획안에 없는데 넣은 것(선생님께 알림): 메아리 골짜기와 돌탑, Shift 짝 익히기 표지판, 🪢 밧줄로 절벽 오르기(🪨 돌다리는 기획안대로 10장 귀환길 몫으로 남김), 요새 문의 방패 자물쇠 둘. */
+(() => {
+const NEW = 'ㅃㅉㄸㄲㅆㅒㅖ', ALL = 'ㅁㄴㅇㄹㅎㅗㅓㅏㅣㅂㅈㄷㄱㅅㅛㅕㅑㅐㅔㅋㅌㅊㅍㅠㅜㅡㅃㅉㄸㄲㅆㅒㅖ';
+const task = (text, keys) => ({language: 'ko', stage: 7, allowedKeySet: keys, text, inputMode: 'jamo', difficulty: 1, contentVersion: 1});
+const word = (text, keys) => ({language: 'ko', stage: 7, allowedKeySet: keys, text, inputMode: 'word', difficulty: 1, contentVersion: 1});
+/* 자리: 거인이 받친 다리 끝(BR), 표지판(SG), 메아리 돌탑 셋(CA), 맞은편 벼랑(WZ), 절벽(CL, 그 위는 높이 PH의 너른 터), 앞쪽 비탈길(RAMP), 요새 문(GT) */
+const BR = -40, SG = [-22, -1.4], CA = [[-6, -1.6], [5, -1.6], [16, -1.6]], WZ = -10, CL = 30.8, PH = 3, RZ = 6.2, RX0 = 19, GT = [48, -3.4];
+const ROPE = [30.0, 1.6], MP = [48, .4], CAM = [1.25, 3];
+const MD = [46.2, 1.4], CAM3 = [1.5, 3.4], MU = [48, -1.3];   /* 7-3: 모아가 지키는 자리, 그때 화면, 벽화 앞 */
+const SAT = [[GT[0] - 1.55, PH + 5.4, GT[1] + .6], [GT[0] + 1.55, PH + 5.4, GT[1] + .6]];   /* 7-2: 방패 위 글자판 자리 */
+const PAIR = ['ㅂㅃ', 'ㅈㅉ', 'ㄷㄸ', 'ㄱㄲ', 'ㅅㅆ', 'ㅐㅒ', 'ㅔㅖ'];
+/* 7-3 방어 낱말: 방패 깨기(쌍자음으로 시작 — Shift) / 보통·갑옷·쌍둥이 / 빠른·작은 / 우산 구름(세 글자 이상) */
+const PS7 = ['빨대', '뿌리', '짝꿍', '찌개', '땅콩', '똑똑', '꼬마', '꿀벌', '쑥쑥', '씨름'],
+  PN7 = ['시계', '계곡', '노래', '바다', '하늘', '얘기', '모자', '우산', '지붕', '투구', '차례', '폭포', '나비', '구슬'],
+  PF7 = ['꽃', '빵', '떡', '쌀', '별', '눈', '솜', '책', '붓', '탑', '공', '집'],
+  PB7 = ['바구니', '도토리', '무지개', '코끼리', '해바라기', '꼬리연'];
+const LANES7 = [{from: [38.2, 1.0], to: [46.0, -2.3]}, {from: [48, -11], to: [48, -1.3]}, {from: [57.8, 1.0], to: [50.0, -2.3]}];   // 왼쪽 / 가운데(성벽 너머에서 뛰어내림) / 오른쪽. 태블릿(4:3)에서도 화면 안에서 나온다
+const KINDS7 = {normal: {pool: 'normal', n: 1, speed: .7}, fast: {pool: 'fast', n: 1, speed: 1.3}, armor: {pool: 'normal', n: 2, speed: .6, back: 2.5}, split: {pool: 'normal', n: 1, speed: .65, split: 'mini'}, mini: {pool: 'fast', n: 1, speed: 1},
+  twin: {pool: 'normal', n: 1, speed: .62, twin: true, boost: 1.9, intro: 'twinIntro', introPause: 3.2}, umbrella: {pool: 'long', n: 1, speed: .7, shield: 5.6, intro: 'umbrellaIntro', introPause: 3.2},
+  shieldc: {pools: ['shift', 'normal'], n: 2, speed: .55, back: 1.6, intro: 'shieldIntro', introPause: 3.6}};   /* 방패 구름(7장 새 구름): 첫 낱말 = Shift 낱말로 방패 깨기 */
+const W7 = [
+  [[0, 0, 'normal'], [3, 2, 'normal'], [6, 1, 'normal'], [9, 0, 'fast'], [11, 2, 'normal'], [14, 1, 'normal']],
+  [[0, 1, 'shieldc'], [5, 0, 'normal'], [7, 2, 'fast'], [10, 1, 'normal'], [12, 0, 'shieldc'], [16, 2, 'normal'], [18, 1, 'fast']],
+  [[0, 2, 'shieldc'], [3, 0, 'armor'], [6, 1, 'twin'], [10, 2, 'fast'], [12, 0, 'shieldc'], [15, 1, 'split'], [18, 2, 'normal'], [20, 0, 'fast']],
+  [[0, 0, 'umbrella'], [1.7, 0, 'shieldc'], [4, 2, 'fast'], [6, 1, 'armor'], [9, 2, 'shieldc'], [12, 1, 'twin'], [15, 0, 'normal'], [17, 2, 'split'], [19, 1, 'shieldc'], [21, 0, 'fast']],
+  [[0, 1, 'shieldc'], [2, 0, 'fast'], [4, 2, 'shieldc'], [6, 1, 'armor'], [8, 0, 'twin'], [11, 2, 'umbrella'], [12.7, 2, 'shieldc'], [15, 1, 'split'], [17, 0, 'shieldc'], [19, 2, 'fast'], [21, 1, 'armor'], [23, 0, 'shieldc'], [25, 2, 'fast']]];
+/* 구름 높이: 가운데 길은 성벽 위로 넘어온 뒤 문 앞으로 뛰어내린다 */
+const yOf = z => { const k = Math.max(0, Math.min(1, (z + 3.7) / 2.3)), e = k * k * (3 - 2 * k); return 12 + (PH + 1.5 - 12) * e; };
+const ECHO = [['빵', '꿀'], ['딸기', '짝꿍'], ['쌍둥이', '얘들아', '예쁜']];
+window.__advChapters[7] = {
+n: 7, name: '쌍둥이 봉우리', part: '7-3', start: [-34, 1.6], routes: ['blue', 'red'],
+collect: ['🗺️', '📖'], collectName: '숨겨진 기록',   // 7-2: 먼저 푼 방패 쪽 탑에서 나오는 기록(8장 기억 조각의 단서). 다시 할 때 순서를 바꾸면 다른 기록
+
+backspace: true, speedTest: '구름 빠르기', speedDefault: 1.7,   // 구름 빠르기 1.7배는 3·4·6장과 같은 값
+shortcut: {from: 'g3', to: 'g3e', at: MD, cam: CAM3, label: '🛡️ 방패 구름 막기', end: '방패 구름을 막았어요!', rec: {defend: 'ch7_gate', flag: 'shieldFirst', def: 'blue', unit: '문틈 빛', icon: '✨', minAcc: 90}},   /* 반복 놀이(기획안: Shift 무오타·방패 적 처리): 7장을 끝낸 학생만(파일로 열면 늘). 잃은 문틈 빛이 적을수록 좋은 기록, Shift 놓침도 함께 남김 */
+endAsk: {say: '방패 구름을 한 번 더 막아 볼까?', face: [GT[0], GT[1]], goSay: '좋아! 문 앞으로 가자!', nextSay: '기억의 섬으로 가자!', choices: [{id: 'again', task: 'ko7_ask_again', at: [GT[0] - 3, PH + 6.6, -1], tag: '🛡️ 방패 구름 막기<br>Shift 기록에 도전'}, {id: 'next', task: 'ko7_ask_next', at: [GT[0] + 3, PH + 6.6, -1], tag: '🏝️ 다음 장으로'}]},
+uses: ['🪢'], carryTest: [['🪢', '출렁 밧줄다리']],   // 6장에서 가져오는 것: 🪢 = 밧줄다리를 놓은 학생(남은 밧줄로 절벽을 곧장 오름). 없어도 끝까지 간다(비탈길로 돌아감)
+marks: {cl: {label: '절벽부터', at: [26, 1.6]}, p2: {label: '7-2부터', at: [48, .4]}, g3: {label: '7-3부터(🗺️)', at: MD, flags: {shieldFirst: 'blue'}, got: ['🗺️']}, g3r: {label: '7-3부터(📖)', from: 'g3', at: MD, flags: {shieldFirst: 'red'}, got: ['📖']}},
+keymap: {KeyA: 'ㅁ', KeyS: 'ㄴ', KeyD: 'ㅇ', KeyF: 'ㄹ', KeyG: 'ㅎ', KeyH: 'ㅗ', KeyJ: 'ㅓ', KeyK: 'ㅏ', KeyL: 'ㅣ', KeyQ: 'ㅂ', KeyW: 'ㅈ', KeyE: 'ㄷ', KeyR: 'ㄱ', KeyT: 'ㅅ', KeyY: 'ㅛ', KeyU: 'ㅕ', KeyI: 'ㅑ', KeyO: 'ㅐ', KeyP: 'ㅔ', KeyZ: 'ㅋ', KeyX: 'ㅌ', KeyC: 'ㅊ', KeyV: 'ㅍ', KeyB: 'ㅠ', KeyN: 'ㅜ', KeyM: 'ㅡ'},
+shiftmap: {KeyQ: 'ㅃ', KeyW: 'ㅉ', KeyE: 'ㄸ', KeyR: 'ㄲ', KeyT: 'ㅆ', KeyO: 'ㅒ', KeyP: 'ㅖ'},   // Shift를 누른 채로 치면 쌍자음·쌍모음(core v15.9). Shift 없이 치면 틀림 → 'Shift + ㅂ' 안내
+jamo: ALL,
+sky: {bg: '#9cc3e6', fog: '#b7d0e6', hemi: '#e3eefa', ground: '#6b7356', hemiI: .62, sun: '#fff3dc', sunI: .85},
+card: {title: '🏔️ 7장 쌍둥이 봉우리', html: '<p>다리를 건너니 쌍둥이 봉우리!<br>꼭대기 요새의 문이 잠겨 있어요.<br><b>모아</b>와 함께 봉우리를 올라요!</p>', keys: NEW, how: '새 글쇠 ㅃ ㅉ ㄸ ㄲ ㅆ ㅒ ㅖ는 Shift를 누른 채로 쳐요.'},
+endTitle: '7장을 마쳤어요!', tipOther: '다른 방패를 먼저 풀면 다른 기록이 나와요 · 🛡️ 방패 구름 막기가 열렸어요', tipBoth: '두 기록을 모두 찾았어요! · 🛡️ 방패 구름 막기가 열렸어요', nextTip: '다음은 8장 기억의 섬',
+
+/* ── 입력 과제: 표지판은 짝(ㅂ→ㅃ)으로 Shift 익히기, 메아리·절벽은 새 글쇠가 든 낱말 ── */
+tasks: {
+  ...Object.fromEntries(PAIR.map((t, i) => ['ko7_p' + i, task(t + t, ALL)])),
+  ...Object.fromEntries([].concat(...ECHO.map((a, k) => a.map((w, i) => ['ko7_e' + k + i, word(w, ALL)])))),
+  ko7_r1: word('쌩', ALL), ko7_r2: word('꼭', ALL), ko7_r3: word('쭉쭉', ALL),        /* 🪢 밧줄: 던지고, 묶고, 오른다 */
+  ko7_w1: word('끙끙', ALL), ko7_w2: word('씩씩하게', ALL),                           /* 밧줄이 없으면 비탈길로 */
+  ko7_gate: word('방패', ALL),
+  /* 7-2 방패 암호: 고르기(첫 글쇠 ㅍ / ㅃ), 파랑 방패(ㄲ) 꽃·까치·꼬리, 빨강 방패(ㅆ) 씨앗·쌀·썰매 */
+  ko7_pick_blue: word('파랑', ALL), ko7_pick_red: word('빨강', ALL),
+  ko7_b0: word('꽃', ALL), ko7_b1: word('까치', ALL), ko7_b2: word('꼬리', ALL), ko7_r0: word('씨앗', ALL), ko7_r1s: word('쌀', ALL), ko7_r2s: word('썰매', ALL),
+  /* 7-3 요새 문 지키기 */
+  ...Object.fromEntries(PS7.map((w, i) => ['ko7_ps' + i, word(w, ALL)])), ...Object.fromEntries(PN7.map((w, i) => ['ko7_pn' + i, word(w, ALL)])),
+  ...Object.fromEntries(PF7.map((w, i) => ['ko7_pf' + i, word(w, ALL)])), ...Object.fromEntries(PB7.map((w, i) => ['ko7_pb' + i, word(w, ALL)])),
+  ko7_m0: word('기억', ALL), ko7_ask_again: word('다시', ALL), ko7_ask_next: word('가자', ALL)
+},
+
+/* ── 장면 자료 ── */
+scenes: [
+  /* 6장 끝에서 이어짐: 거인이 받쳐 준 다리를 막 건넜다 */
+  {where: '다리 건너편', face: [BR, 1.6], pose: 'cheer', say: '거인 아저씨, 고마워요!', ms: 2000, wait: 1500},
+  {fx: 'giantWave', wait: 900},
+  {where: '산길 어귀', cam: [1.1, .6], go: [SG[0] - 3, 1.6], face: [SG[0], SG[1]]},
+  {pose: 'surprise', say: '봉우리가 둘이야! 꼭대기에 요새가 있어', ms: 2600, wait: 2300},
+  {pose: 'inspect', say: '표지판에 처음 보는 글자가 있어', ms: 2200, wait: 1900},
+  {say: '굵은 글자는 Shift를 누른 채로 쳐야 해!', ms: 2600, wait: 2000}, {say: ''},
+  ...PAIR.map((t, i) => ({type: 'ko7_p' + i, at: [SG[0], 5.4, SG[1]], tag: i ? null : '왼손 새끼손가락으로 Shift를 누른 채로', done: 'signLit', arg: i})),
+  {fx: 'signDone', pose: 'cheer', say: '표지판 글자가 다 켜졌어!', ms: 2000, wait: 1700},
+  /* 메아리 골짜기: 낱말을 치면 맞은편 벼랑에서 메아리가 돌아와 돌탑에 불이 켜진다 */
+  ...[].concat(...ECHO.map((a, k) => [
+    {where: '메아리 골짜기', cam: [1.1, .6], go: [CA[k][0] - .8, 1.6], face: [CA[k][0], WZ]},
+    ...(k ? [] : [{say: '여기는 메아리 골짜기래', ms: 2000, wait: 1700}, {say: '크게 외치면 돌탑에 불이 켜진대!', ms: 2400, wait: 2000}, {say: ''}]),
+    ...a.map((w, i) => ({type: 'ko7_e' + k + i, follow: 'moa', as: 'cheer', tag: k || i ? null : '외치면 메아리가 돌아와요', done: 'echo', arg: k + ':' + w})),
+    {fx: 'cairnLit', arg: k, wait: 600}])),
+  {say: '돌탑 셋에 모두 불이 켜졌어!', ms: 2000, wait: 1800},
+  /* 절벽 */
+  {mark: 'cl', where: '절벽 아래', cam: [1.15, 1.2], go: [26, 1.6], face: [CL, 1.6]},
+  {pose: 'surprise', say: '높은 절벽이 길을 막았어!', ms: 2000, wait: 1800},
+  {has: '🪢', use: true,
+   then: [{say: '밧줄다리에서 남은 밧줄이 있지!', ms: 2200, wait: 1900}, {say: ''},
+     {go: [ROPE[0], ROPE[1]], face: [CL, 1.6]},
+     {type: 'ko7_r1', follow: 'moa', as: 'throw', tag: '밧줄을 던져요', done: 'ropeThrow'},
+     {type: 'ko7_r2', follow: 'moa', tag: '단단히 묶어요', done: 'ropeTie'},
+     {pose: 'cheer', say: '걸렸어! 이제 올라가자', ms: 1800, wait: 1300}, {say: ''},
+     {type: 'ko7_r3', follow: 'moa', as: 'lift', tag: '밧줄을 타고 올라요', done: 'climb'},
+     {pose: 'cheer', say: '한 번에 올라왔어!', ms: 1800, wait: 1500}],
+   else: [{pose: 'inspect', say: '오를 줄이 없어… 저쪽 비탈길로 돌아가자', ms: 2600, wait: 2200},
+     {path: [[RX0 - 1, 1.6], [RX0, RZ], [RX0 + 5.5, RZ]]},
+     {say: '가파르다…', ms: 1400, wait: 900}, {say: ''},
+     {type: 'ko7_w1', follow: 'moa', tag: '힘내서 올라요', done: 'puff'},
+     {path: [[CL - .4, RZ], [CL + 1.6, RZ - .6]]},
+     {type: 'ko7_w2', follow: 'moa', as: 'cheer', done: 'puff'},
+     {say: '휴, 돌아서 올라왔어', ms: 1800, wait: 1500}]},
+  /* 요새 문 앞 */
+  {where: '요새 문 앞', cam: CAM, path: [[CL + 3, 1.6], [MP[0] - 4, 1.6], [MP[0], MP[1]]], face: [GT[0], GT[1]]},
+  {fx: 'gateLook', pose: 'surprise', say: '요새 문이 꽁꽁 잠겨 있어!', ms: 2200, wait: 2000},
+  {say: '방패 자물쇠가 왼쪽에 하나, 오른쪽에 하나…', ms: 2600, wait: 2300},
+  {say: ''}, {type: 'ko7_gate', at: [GT[0], PH + 6.4, GT[1] + .6], tag: '자물쇠를 살펴봐요', done: 'shieldGlow'},
+  {pose: 'inspect', say: '방패마다 암호가 있어', ms: 2400, wait: 2200},
+  /* ══ 7-2 방패 암호: 먼저 풀 방패를 고른다. 두 방패 모두 풀지만, 먼저 푼 쪽 탑에서 숨겨진 기록이 나온다 ══ */
+  {mark: 'p2', where: '요새 문 앞', cam: CAM, go: MP, face: [GT[0], GT[1]]},
+  {say: '방패를 보면 무늬가 깜박여. 그 차례대로 치면 풀릴 거야', ms: 2800, wait: 2400}, {say: ''},
+  {repair: 'ch7_shield', flag: 'shieldFirst', where: '먼저 풀 방패 고르기', look: [GT[0], GT[1]], ask: '어느 방패부터 풀까?', choices: [
+    {id: 'blue', where: '파랑 방패 풀기', at: [GT[0] - 3.4, PH + 6.2, GT[1] + .8], task: 'ko7_pick_blue', tag: '🔵 파랑 방패 먼저<br>왼쪽 탑',
+      parts: [{stand: MP, look: [GT[0] - 1.55, GT[1]], at: SAT[0], task: 'ko7_b0', each: 'busy0', done: 'rune'}, {at: SAT[0], task: 'ko7_b1', done: 'rune'}, {at: SAT[0], task: 'ko7_b2', done: 'rune'}],
+      after: [{fx: 'shieldOpen', arg: 0, pose: 'cheer', say: '파랑 방패가 풀렸어!', ms: 1900, wait: 1600}],
+      first: [{fx: 'towerOpen', arg: 0, pose: 'surprise', say: '왼쪽 탑에 작은 문이 열렸어!', ms: 2200, wait: 1800},
+        {has: '🗺️', then: [{say: '옛 지도 조각은 벌써 갖고 있어. 잘 간직하자', ms: 2600, wait: 2400}],
+         else: [{fx: 'giftFly', arg: 0, get: '🗺️', say: '옛 지도 조각이야! 어딘가 섬이 그려져 있어', ms: 2800, wait: 2600}]}],
+      second: [{say: '파랑 방패도 풀었어!', ms: 1800, wait: 1600}]},
+    {id: 'red', where: '빨강 방패 풀기', at: [GT[0] + 3.4, PH + 6.2, GT[1] + .8], task: 'ko7_pick_red', tag: '🔴 빨강 방패 먼저<br>오른쪽 탑',
+      parts: [{stand: MP, look: [GT[0] + 1.55, GT[1]], at: SAT[1], task: 'ko7_r0', each: 'busy1', done: 'rune'}, {at: SAT[1], task: 'ko7_r1s', done: 'rune'}, {at: SAT[1], task: 'ko7_r2s', done: 'rune'}],
+      after: [{fx: 'shieldOpen', arg: 1, pose: 'cheer', say: '빨강 방패가 풀렸어!', ms: 1900, wait: 1600}],
+      first: [{fx: 'towerOpen', arg: 1, pose: 'surprise', say: '오른쪽 탑에 작은 문이 열렸어!', ms: 2200, wait: 1800},
+        {has: '📖', then: [{say: '낡은 기록장은 벌써 갖고 있어. 잘 간직하자', ms: 2600, wait: 2400}],
+         else: [{fx: 'giftFly', arg: 1, get: '📖', say: '낡은 기록장이야! 누가 섬 이야기를 적어 두었어', ms: 2800, wait: 2600}]}],
+      second: [{say: '빨강 방패도 풀었어!', ms: 1800, wait: 1600}]}
+  ]},
+  {fx: 'gateCrack', pose: 'cheer', say: '큰 문이 열리기 시작했어!', ms: 2000, wait: 1800},
+  {fx: 'cloudsCome', pose: 'surprise', say: '앗! 먹구름 무리가 몰려와!', ms: 2400, wait: 2200},
+  {say: '문이 다 열릴 때까지 지켜야 해!', ms: 2400, wait: 2200},
+  /* ══ 7-3 요새 문 지키기: 차례를 막을 때마다 큰 문이 조금씩 열린다. 구름이 문에 닿으면 문틈 빛 ✨이 줄고 문이 덜컹 닫힌다 ══ */
+  {mark: 'g3', where: '요새 문 지키기', cam: CAM3, go: MD, face: [GT[0], 8]},
+  {fx: 'darkSplit', pose: 'surprise', say: '먹구름이 세 길로 나뉘었어!', ms: 2200, wait: 2000},
+  {say: ''},
+  {defend: 'ch7_gate', where: '요새 문 지키기', waveNames: ['첫째 차례', '둘째 차례', '셋째 차례', '넷째 차례', '마지막 차례'], hp: 3, hpIcon: '✨', plateY: m => yOf(m.z) + 1.7,
+    lanes: LANES7, kinds: KINDS7, rates: [.8, .95, 1.05, 1.15, 1.25],
+    pools: {shift: PS7.map((w, i) => 'ko7_ps' + i), normal: PN7.map((w, i) => 'ko7_pn' + i), fast: PF7.map((w, i) => 'ko7_pf' + i), long: PB7.map((w, i) => 'ko7_pb' + i)},
+    waves: W7.map(w => w.map(a => ({t: a[0], lane: a[1], kind: a[2]}))), onShield: 'shieldSay',
+    onWave: 'waveSay', onReach: 'doorBump', onFail: 'doorBack', onWin: 'gateWin'},
+  {mark: 'g3e', where: '요새 문', cam: CAM3, fx: 'gateOpen', pose: 'cheer', say: '문이 활짝 열렸어!', ms: 2000, wait: 1800},
+  /* 문 안의 벽화(숨겨진 기록): 7-2에서 받은 🗺️·📖과 이어진다 → 8장 기억의 섬 */
+  {where: '숨겨진 기록', cam: [1.05, 2.6], path: [[GT[0] - 1.2, .2], MU], face: [GT[0], GT[1] - 2]},
+  {fx: 'muralLit', pose: 'surprise', say: '벽에 커다란 그림이 있어!', ms: 2000, wait: 1800},
+  {fx: 'muralPath', say: '섬들이 그려진 옛 지도야. 우리가 지나온 섬도 있어!', ms: 2800, wait: 2600},
+  {has: '🗺️', use: [GT[0] + 1.6, PH + 3.9, GT[1] - .2],
+   then: [{fx: 'muralPiece', pose: 'cheer', say: '지도 조각이 딱 맞아! 섬 하나가 나타났어', ms: 2600, wait: 2400}],
+   else: [{pose: 'inspect', say: '한 군데가 찢겨 나갔어… 섬 하나가 안 보여', ms: 2600, wait: 2400}]},
+  {say: '그 옆에 글씨가 있어', ms: 1600, wait: 1200}, {say: ''},
+  {type: 'ko7_m0', at: [GT[0] + 1.6, PH + 6.2, GT[1] + .4], tag: '벽화 글씨를 읽어요', done: 'muralName'},
+  {say: '기억의 섬…!', ms: 1800, wait: 1600},
+  {has: '📖', use: [GT[0], PH + 1.2, GT[1] - .2],
+   then: [{fx: 'muralBook', pose: 'surprise', say: '기록장 마지막 장과 같은 글귀야!', ms: 2400, wait: 2200}, {say: '"모든 이야기는 기억의 섬에 모여 있다"', ms: 2800, wait: 2600}]},
+  {fx: 'muralCloud', pose: 'inspect', say: '섬 옆에 작은 구름이 혼자 그려져 있어…', ms: 2800, wait: 2600},
+  {pose: 'cheer', say: '기억의 섬에 가 보면 알 수 있을 거야!', ms: 2400, wait: 2200}   /* 이어서 묻는다(endAsk): 방패 구름 막기 / 다음 장으로 */
+],
+
+/* ── 무대 ── */
+build(E) { const {T, S, rnd, M, add, flat, glow, inst, MG, burst, sleep, sfx} = E;
+  const sm = (a, b, k) => a + (b - a) * k, ease = k => k * k * (3 - 2 * k);
+  const canvasTex = (w, h, draw) => { const c = document.createElement('canvas'); c.width = w; c.height = h; draw(c.getContext('2d'), w, h); const t = new T.CanvasTexture(c); t.encoding = T.sRGBEncoding; return t; };
+  const rockC = ['#8f8a80', '#7c776e', '#a09a8e', '#6e6a62', '#b0a99b'];
+  const ZB = -60, ZF = 26;
+  const gy = (x, z) => { if (x >= CL) return PH; if (x > RX0 && z > RZ - 1.6 && z < RZ + 1.6) return PH * Math.min(1, (x - RX0) / (CL - RX0)); return 0; };
+
+  /* 땅: 산 아래 풀밭(왼쪽) + 절벽 위 너른 터(오른쪽, 높이 PH) */
+  const gTex = canvasTex(512, 512, x => { x.fillStyle = '#7f9a5a'; x.fillRect(0, 0, 512, 512); for (let i = 0; i < 5000; i++) { x.fillStyle = ['#8aa665', '#71894f', '#9bb072', '#66804a', '#a3a46e'][i % 5]; x.globalAlpha = .5; x.fillRect(rnd() * 512, rnd() * 512, 3 + rnd() * 6, 1.5 + rnd() * 2.5); } });
+  gTex.wrapS = gTex.wrapT = T.RepeatWrapping;
+  { const t = gTex.clone(); t.needsUpdate = true; t.repeat.set(9, 8); const g = new T.Mesh(new T.PlaneGeometry(CL + 70, ZF - ZB), new T.MeshStandardMaterial({map: t, roughness: 1})); g.rotation.x = -Math.PI / 2; g.position.set((CL - 70) / 2, 0, (ZB + ZF) / 2); g.receiveShadow = true; S.add(g); }
+  const plat = new T.Mesh(new T.BoxGeometry(60, PH, ZF - ZB), new T.MeshStandardMaterial({color: '#8c8579', roughness: 1, flatShading: true})); plat.position.set(CL + 30, PH / 2, (ZB + ZF) / 2); plat.receiveShadow = true; S.add(plat);
+  { const t = gTex.clone(); t.needsUpdate = true; t.repeat.set(5, 8); const g = new T.Mesh(new T.PlaneGeometry(60, ZF - ZB), new T.MeshStandardMaterial({map: t, roughness: 1})); g.rotation.x = -Math.PI / 2; g.position.set(CL + 30, PH + .01, (ZB + ZF) / 2); g.receiveShadow = true; S.add(g); }
+  /* 절벽 얼굴: 층층 바위 */
+  { const L = []; for (let z = ZB + 30; z <= ZF; z += 1.1) for (let y = .4; y < PH; y += 1) L.push({p: [CL - .02, y, z + (rnd() - .5) * .5], r: [0, 0, (rnd() - .5) * .4], s: [.28 + rnd() * .12, .6 + rnd() * .3, .7 + rnd() * .4], c: rockC[(rnd() * 5) | 0]});   /* v16.0: 벽에 납작하게(전엔 1칸 가까이 튀어나와 오르는 모아가 바위 속에 묻혔음) */
+    const g = new T.DodecahedronGeometry(1, 0); L.forEach(a => { const e = add(g, M(a.c), a.p[0], a.p[1], a.p[2]); e.rotation.set(a.r[0], a.r[1], a.r[2]); e.scale.set(a.s[0], a.s[1], a.s[2]); }); }
+  /* 길: 흙길 */
+  const road = (x0, z0, x1, z1, w, y) => { const dx = x1 - x0, dz = z1 - z0, Ln = Math.hypot(dx, dz), a = -Math.atan2(dz, dx); flat(Ln + w * .5, w, '#c2ad86', (x0 + x1) / 2, (z0 + z1) / 2, a, (y || 0) + .025); };
+  road(BR + 2, 1.6, CL - .3, 1.6, 2.6); road(CL + .3, 1.6, MP[0] - 3, 1.6, 2.6, PH); road(MP[0] - 3, 1.6, MP[0], MP[1] - .6, 2.4, PH); road(RX0 - 1, 1.6, RX0, RZ, 2);
+  /* 비탈길(밧줄이 없을 때 돌아 오르는 길): 절벽 앞쪽으로 비스듬히 오르는 돌길 */
+  { const Ln = Math.hypot(CL - RX0, PH), a = Math.atan2(PH, CL - RX0); const r = add(new T.BoxGeometry(Ln + .4, .5, 2.6), M('#a39780'), (RX0 + CL) / 2, PH / 2 - .25, RZ); r.rotation.z = a;
+    for (let i = 0; i < 9; i++) { const x = RX0 + 1 + i * 1.2, h = PH * (x - RX0) / (CL - RX0); add(new T.BoxGeometry(.9, Math.max(.2, h - .3), 2.4), M(rockC[i % 5]), x, Math.max(.1, (h - .3) / 2), RZ + .1); }
+    for (let x = RX0 + 1; x < CL; x += 1.6) { const h = PH * (x - RX0) / (CL - RX0); add(new T.CylinderGeometry(.05, .05, .9, 5), M('#6b4626'), x, h + .45, RZ + 1.3); } }
+
+  /* 뒤쪽: 다리 끝(왼쪽 협곡), 메아리 골짜기의 맞은편 벼랑, 쌍둥이 봉우리와 요새 */
+  { /* 협곡과 다리 끝: 6장 다리의 끝 판자들, 그 아래로 거인의 커다란 손이 받치고 있다 */
+    const gap = new T.Mesh(new T.PlaneGeometry(10, ZF - ZB), new T.MeshStandardMaterial({color: '#3d3a36', roughness: 1})); gap.rotation.x = -Math.PI / 2; gap.position.set(BR - 5, .02, (ZB + ZF) / 2); S.add(gap);
+    for (let i = 0; i < 9; i++) add(new T.BoxGeometry(.55, .14, 2.2), M(i % 2 ? '#a9713f' : '#c29159'), BR - 8 + i * .95, .5, 1.6);
+    [[BR - 8.5, .4], [BR - 8.5, 2.8], [BR + .3, .4], [BR + .3, 2.8]].forEach(p => add(new T.CylinderGeometry(.09, .1, 1.3, 6), M('#6b4626'), p[0], .55, p[1]));
+    var HAND = new T.Group(); HAND.position.set(BR - 4, -.2, 1.6); S.add(HAND); const armor = M('#7d8796', {metalness: .3}), armorD = M('#5c6370', {metalness: .3});
+    add(new T.BoxGeometry(2.4, .7, 3), armor, 0, -.05, 0, HAND); [-1, -.35, .3, .95].forEach(z => add(new T.BoxGeometry(.6, .55, .5), armorD, 1.35, .05, z, HAND)); add(new T.BoxGeometry(1.4, 2.6, 1.4), armorD, -1.6, -1.6, 0, HAND); }
+  { /* 메아리 골짜기 맞은편 벼랑(뒤쪽, z = WZ) */
+    const L = []; for (let x = BR + 6; x < CL + 6; x += 1.5) for (let y = .5; y < 11; y += 1.6) L.push({p: [x + (rnd() - .5) * .8, y, WZ - 1.2 - y * .18 + (rnd() - .5) * .6], s: 1.1 + rnd() * .9, c: rockC[(rnd() * 5) | 0]});
+    const g = new T.DodecahedronGeometry(1, 0); L.forEach(a => { const e = add(g, M(a.c), a.p[0], a.p[1], a.p[2]); e.scale.set(a.s, a.s * .85, a.s); e.rotation.set(rnd(), rnd() * 3, rnd()); e.castShadow = false; });
+    for (let i = 0; i < 40; i++) { const x = BR + 8 + rnd() * (CL - BR - 4), e = add(new T.ConeGeometry(.5 + rnd() * .4, 1.4 + rnd(), 6), M(['#4f7a3e', '#5f8a48', '#456d36'][i % 3]), x, 11 + rnd() * .4, WZ - 3.2 - rnd() * 2); e.castShadow = false; } }
+  /* 쌍둥이 봉우리(멀리 뒤): 눈 덮인 두 봉우리, 그 사이 높은 성벽과 탑 */
+  const PK = [[36, -42], [62, -42]];
+  PK.forEach((p, i) => { const h = 34 + i * 2, e = add(new T.ConeGeometry(15, h, 7), M(i ? '#7a7f88' : '#80858d'), p[0], h / 2 - .5, p[1]); e.castShadow = false; e.rotation.y = i * .7;
+    const sn = add(new T.ConeGeometry(5.4, h * .34, 7), M('#f4f6fa'), p[0], h - h * .17 - .4, p[1]); sn.castShadow = false; sn.rotation.y = i * .7; });
+  { const wall = M('#b9ad97'), wallD = M('#8f846f'); const W = add(new T.BoxGeometry(20, 5, 2.4), wall, 49, 18, -38); W.castShadow = false;
+    for (let x = 39.5; x <= 58.5; x += 1.6) add(new T.BoxGeometry(.8, .8, 2.4), wall, x, 20.9, -38).castShadow = false;
+    [[39, -38], [59, -38], [49, -38]].forEach((p, i) => { add(new T.CylinderGeometry(1.4, 1.6, 9, 8), wallD, p[0], 18 + (i === 2 ? 2 : 0), p[1]).castShadow = false; add(new T.ConeGeometry(1.9, 2.4, 8), M('#b04a3c'), p[0], 23.7 + (i === 2 ? 2 : 0), p[1]).castShadow = false; }); }
+  /* 요새 문(절벽 위 너른 터 뒤쪽): 돌 성벽 + 큰 나무 문 + 방패 자물쇠 둘(왼쪽 파랑 / 오른쪽 빨강) */
+  const wallM = M('#c2b59c'), wallD = M('#93876f');
+  add(new T.BoxGeometry(34, 7, 2), wallM, GT[0], PH + 3.5, GT[1] - 1.4);
+  for (let x = GT[0] - 16.5; x <= GT[0] + 16.5; x += 1.5) add(new T.BoxGeometry(.75, .8, 2), wallM, x, PH + 7.4, GT[1] - 1.4);
+  [-1, 1].forEach(sx => { add(new T.CylinderGeometry(1.5, 1.7, 9.5, 8), wallD, GT[0] + sx * 4.6, PH + 4.75, GT[1] - 1); add(new T.ConeGeometry(2, 2.6, 8), M('#b04a3c'), GT[0] + sx * 4.6, PH + 10.8, GT[1] - 1); });
+  const DOOR = []; [-1, 1].forEach(sx => { const d = new T.Group(); d.position.set(GT[0] + sx * 3.1, PH, GT[1] - .3); S.add(d);
+    add(new T.BoxGeometry(3.1, 5.6, .4), M('#7a5230'), -sx * 1.55, 2.8, 0, d); [1.2, 2.8, 4.4].forEach(y => add(new T.BoxGeometry(3.1, .22, .1), M('#3d3a36', {metalness: .4}), -sx * 1.55, y, .25, d)); DOOR.push(d); });
+  const SHC = ['#3b82d6', '#d6453b'], SHIELD = [-1, 1].map((sx, i) => { const g = new T.Group(); g.position.set(GT[0] + sx * 1.55, PH + 3.2, GT[1] + .05); S.add(g);
+    const tex = canvasTex(256, 256, (x) => { x.fillStyle = SHC[i]; x.beginPath(); x.arc(128, 128, 124, 0, 6.3); x.fill(); x.lineWidth = 14; x.strokeStyle = '#f1d27a'; x.stroke(); x.fillStyle = '#fff6d8'; x.font = 'bold 96px "Noto Sans KR","Malgun Gothic",sans-serif'; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText(i ? 'ㅆ' : 'ㄲ', 128, 136); });
+    const f = add(new T.CylinderGeometry(1.1, 1.1, .18, 28), [M('#8a6a2a'), new T.MeshStandardMaterial({map: tex, roughness: .6}), M('#8a6a2a')], 0, 0, 0, g); f.rotation.x = Math.PI / 2;
+    const gl = glow(3.2, SHC[i]); gl.position.set(g.position.x, g.position.y, g.position.z + .3); gl.material.opacity = 0;
+    const rn = [0, 1, 2].map(j => { const a = Math.PI / 2 + (j - 1) * 1.15, e = add(new T.SphereGeometry(.17, 10, 8), M('#5a5a5a', {flatShading: false, emissive: SHC[i], emissiveIntensity: 0}), Math.cos(a) * .82, Math.sin(a) * .82, .14, g); return e; });
+    return {g, gl, rn, on: 0, open: 0, openT: 0}; });
+  /* 탑의 작은 문(7-2): 먼저 푼 방패 쪽 탑 아래에 열린다 */
+  const TDOOR = [-1, 1].map((sx, i) => { const d = add(new T.BoxGeometry(1.1, 1.8, .1), M('#5c3d1e'), GT[0] + sx * 4.6, PH + .9, GT[1] + .55); const gl = glow(2.4, '#ffe8a3'); gl.position.set(d.position.x, PH + 1, GT[1] + .9); gl.material.opacity = 0; return {d, gl, t: -1}; });
+  const crackGl = glow(4, '#fff3bf'); crackGl.position.set(GT[0], PH + 2.8, GT[1] + .1); crackGl.scale.set(1.2, 6, 1); crackGl.material.opacity = 0;
+  /* 선물 그림(이모지)이 탑에서 모아에게 날아온다 */
+  const emo = e => { const sp = new T.Sprite(new T.SpriteMaterial({map: canvasTex(128, 128, x => { x.font = '96px "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif'; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText(e, 64, 70); }), transparent: true, depthTest: false})); sp.renderOrder = 11; sp.scale.set(1.4, 1.4, 1); S.add(sp); return sp; };
+  const GIFT = []; 
+  /* 몰려오는 먹구름 무리(7-3 요새 문 지키기로 이어짐) */
+  const DARK = []; for (let i = 0; i < 7; i++) { const g = new T.Group(); [[0, 0, 0, .9], [.8, -.1, .1, .65], [-.8, -.15, 0, .6], [.2, .45, 0, .6]].forEach(q => { const e = add(new T.SphereGeometry(q[3], 10, 8), M('#4a4f60', {flatShading: false}), q[0], q[1], q[2], g); e.castShadow = false; });
+    [-.25, .25].forEach(x => add(new T.SphereGeometry(.09, 6, 6), M('#ffe066', {emissive: '#ffd43b', emissiveIntensity: 1.4}), x, .1, .8, g)); g.visible = false; S.add(g); DARK.push({g, a: [30 + i * 6, 20 + (i % 3) * 3, -38], b: [36 + i * 4.2, PH + 4 + (i % 3) * 1.6, -14 - (i % 2) * 4], t: -1, d: i * .25}); }
+
+  /* 표지판: 짝 일곱(ㅂ→ㅃ …). 치면 그 칸이 켜진다 */
+  const signLit = []; let signTex;
+  const drawSign = () => { const c = signTex.image, x = c.getContext('2d'); x.fillStyle = '#d9b47a'; x.fillRect(0, 0, 512, 320); x.strokeStyle = '#8b5e34'; x.lineWidth = 14; x.strokeRect(7, 7, 498, 306);
+    x.fillStyle = '#5a3a1c'; x.font = 'bold 44px "Noto Sans KR","Malgun Gothic",sans-serif'; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText('▲ 쌍둥이 봉우리 · 요새', 256, 52);
+    PAIR.forEach((p, i) => { const row = i < 4 ? 0 : 1, x0 = row ? 75 : 14, bx = x0 + (row ? i - 4 : i) * 122, by = 104 + row * 100; x.fillStyle = signLit[i] ? '#fff3bf' : '#c9a36b'; x.fillRect(bx, by, 112, 80);
+      x.fillStyle = signLit[i] ? '#c92a2a' : '#7a5a34'; x.font = 'bold 42px "Noto Sans KR","Malgun Gothic",sans-serif'; x.fillText(p[0] + '→' + p[1], bx + 56, by + 42); });
+    signTex.needsUpdate = true; };
+  { const c = document.createElement('canvas'); c.width = 512; c.height = 320; signTex = new T.CanvasTexture(c); signTex.encoding = T.sRGBEncoding; drawSign();
+    [-1.5, 1.5].forEach(dx => add(new T.CylinderGeometry(.1, .12, 4.4, 6), M('#6b4626'), SG[0] + dx, 2.2, SG[1] - .24));   /* v16.0: 기둥이 글자를 가리지 않게 판 뒤로 */
+    add(new T.BoxGeometry(4.2, 2.6, .16), [M('#8b5e34'), M('#8b5e34'), M('#8b5e34'), M('#8b5e34'), new T.MeshStandardMaterial({map: signTex, roughness: .9}), M('#8b5e34')], SG[0], 3.3, SG[1]); }
+  const signGlow = glow(5, '#ffe066'); signGlow.position.set(SG[0], 3.3, SG[1] + .4); signGlow.material.opacity = 0;
+
+  /* 메아리 돌탑 셋: 납작한 돌을 쌓고, 꼭대기 돌이 불 켜진다 */
+  const CAIRN = CA.map((p, k) => { const n = 5 + k; let y = 0; for (let i = 0; i < n; i++) { const s = 1.1 - i * .1, h = .34 + rnd() * .1; const e = add(new T.CylinderGeometry(s * .62, s * .7, h, 9), M(rockC[(i + k) % 5]), p[0] + (rnd() - .5) * .12, y + h / 2, p[1]); e.rotation.y = rnd() * 3; y += h; }
+    const top = add(new T.IcosahedronGeometry(.36, 0), M('#9fb4c8', {emissive: '#74c0fc', emissiveIntensity: 0}), p[0], y + .3, p[1]); const gl = glow(2.6, '#74c0fc'); gl.position.set(p[0], y + .3, p[1]); gl.material.opacity = 0; return {top, gl, y: y + .3, lit: 0, litT: 0, pulse: 0}; });
+
+  /* 메아리 글자: 모아 머리에서 맞은편 벼랑으로 날아가 부딪히고, 작게 둘로 나뉘어 돌탑으로 돌아온다 */
+  const textTex = (w, col) => canvasTex(512, 160, x => { x.font = 'bold 110px "Noto Sans KR","Malgun Gothic",sans-serif'; x.textAlign = 'center'; x.textBaseline = 'middle'; x.lineWidth = 16; x.strokeStyle = '#14324a'; x.strokeText(w, 256, 84); x.fillStyle = col; x.fillText(w, 256, 84); });
+  const FLY = [];
+  const mkText = (w, col) => { const sp = new T.Sprite(new T.SpriteMaterial({map: textTex(w, col), transparent: true, depthTest: false, depthWrite: false, fog: false})); sp.renderOrder = 10; sp.scale.set(3.2, 1, 1); S.add(sp); return sp; };
+
+  /* 밧줄(🪢): 던진 고리가 절벽 위 바위에 걸리고, 모아가 붙잡고 오른다 */
+  const hook = add(new T.TorusGeometry(.22, .06, 6, 12), M('#6e6a62', {metalness: .5}), 0, 0, 0); hook.visible = false;
+  const ropeM = M('#d9c28f'); const rope = add(new T.CylinderGeometry(.06, .06, 1, 6), ropeM, 0, 0, 0); rope.visible = false;
+  const anchor = add(new T.DodecahedronGeometry(.6, 0), M('#7c776e'), CL + 1.1, PH + .45, ROPE[1] - .2);
+  const setLine = (e, a, b) => { const dx = b[0] - a[0], dy = b[1] - a[1], dz = b[2] - a[2], L = Math.hypot(dx, dy, dz); e.position.set((a[0] + b[0]) / 2, (a[1] + b[1]) / 2, (a[2] + b[2]) / 2); e.scale.set(1, L, 1); e.quaternion.setFromUnitVectors(new T.Vector3(0, 1, 0), new T.Vector3(dx / L, dy / L, dz / L)); };
+  const RT = {throw: -1, tied: false, climb: -1};
+  const TOP = [CL + .9, PH + .5, ROPE[1] - .2];
+
+  /* 나무·바위·풀(길과 돌탑·표지판을 비우고) */
+  { const free = (x, z) => Math.abs(z - 1.6) > 2.4 && !(x > RX0 - 2 && x < CL + 1 && z > RZ - 2.2 && z < RZ + 2.4) && Math.hypot(x - SG[0], z - SG[1]) > 3 && CA.every(c => Math.hypot(x - c[0], z - c[1]) > 2.4) && !(x > BR - 11 && x < BR + 1) && !(x > GT[0] - 18 && x < GT[0] + 18 && z < GT[1] + 2 && x > CL);
+    const TR = [], RK = [];
+    for (let i = 0; i < 170; i++) { const x = BR - 20 + rnd() * 120, z = WZ + 1 + rnd() * (ZF - WZ - 4); if (!free(x, z)) continue; (rnd() < .45 ? TR : RK).push({p: [x, gy(x, z), z], s: .6 + rnd() * .8, r: rnd() * 3}); }
+    TR.forEach(a => { const s = a.s; add(new T.CylinderGeometry(.12 * s, .16 * s, 1.1 * s, 6), M('#6b4626'), a.p[0], a.p[1] + .55 * s, a.p[2]); [0, 1, 2].forEach(j => add(new T.ConeGeometry((1 - j * .25) * s, 1.2 * s, 7), M(['#3f6b35', '#4b7c3e', '#5a8a48'][j]), a.p[0], a.p[1] + (1.2 + j * .7) * s, a.p[2])); });
+    RK.forEach(a => { const e = add(new T.DodecahedronGeometry(.45 * a.s, 0), M(rockC[(a.r * 10 | 0) % 5]), a.p[0], a.p[1] + .2 * a.s, a.p[2]); e.rotation.y = a.r; e.scale.y = .7; });
+    const GR = []; for (let i = 0; i < 700; i++) { const x = BR - 20 + rnd() * 120, z = -8 + rnd() * 30; if (Math.abs(z - 1.6) < 1.4) continue; GR.push({p: [x, gy(x, z) + .12, z], r: [0, rnd() * 3, 0], s: .7 + rnd() * .6}); }
+    inst(new T.ConeGeometry(.08, .3, 3), M('#6f9a4a'), GR, false); }
+
+  /* 하늘의 구름 몇 점 */
+  const CLOUD = []; for (let i = 0; i < 7; i++) { const g = new T.Group(); [[0, 0, 0, 2.2], [1.8, -.3, .3, 1.6], [-1.8, -.4, -.2, 1.5], [.6, .7, 0, 1.5]].forEach(q => { const e = add(new T.SphereGeometry(q[3], 10, 8), M('#ffffff', {flatShading: false}), q[0], q[1], q[2], g); e.castShadow = false; }); g.position.set(-40 + i * 18 + rnd() * 6, 26 + rnd() * 6, -36 - rnd() * 10); S.add(g); CLOUD.push({g, v: .3 + rnd() * .3}); }
+
+  /* ══ 7-3 ══ */
+  const sph = (c, o) => M(c, Object.assign({flatShading: false}, o || {}));
+  let doorK = 0, doorKT = 0, wLv = .22, bumpT = -1;   /* 큰 문이 열린 정도(라디안). 차례를 막을 때마다 더 열린다 */
+  /* 방패 자물쇠를 문짝에 붙인다(문이 열릴 때 함께 돈다) */
+  const shieldsOnDoors = () => SHIELD.forEach((s, i) => { if (s.g.parent !== DOOR[i]) DOOR[i].attach(s.g); });
+  const shieldsHome = () => SHIELD.forEach((s, i) => { if (s.g.parent !== S) S.add(s.g); s.g.position.set(GT[0] + (i ? 1 : -1) * 1.55, PH + 3.2, GT[1] + .05); s.g.rotation.set(0, 0, 0); });
+  /* 문 안 벽화(숨겨진 기록): 글쇠섬나라 섬 열 개. 8번(기억의 섬)은 찢겨 나가 있다 */
+  const MS = {lit: 0, litT: 0, path: 0, piece: 0, name: 0, book: 0, cloud: 0};
+  const ISL = [[70, 440], [160, 395], [95, 305], [205, 245], [110, 160], [235, 110], [335, 215], [450, 145], [485, 320], [380, 415]];
+  const muralC = document.createElement('canvas'); muralC.width = 580; muralC.height = 520; const muralTex = new T.CanvasTexture(muralC); muralTex.encoding = T.sRGBEncoding;
+  const blob = (x, cx, cy, r, col) => { x.fillStyle = col; x.beginPath(); for (let a = 0; a < 6.3; a += .5) { const rr = r * (1 + Math.sin(a * 3 + cx) * .12); x[a ? 'lineTo' : 'moveTo'](cx + Math.cos(a) * rr * 1.25, cy + Math.sin(a) * rr * .8); } x.closePath(); x.fill(); };
+  const drawMural = () => { const x = muralC.getContext('2d'), F = '"Noto Sans KR","Malgun Gothic",sans-serif';
+    x.fillStyle = '#d8c8a4'; x.fillRect(0, 0, 580, 520); for (let i = 0; i < 260; i++) { x.fillStyle = i % 2 ? '#cdbb94' : '#e2d4b2'; x.globalAlpha = .5; x.fillRect((i * 137) % 580, (i * 71) % 520, 8, 3); } x.globalAlpha = 1;
+    x.strokeStyle = '#8a6d45'; x.lineWidth = 12; x.strokeRect(6, 6, 568, 508);
+    x.fillStyle = '#7da7c9'; x.globalAlpha = .35; x.fillRect(20, 60, 540, 440); x.globalAlpha = 1;
+    x.fillStyle = '#5a3a1c'; x.font = 'bold 40px ' + F; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText('글쇠섬나라', 290, 36);
+    /* 길: 1→7은 지나온 길(빛남), 7→8은 점선 */
+    x.lineCap = 'round'; for (let i = 0; i < 6; i++) { const a = ISL[i], b = ISL[i + 1], on = MS.path > i + 1; x.strokeStyle = on ? '#f2b632' : '#9c8a68'; x.lineWidth = on ? 7 : 4; x.setLineDash(on ? [] : [10, 10]); x.beginPath(); x.moveTo(a[0], a[1]); x.lineTo(b[0], b[1]); x.stroke(); }
+    x.setLineDash([8, 12]); x.strokeStyle = '#7a5a34'; x.lineWidth = 4; x.beginPath(); x.moveTo(ISL[6][0], ISL[6][1]); x.lineTo(ISL[7][0], ISL[7][1]); x.stroke(); x.setLineDash([]);
+    ISL.forEach((p, i) => { if (i === 7) return; const on = MS.path > i; if (on) { x.fillStyle = '#ffe48a'; x.globalAlpha = .7; x.beginPath(); x.arc(p[0], p[1], 44, 0, 6.3); x.fill(); x.globalAlpha = 1; } blob(x, p[0], p[1], 30, i < 7 ? '#8fbf6a' : '#a7b99a');
+      if (i === 6) { x.fillStyle = '#7a7f88'; [[-12, 0], [12, 4]].forEach(q => { x.beginPath(); x.moveTo(p[0] + q[0] - 14, p[1] + 10); x.lineTo(p[0] + q[0], p[1] - 26 + q[1]); x.lineTo(p[0] + q[0] + 14, p[1] + 10); x.fill(); }); }
+      x.fillStyle = '#3d2a14'; x.font = 'bold 26px ' + F; x.fillText(String(i + 1), p[0], p[1] + 2); });
+    /* 8번 기억의 섬: 찢긴 자리 / 지도 조각을 맞추면 섬이 보인다 */
+    const P8 = ISL[7], torn = () => { x.beginPath(); for (let a = 0; a < 6.3; a += .35) { const rr = 70 + (Math.sin(a * 7) * 9 + Math.cos(a * 13) * 6); x[a ? 'lineTo' : 'moveTo'](P8[0] + Math.cos(a) * rr, P8[1] + Math.sin(a) * rr * .85); } x.closePath(); };
+    if (!MS.piece) { torn(); x.fillStyle = '#5b5248'; x.fill(); x.strokeStyle = '#3a332c'; x.lineWidth = 3; x.stroke(); }
+    else { torn(); x.fillStyle = '#e8dcbc'; x.fill(); x.setLineDash([6, 6]); x.strokeStyle = '#a08660'; x.lineWidth = 3; x.stroke(); x.setLineDash([]); x.fillStyle = '#ffd9f0'; x.globalAlpha = .7; x.beginPath(); x.arc(P8[0], P8[1], 46, 0, 6.3); x.fill(); x.globalAlpha = 1; blob(x, P8[0], P8[1], 32, '#c9a7e0'); x.fillStyle = '#3d2a14'; x.font = 'bold 30px ' + F; x.fillText('?', P8[0], P8[1] + 2); }
+    if (MS.name) { x.fillStyle = '#7a1f5c'; x.font = 'bold 34px ' + F; x.fillText('기억의 섬', P8[0] - 6, P8[1] + 92); }
+    if (MS.cloud) { const c = [535, 70]; x.fillStyle = '#6b7080'; [[0, 0, 16], [-14, 4, 11], [14, 4, 12], [5, -9, 11]].forEach(q => { x.beginPath(); x.arc(c[0] + q[0], c[1] + q[1], q[2], 0, 6.3); x.fill(); }); x.fillStyle = '#fff'; [-5, 6].forEach(d => { x.beginPath(); x.arc(c[0] + d, c[1], 2.6, 0, 6.3); x.fill(); }); }
+    if (MS.book) { x.fillStyle = '#5a3a1c'; x.font = 'bold 28px ' + F; x.fillText('모든 이야기는 기억의 섬에 모여 있다', 290, 488); }
+    muralTex.needsUpdate = true; };
+  drawMural();
+  add(new T.BoxGeometry(6.4, 5.8, .06), M('#3a332c'), GT[0], PH + 2.9, GT[1] - .38);   /* v16.5: 벽 앞면(z GT-.4)보다 앞으로 — 전엔 벽 속에 묻혀 안 보였음 */
+  const muralM = new T.MeshBasicMaterial({map: muralTex, color: new T.Color(.3, .3, .3)}), mural = new T.Mesh(new T.PlaneGeometry(5.8, 5.2), muralM); mural.position.set(GT[0], PH + 2.75, GT[1] - .31); S.add(mural);
+  const muralGl = glow(7, '#fff3bf'); muralGl.position.set(GT[0], PH + 2.8, GT[1] - .5); muralGl.material.opacity = 0;
+
+  /* 구름 무리(3·4·6장 구름 모양 + 방패 구름: 은빛 둥근 방패에 ⇧) */
+  let lastTaker = null, broke = 0; const MOBS = [], SHARD = [], cG = [new T.SphereGeometry(1, 14, 10), new T.SphereGeometry(.24, 12, 10), new T.SphereGeometry(.11, 8, 8)];
+  const linkM = new T.MeshBasicMaterial({color: '#ffd1e3', transparent: true, opacity: .8, fog: false});
+  const shTex = canvasTex(256, 256, x => { const g = x.createRadialGradient(110, 100, 10, 128, 128, 128); g.addColorStop(0, '#f4f7fb'); g.addColorStop(1, '#9aa8bd'); x.fillStyle = g; x.beginPath(); x.arc(128, 128, 124, 0, 6.3); x.fill(); x.lineWidth = 16; x.strokeStyle = '#e0b53c'; x.stroke();
+    x.fillStyle = '#2f5d9c'; x.beginPath(); x.moveTo(128, 40); x.lineTo(210, 128); x.lineTo(166, 128); x.lineTo(166, 200); x.lineTo(90, 200); x.lineTo(90, 128); x.lineTo(46, 128); x.closePath(); x.fill(); });
+  const mkMob = kind => { const g = new T.Group(); S.add(g); const col = {normal: '#9a93b4', fast: '#8fb8ea', armor: '#8a84a0', split: '#c79be0', mini: '#c79be0', twin: '#f0a6c4', umbrella: '#86c2a6', shieldc: '#8d97b0'}[kind], dk = sph(col, {roughness: .95}); [[0, 0, 0, 1], [-.9, -.15, 0, .72], [.9, -.1, 0, .76], [-.35, .5, -.05, .7], [.45, .48, -.1, .66]].forEach(a => { const e = add(cG[0], dk, a[0], a[1], a[2], g); e.scale.set(a[3], a[3] * .82, a[3]); e.castShadow = false; });
+    const eyeW = sph('#fff', {emissive: '#fff', emissiveIntensity: .25}), eyes2 = []; [-.34, .34].forEach(x => { eyes2.push(add(cG[1], eyeW, x, .1, .86, g)); add(cG[2], sph('#111'), x, .06, 1.06, g); }); const gr = add(new T.TorusGeometry(.26, .05, 6, 12, Math.PI), sph('#fff'), 0, -.3, .9, g); gr.rotation.z = Math.PI;
+    const o = {g, kind, x: 0, z: 0, sc: {normal: .55, fast: .4, armor: .62, split: .66, mini: .32, twin: .5, umbrella: .58, shieldc: .6}[kind], s: 0, fly: 0, sq: 0, helm: null, boost: 0, link: null, eyes2, shield: null};
+    if (kind === 'fast') [-1, 0, 1].forEach(k => { const e = add(new T.ConeGeometry(.16, 1.1, 5), sph('#9cc4e8'), k * .5, .1 - Math.abs(k) * .1, -1.2, g); e.rotation.x = -Math.PI / 2; e.castShadow = false; });
+    if (kind === 'armor') { const h = new T.Group(); g.add(h); const im = sph('#9aa4ad', {metalness: .5, roughness: .4}); add(new T.SphereGeometry(1.02, 14, 8, 0, 6.3, 0, 1.5), im, 0, .28, 0, h).scale.set(1.25, .85, 1.05); add(new T.TorusGeometry(1.1, .09, 6, 18), im, 0, .36, 0, h).rotation.x = Math.PI / 2; [-.3, .3].forEach(x => add(new T.BoxGeometry(.5, .1, .1), sph('#111'), x, .42, .98, g).rotation.z = x > 0 ? .45 : -.45); o.helm = h; }
+    if (kind === 'split') { add(new T.BoxGeometry(.08, 1.7, 2), sph('#fff7e2'), 0, .05, 0, g).castShadow = false; [-.55, .55].forEach(x => add(new T.SphereGeometry(.14, 8, 6), sph('#ffd43b', {emissive: '#ffb300', emissiveIntensity: .6}), x, .95, .3, g)); }
+    if (kind === 'twin') { const st = add(new T.OctahedronGeometry(.36, 0), sph('#ffe066', {emissive: '#ffc400', emissiveIntensity: .8}), 0, 1.25, 0, g); st.scale.set(1, 1.3, .5); st.castShadow = false; o.star = st; [-1, 1].forEach(k => add(new T.SphereGeometry(.13, 8, 6), sph('#ff8fb4'), k * .62, -.18, .8, g).castShadow = false); }
+    if (kind === 'umbrella') { const u = new T.Group(); g.add(u); add(new T.CylinderGeometry(.07, .07, 2.6, 6), sph('#5f4226'), 0, 1.6, 0, u); const c = add(new T.SphereGeometry(1.6, 14, 6, 0, 6.3, 0, 1.1), sph('#e2372f', {side: T.DoubleSide}), 0, 1.9, 0, u); c.scale.y = .6; [0, 1, 2, 3, 4, 5].forEach(k => { const a = k * 1.047; add(new T.SphereGeometry(.16, 6, 5), sph('#fff7e2'), Math.cos(a) * 1.42, 2.32, Math.sin(a) * 1.42, u).castShadow = false; }); }
+    if (kind === 'shieldc') { const sh = new T.Group(); sh.position.set(.15, -.1, 1.25); g.add(sh); const f = add(new T.CylinderGeometry(1.05, 1.05, .16, 28), [sph('#c9a544', {metalness: .5, roughness: .35}), new T.MeshStandardMaterial({map: shTex, roughness: .35, metalness: .3}), sph('#7a828f')], 0, 0, 0, sh); f.rotation.x = Math.PI / 2; f.castShadow = false;
+      [-1, 1].forEach(k => { const a = add(new T.CapsuleGeometry ? new T.CapsuleGeometry(.12, .5, 4, 8) : new T.CylinderGeometry(.12, .12, .7, 8), dk, k * .78, -.2, .75, g); a.rotation.set(1.1, 0, -k * .5); a.castShadow = false; });
+      [-.3, .3].forEach(x => add(new T.BoxGeometry(.5, .1, .1), sph('#111'), x, .42, .98, g).rotation.z = x > 0 ? .45 : -.45); o.shield = sh; }
+    MOBS.push(o); return o; };
+  const breakShield = o => { const sh = o.shield; if (!sh || !sh.visible) return; sh.visible = false; const p = new T.Vector3(); sh.getWorldPosition(p);
+    for (let i = 0; i < 7; i++) { const e = add(new T.BoxGeometry(.38, .38, .08), sph(i % 2 ? '#c9d2df' : '#e0b53c', {metalness: .5}), p.x, p.y, p.z); e.castShadow = false; const a = i / 7 * 6.28; SHARD.push({e, v: [Math.cos(a) * 3.5, 2.5 + Math.random() * 2.5, Math.sin(a) * 1.5 + 2], r: [Math.random() * 9, Math.random() * 9], t: 0}); }
+    burst(p.x, p.y, p.z, 18, '#e8eef8', 4); E.beep(1200, .08, 'square', .05); setTimeout(() => E.beep(900, .14, 'square', .045), 70); setTimeout(() => E.beep(600, .2, 'triangle', .04), 160);
+    if (!broke) { broke = 1; E.bubble('방패가 깨졌어! 한 번 더 치면 물러나!', 1800); } };
+  const mob = {spawn: mkMob, hit(o) { o.sq = 1; burst(o.x, yOf(o.z), o.z, 10, '#d7d2e6', 3); if (o.helm && o.helm.visible) { o.helm.visible = false; burst(o.x, yOf(o.z) + .7, o.z, 10, '#cfd6dc', 3.5); } if (o.shield) breakShield(o); },
+    boost(o) { o.boost = 1; o.eyes2.forEach(e => { e.material = sph('#ff5a5a', {emissive: '#ff2a2a', emissiveIntensity: .9}); }); burst(o.x, yOf(o.z), o.z, 14, '#ff9fbf', 3.6); E.bubble('쌍둥이가 화났어! 빨라져!', 1500); E.beep(880, .12, 'sawtooth', .03); setTimeout(() => E.beep(1100, .12, 'sawtooth', .03), 110); },
+    gone(o, how) { if (o.link) o.link.visible = false; if (o.pair && o.pair.link) o.pair.link.visible = false; if (how === 'win') { o.fly = .001; burst(o.x, yOf(o.z), o.z, 12, '#d7d2e6', 3); } else if (how === 'reach') { o.fly = .001; o.took = true; lastTaker = o; } else { S.remove(o.g); if (o.link) S.remove(o.link); MOBS.splice(MOBS.indexOf(o), 1); } }};
+
+  const actors = {};
+  /* ── 장면 효과 ── */
+  let waveT = -1, gateT = -1, crackT = -1;
+  const fx = {
+    /* ── 7-3 ── */
+    async darkSplit() { DARK.forEach((c, i) => { if (c.g.visible) { c.out = 0; c.side = i < 3 ? -1 : i > 3 ? 1 : 0; } }); E.beep(180, .4, 'sawtooth', .04); await sleep(600); },
+    waveSay(i) { wLv = .22 + i * .16; doorKT = wLv; E.bubble(['첫째 차례! 먹구름이 세 길로 와', '둘째 차례! 방패 구름이 와', '셋째 차례! 쌍둥이 구름도 와', '넷째 차례! 우산 구름부터 막자', '마지막 차례! 문이 거의 다 열렸어'][i], 2400); if (i) { E.beep(392, .2, 'triangle', .04); setTimeout(() => E.beep(523, .25, 'triangle', .04), 150); } },
+    shieldIntro(o) { E.bubble('방패 구름이야! Shift 낱말로 방패부터 깨!', 3400); burst(o.x, yOf(o.z) + .5, o.z, 16, '#e0b53c', 4); sfx.done(); },
+    shieldSay() { E.bubble('우산 구름부터 막아야 해!', 1300); },
+    umbrellaIntro(o) { E.bubble('우산 아래 구름은 못 막아. 우산 구름부터!', 3200); burst(o.x, yOf(o.z) + 1.5, o.z, 16, '#ff8f8f', 4); sfx.done(); },
+    twinIntro(o) { E.bubble('쌍둥이 구름이야! 하나를 막으면 남은 하나가 빨라져', 3200); burst(o.x, yOf(o.z) + .9, o.z, 16, '#ffd1e3', 4); sfx.done(); },
+    doorBump(hp) { E.setSt('oops'); doorKT = Math.max(.06, doorKT - .14); bumpT = 0; burst(GT[0], PH + 2.4, GT[1] + .2, 14, '#6b7080', 3); E.beep(120, .35, 'sawtooth', .05); E.bubble(hp > 0 ? '앗! 구름이 부딪혀서 문이 덜컹 닫혔어' : '문틈 빛이 다 꺼졌어!', 1600); },
+    async doorBack() { doorKT = wLv; E.bubble('모아가 문을 다시 밀어 열었어. 이 차례를 다시 막자!', 2800); },
+    async gateWin() { MOBS.forEach(o => { if (!o.fly) o.fly = .001; }); doorKT = 1; sfx.win(); E.bubble('먹구름 무리를 다 막았어!', 1400); await sleep(1200); },
+    async gateOpen() { doorKT = 1.45; SHIELD.forEach(s => { s.gl.material.opacity = 0; }); burst(GT[0], PH + 2.8, GT[1] + .3, 26, '#fff3bf', 4); [392, 523, 659, 784].forEach((f, i) => setTimeout(() => E.beep(f, .2, 'triangle', .045), i * 110)); await sleep(900); },
+    async muralLit() { MS.lit = 1; muralGl.material.opacity = .5; E.beep(440, .3, 'triangle', .04); await sleep(400); },
+    async muralPath() { for (let i = 1; i <= 7; i++) { MS.path = i; drawMural(); E.beep(440 + i * 60, .1, 'triangle', .04); await sleep(240); } },
+    async muralPiece() { MS.piece = 1; drawMural(); burst(GT[0] + 1.6, PH + 3.9, GT[1] - .4, 20, '#ffd9f0', 3); E.beep(784, .12, 'triangle', .05); setTimeout(() => E.beep(1046, .2, 'triangle', .05), 110); await sleep(400); },
+    async muralName() { MS.name = 1; drawMural(); burst(GT[0] + 1.5, PH + 2.95, GT[1] - .4, 14, '#e599c6', 2.6); E.beep(659, .14, 'triangle', .05); },
+    async muralBook() { MS.book = 1; drawMural(); burst(GT[0], PH + .9, GT[1] - .4, 18, '#ffe8a3', 3); E.beep(523, .2, 'triangle', .05); await sleep(300); },
+    async muralCloud() { MS.cloud = 1; drawMural(); burst(GT[0] + 2.45, PH + 4.65, GT[1] - .4, 10, '#9aa0b0', 2); E.beep(330, .3, 'sine', .04); await sleep(300); },
+    async giantWave() { waveT = 0; sfx.ok && E.beep(220, .3, 'triangle', .05); await sleep(300); },
+    async signLit(i) { signLit[i] = 1; drawSign(); signGlow.material.opacity = .5; E.beep(660 + i * 70, .1, 'triangle', .05); },
+    async signDone() { const p = [SG[0], 3.3, SG[1] + .4]; burst(p[0], p[1], p[2], 18, '#ffe066', 3); E.beep(880, .12, 'triangle', .05); setTimeout(() => E.beep(1175, .18, 'triangle', .05), 90); await sleep(400); },
+    async echo(a) { const [k, w] = String(a).split(':'), c = CA[+k], p = MG.position, sp = mkText(w, '#ffffff');
+      FLY.push({sp, t: 0, a: [p.x, p.y + 4.6, p.z], b: [c[0] + 1.5, 6.5, WZ - 1], back: [c[0], CAIRN[+k].y + 1.2, c[1]], w, k: +k}); E.beep(523, .08, 'square', .04); await sleep(250); },
+    async cairnLit(k) { const C = CAIRN[k]; C.lit = 1; C.pulse = 1; burst(CA[k][0], C.y, CA[k][1], 16, '#a5d8ff', 3); E.beep(784, .1, 'triangle', .05); setTimeout(() => E.beep(1046, .16, 'triangle', .05), 100); await sleep(300); },
+    async ropeThrow() { RT.throw = 0; E.beep(330, .2, 'sawtooth', .04); await sleep(700); hook.position.set(TOP[0], TOP[1], TOP[2]); E.beep(180, .14, 'square', .05); burst(TOP[0], TOP[1], TOP[2], 10, '#e8e2d2', 2); },
+    async ropeTie() { RT.tied = true; E.beep(520, .1, 'triangle', .05); await sleep(200); },
+    async climb() { RT.climb = 0; await sleep(1500); },
+    async puff() { const p = MG.position; burst(p.x, p.y + 1, p.z, 8, '#f1f3f5', 1.6); await sleep(200); },
+    async gateLook() { gateT = 0; E.beep(140, .4, 'sawtooth', .04); await sleep(400); },
+    busy0() { SHIELD[0].busy = true; SHIELD[1].busy = false; }, busy1() { SHIELD[1].busy = true; SHIELD[0].busy = false; },
+    async rune(a) { const i = SHIELD.findIndex(s => s.on < 3 && s.busy); const S0 = SHIELD[i >= 0 ? i : 0]; const j = S0.on; S0.rn[j].material.emissiveIntensity = 1.6; S0.on++; burst(S0.g.position.x + Math.cos(Math.PI / 2 + (j - 1) * 1.15) * .82, S0.g.position.y + Math.sin(Math.PI / 2 + (j - 1) * 1.15) * .82, S0.g.position.z + .3, 10, SHC[SHIELD.indexOf(S0)], 2); E.beep(660 + j * 120, .12, 'triangle', .05); },
+    async shieldOpen(i) { const S0 = SHIELD[i]; S0.busy = false; S0.open = 1; burst(S0.g.position.x, S0.g.position.y, S0.g.position.z + .3, 22, SHC[i], 3.4); E.beep(523, .12, 'triangle', .05); setTimeout(() => E.beep(784, .2, 'triangle', .05), 120); await sleep(500); },
+    async towerOpen(i) { TDOOR[i].t = 0; E.beep(200, .3, 'square', .04); await sleep(700); },
+    async giftFly(i) { const sp = emo(i ? '📖' : '🗺️'); GIFT.push({sp, t: 0, a: [TDOOR[i].d.position.x, PH + 1.2, GT[1] + 1], i}); E.beep(880, .1, 'triangle', .05); await sleep(900); },
+    async gateCrack() { crackT = 0; doorKT = .22; shieldsOnDoors(); E.beep(110, .6, 'sawtooth', .05); setTimeout(() => E.beep(90, .5, 'sawtooth', .05), 400); await sleep(900); },
+    async cloudsCome() { DARK.forEach(c => { c.t = 0; c.g.visible = true; }); E.beep(150, .5, 'sawtooth', .05); await sleep(1200); },
+    async shieldGlow() { SHIELD.forEach((s, i) => setTimeout(() => { s.gl.material.opacity = .85; burst(s.g.position.x, s.g.position.y, s.g.position.z + .3, 14, SHC[i], 2.4); E.beep(i ? 784 : 659, .14, 'triangle', .05); }, i * 300)); await sleep(700); }
+  };
+  /* 밧줄을 타고 오르는 동안 모아 자리(core가 매 장면 읽음) */
+  const ride = () => { if (RT.climb < 0) return null; const k = ease(Math.min(1, RT.climb / 1.5)), x = sm(ROPE[0], CL + .7, Math.max(0, (k - .8) / .2)), y = sm(0, PH, Math.min(1, k / .85)); return [x, y, ROPE[1], Math.PI / 2]; };
+  const reset = () => { signLit.length = 0; drawSign(); signGlow.material.opacity = 0; CAIRN.forEach(C => { C.lit = 0; C.litT = 0; C.pulse = 0; }); FLY.forEach(f => { S.remove(f.sp); (f.sb || []).forEach(s => S.remove(s)); }); FLY.length = 0;
+    hook.visible = false; rope.visible = false; RT.throw = -1; RT.tied = false; RT.climb = -1; waveT = -1; gateT = -1; SHIELD.forEach(s => { s.gl.material.opacity = 0; s.on = 0; s.busy = false; s.open = 0; s.openT = 0; s.rn.forEach(r => { r.material.emissiveIntensity = 0; }); }); HAND.rotation.z = 0;
+    TDOOR.forEach(d => { d.t = -1; d.d.position.y = PH + .9; d.gl.material.opacity = 0; }); GIFT.forEach(g => S.remove(g.sp)); GIFT.length = 0; crackT = -1; crackGl.material.opacity = 0; DOOR.forEach(d => { d.rotation.y = 0; }); shieldsHome(); DARK.forEach(c => { c.t = -1; c.out = -1; c.g.visible = false; c.g.scale.setScalar(1); });
+    doorK = doorKT = 0; wLv = .22; bumpT = -1; broke = 0; lastTaker = null; MOBS.slice().forEach(o => { S.remove(o.g); if (o.link) S.remove(o.link); }); MOBS.length = 0; SHARD.forEach(h => S.remove(h.e)); SHARD.length = 0;
+    Object.assign(MS, {lit: 0, litT: 0, path: 0, piece: 0, name: 0, book: 0, cloud: 0}); drawMural(); muralGl.material.opacity = 0; tick(0, 0); };
+  /* 절벽부터(선생님 점검): 표지판과 돌탑은 다 켜져 있다 */
+  const jumpTo = (m, ctx) => { PAIR.forEach((p, i) => { signLit[i] = 1; }); drawSign(); CAIRN.forEach(C => { C.lit = 1; }); if (m === 'p2') SHIELD.forEach(s => { s.gl.material.opacity = .85; });
+    if (m && m.startsWith('g3')) { const f = (ctx || E.ctx).flags; SHIELD.forEach(s => { s.open = s.openT = 1; s.on = 3; s.rn.forEach(r => { r.material.emissiveIntensity = 1.6; }); }); TDOOR[f.shieldFirst === 'red' ? 1 : 0].t = 5; crackT = 2; doorK = doorKT = .22; shieldsOnDoors(); } };
+  const tick = (t, dt) => {
+    CLOUD.forEach(c => { c.g.position.x += c.v * dt; if (c.g.position.x > 100) c.g.position.x = -60; });
+    if (waveT >= 0) { waveT += dt; HAND.rotation.z = Math.sin(Math.min(1, waveT / 1.6) * Math.PI) * .18; HAND.position.y = -.2 + Math.sin(Math.min(1, waveT / 1.6) * Math.PI * 2) * .15; }
+    CAIRN.forEach(C => { C.litT = sm(C.litT, C.lit, Math.min(1, dt * 3)); C.pulse = Math.max(0, C.pulse - dt * 1.5); C.top.material.emissiveIntensity = C.litT * (1.1 + Math.sin(t * 3) * .2) + C.pulse; C.gl.material.opacity = C.litT * .7 + C.pulse * .3; C.top.rotation.y = t * (.4 + C.litT); });
+    for (const f of FLY.slice()) { f.t += dt;
+      if (f.t < .55) { const k = ease(f.t / .55); f.sp.position.set(sm(f.a[0], f.b[0], k), sm(f.a[1], f.b[1], k) + Math.sin(k * Math.PI) * 1.2, sm(f.a[2], f.b[2], k)); const s = 1 + k * .6; f.sp.scale.set(3.2 * s, s, 1); }
+      else if (!f.sb) { f.sp.material.opacity = 0; f.sb = [0, 1].map(j => { const s = mkText(f.w, '#a5d8ff'); s.position.set(f.b[0], f.b[1], f.b[2]); return s; }); E.beep(523, .08, 'triangle', .03); setTimeout(() => E.beep(523, .06, 'triangle', .02), 160); }
+      else { const k = Math.min(1, (f.t - .55) / .7); f.sb.forEach((s, j) => { const kk = ease(Math.max(0, Math.min(1, k * 1.2 - j * .2))); s.position.set(sm(f.b[0], f.back[0], kk) + (j ? .5 : -.5) * Math.sin(kk * Math.PI), sm(f.b[1], f.back[1], kk) + Math.sin(kk * Math.PI) * .8, sm(f.b[2], f.back[2], kk)); const q = (.7 - j * .18) * (1 - kk * .5); s.scale.set(3.2 * q, q, 1); s.material.opacity = 1 - kk * .85; });
+        if (k >= 1) { CAIRN[f.k].pulse = Math.min(1, CAIRN[f.k].pulse + .6); S.remove(f.sp); f.sb.forEach(s => S.remove(s)); FLY.splice(FLY.indexOf(f), 1); } } }
+    if (RT.throw >= 0) { RT.throw += dt; const k = Math.min(1, RT.throw / .7), p = MG.position, a = [p.x + .3, p.y + 2.4, p.z]; hook.visible = true; rope.visible = true;
+      const h = k < 1 ? [sm(a[0], TOP[0], k), sm(a[1], TOP[1], k) + Math.sin(k * Math.PI) * 2.2, sm(a[2], TOP[2], k)] : TOP; hook.position.set(h[0], h[1], h[2]); hook.rotation.x = t * 12;
+      const low = RT.climb >= 0 ? [MG.position.x + .15, MG.position.y + 2.2, MG.position.z] : RT.tied ? [ROPE[0] + .15, 0, ROPE[1]] : a; setLine(rope, h, low); }
+    if (RT.climb >= 0 && RT.climb < 1.6) RT.climb += dt;
+    if (RT.climb >= 1.6) RT.climb = -2;   /* 다 오르면 core가 다시 걷게 한다(땅 높이는 gy) */
+    if (gateT >= 0) { gateT += dt; DOOR.forEach((d, i) => { d.rotation.y = Math.sin(Math.min(1, gateT / .5) * Math.PI * 3) * .02 * (1 - Math.min(1, gateT / .8)) * (i ? 1 : -1); }); }
+    signGlow.material.opacity = Math.max(0, signGlow.material.opacity - dt * .8);
+    SHIELD.forEach((s, i) => { s.openT = sm(s.openT, s.open, Math.min(1, dt * 2)); s.g.rotation.z = s.openT * (i ? -1 : 1) * 1.2; s.g.position.y = (s.g.parent === S ? PH : 0) + 3.2 - s.openT * .3; if (s.busy) s.gl.material.opacity = .6 + Math.sin(t * 5) * .25; else if (s.open) s.gl.material.opacity = Math.max(0, s.gl.material.opacity - dt * .5); s.rn.forEach((r, j) => { if (j >= s.on && s.busy) r.material.emissiveIntensity = Math.max(0, Math.sin(t * 4 - j * 1.3)) * .6; }); });
+    TDOOR.forEach(d => { if (d.t < 0) return; d.t += dt; const k = ease(Math.min(1, d.t / .8)); d.d.position.y = PH + .9 + k * 1.75; d.gl.material.opacity = k * .8; });
+    for (const g of GIFT.slice()) { g.t += dt; const k = ease(Math.min(1, g.t / .9)), p = MG.position, b = [p.x, p.y + 4.2, p.z]; g.sp.position.set(sm(g.a[0], b[0], k), sm(g.a[1], b[1], k) + Math.sin(k * Math.PI) * 2, sm(g.a[2], b[2], k)); if (g.t > 1.6) { S.remove(g.sp); GIFT.splice(GIFT.indexOf(g), 1); } }
+    doorK = sm(doorK, doorKT, Math.min(1, dt * 1.4)); if (bumpT >= 0) { bumpT += dt; if (bumpT > .5) bumpT = -1; }
+    if (crackT >= 0 || doorK > .01) { if (crackT >= 0) crackT += dt; const k = Math.min(1, Math.max(0, crackT) / 1.2), sh = Math.sin(t * 40) * .01 * (1 - k) + (bumpT >= 0 ? Math.sin(bumpT * 50) * .03 * (1 - bumpT * 2) : 0); DOOR.forEach((d, i) => { d.rotation.y = (i ? 1 : -1) * (doorK + sh); }); crackGl.material.opacity = Math.min(.9, doorK * 4) * Math.max(0, 1 - Math.max(0, doorK - .9) * 2); crackGl.scale.set(1.2 + doorK * 5, 6, 1); }
+    MS.litT = sm(MS.litT, MS.lit, Math.min(1, dt * 1.5)); { const c = .3 + MS.litT * .7; muralM.color.setRGB(c, c, c); } muralGl.material.opacity = Math.max(0, muralGl.material.opacity - dt * .25);
+    DARK.forEach(c => { if (c.out === undefined || c.out < 0) return; c.out += dt; const k = Math.min(1, c.out / 1.4); c.g.position.x += c.side * 9 * dt; c.g.position.y += 4 * dt; c.g.scale.setScalar(Math.max(.01, 1.1 * (1 - k))); if (k >= 1) { c.g.visible = false; c.out = -1; c.t = -1; } });
+    for (const h of SHARD.slice()) { h.t += dt; h.v[1] -= 14 * dt; h.e.position.x += h.v[0] * dt; h.e.position.y += h.v[1] * dt; h.e.position.z += h.v[2] * dt; h.e.rotation.x += h.r[0] * dt; h.e.rotation.y += h.r[1] * dt; if (h.t > 1.1) { S.remove(h.e); SHARD.splice(SHARD.indexOf(h), 1); } }
+    for (const o of MOBS.slice()) { o.sq = Math.max(0, o.sq - dt * 3);
+      if (o.kind === 'twin') { if (o.star) o.star.rotation.y = t * 3; const pr = o.pair; if (pr && !o.link && !pr.link && MOBS.includes(pr)) { o.link = add(new T.CylinderGeometry(.05, .05, 1, 5), linkM, 0, 0, 0); o.link.castShadow = false; }
+        if (o.link) { const ok = pr && MOBS.includes(pr) && !o.fly && !pr.fly && !o.boost && !pr.boost; o.link.visible = ok; if (ok) setLine(o.link, [o.g.position.x, o.g.position.y, o.g.position.z], [pr.g.position.x, pr.g.position.y, pr.g.position.z]); } }
+      if (o.fly > 0) { o.fly += dt; const T1 = o.took ? 1.1 : 1.3; if (o.took) { const dx = GT[0] - o.g.position.x, dz = GT[1] - .2 - o.g.position.z, dy = PH + 2.4 - o.g.position.y; o.g.position.x += dx * 4 * dt; o.g.position.z += dz * 4 * dt; o.g.position.y += dy * 4 * dt; }
+        else { const dx = o.x - MG.position.x, dz = o.z - MG.position.z, d = Math.hypot(dx, dz) || 1; o.g.position.x += dx / d * 9 * dt; o.g.position.z += dz / d * 6 * dt - 4 * dt; o.g.position.y += 5 * dt; }
+        o.g.scale.setScalar(Math.max(.01, o.sc * (1 - o.fly / T1))); if (o.fly > T1) { S.remove(o.g); if (o.link) S.remove(o.link); MOBS.splice(MOBS.indexOf(o), 1); } }
+      else { o.s = sm(o.s, 1, Math.min(1, dt * 5)); o.g.position.set(o.x, yOf(o.z) + Math.sin(t * 3 + o.x) * .16, o.z); o.g.rotation.y = Math.atan2(MG.position.x - o.x, MG.position.z + 8 - o.z); o.g.rotation.z = o.boost ? Math.sin(t * 30) * .08 : 0; const q = o.sc * o.s * (o.boost ? 1.1 : 1); o.g.scale.set(q * (1 + o.sq * .25), q * (1 - o.sq * .3), q * (1 + o.sq * .25)); } }
+    DARK.forEach(c => { if (c.t < 0) return; c.t += dt; const k = ease(Math.max(0, Math.min(1, (c.t - c.d) / 2.2))); c.g.position.set(sm(c.a[0], c.b[0], k), sm(c.a[1], c.b[1], k) + Math.sin(t * 2 + c.d * 9) * .2, sm(c.a[2], c.b[2], k)); c.g.lookAt(MG.position.x, c.g.position.y, MG.position.z + 6); c.g.scale.setScalar(.6 + k * .5); });
+  };
+  try { const hid = []; S.traverse(o => { if (!o.visible) { hid.push(o); o.visible = true; } }); E.R.compile(S, E.cam); hid.forEach(o => { o.visible = false; }); } catch (e) {}
+  return {fx, actors, reset, tick, ride, groundY: gy, jumpTo, mob, follow: {moa: () => [MG.position.x, MG.position.y + 4.3, MG.position.z]}};
+}
+};
+})();
+</script>
 <script>
-/* ================= 모험 3D (1~6장) — 처음 열 때만 3D 엔진과 그 장을 만든다 ================= */
-const ADV_SOON = {7: '7장 쌍둥이 봉우리', 8: '8장 기억의 섬', 9: '9장 편지 도서관', 10: '10장 먹구름의 성'};
+/* ================= 모험 3D (1~7장) — 처음 열 때만 3D 엔진과 그 장을 만든다 ================= */
+const ADV_SOON = {8: '8장 기억의 섬', 9: '9장 편지 도서관', 10: '10장 먹구름의 성'};
 COURSES.ko.levels.forEach(L => { if (L.game.type !== 'adv') L.game.soon = (ADV_SOON[L.n] || '새 모험') + ' 공사 중'; });
 COURSES.en.levels.forEach(L => { L.game.soon = '영어 모험 공사 중'; });
 /* 모험 기록: 학생 기록의 새 칸 u.adv (기존 칸은 건드리지 않음). 반 기록 backup 과 함께 올라간다 */
@@ -7697,7 +8113,8 @@ const AdvMusic = {
       3: {bpm: 90, lead: 'sine', MEL: [69,0,72,0,76,0,74,72, 71,0,0,72,74,0,0,0, 67,0,71,0,74,0,72,71, 69,0,0,0,64,0,0,0, 69,0,72,76,0,79,0,76, 74,0,72,71,0,72,74,0, 76,0,74,72,0,71,67,0, 69,0,0,0,0,0,0,0], CH: [[45,60,64], [43,59,62], [41,60,65], [40,59,64]]},
       4: {bpm: 96, lead: 'triangle', MEL: [67,0,71,74,0,71,72,74, 76,0,74,0,72,0,71,0, 69,0,72,76,0,72,74,76, 74,0,0,0,71,0,0,0, 67,0,71,74,0,79,76,74, 72,0,76,74,0,72,71,69, 71,0,72,74,0,71,67,0, 67,0,0,0,0,0,0,0], CH: [[43,59,62], [40,59,64], [48,64,67], [50,62,66]]},
       5: {bpm: 88, lead: 'sine', MEL: [74,0,0,78,81,0,0,0, 79,0,78,0,76,0,0,0, 74,0,76,78,0,81,0,83, 81,0,0,0,78,0,0,0, 86,0,0,83,81,0,79,0, 78,0,79,81,0,76,0,0, 74,0,78,0,76,0,73,0, 74,0,0,0,0,0,0,0], CH: [[50,62,66], [47,62,66], [43,59,62], [45,61,64]]},
-      6: {bpm: 92, lead: 'triangle', MEL: [62,0,65,0,69,0,0,67, 65,0,64,0,62,0,0,0, 60,0,64,67,0,72,0,70, 69,0,0,0,67,0,0,0, 62,0,65,69,0,74,0,72, 70,0,69,67,0,65,64,0, 65,0,67,69,0,64,61,0, 62,0,0,0,0,0,0,0], CH: [[38,62,65], [46,62,65], [41,60,65], [45,61,64]]}},   /* 6장 무너진 다리: 깊은 협곡, 굳센 라단조 행진. 거인과 싸울 땐 긴장(빠르게) */   /* 5장 하늘 등대: 높고 넓은 하늘(라장조, 긴 음). 등대에 불이 켜지기 전(🔆)은 어둡게 */   /* 4장 풍차 공장: 통통 튀는 작업장 느낌(사장조). 공장에 불이 켜지기 전(💡)은 어두운 장면으로 낮고 둥글게 */
+      6: {bpm: 92, lead: 'triangle', MEL: [62,0,65,0,69,0,0,67, 65,0,64,0,62,0,0,0, 60,0,64,67,0,72,0,70, 69,0,0,0,67,0,0,0, 62,0,65,69,0,74,0,72, 70,0,69,67,0,65,64,0, 65,0,67,69,0,64,61,0, 62,0,0,0,0,0,0,0], CH: [[38,62,65], [46,62,65], [41,60,65], [45,61,64]]},
+      7: {bpm: 96, lead: 'triangle', MEL: [67,0,71,0,74,0,79,0, 78,0,76,0,74,0,0,0, 72,0,76,0,79,0,84,0, 83,0,79,0,74,0,0,0, 67,0,71,74,0,79,0,81, 79,0,76,74,0,72,71,0, 72,0,74,76,0,71,67,0, 67,0,0,0,0,0,0,0], CH: [[43,59,62], [48,60,64], [45,60,64], [50,62,66]]}},   /* 7장 쌍둥이 봉우리: 탁 트인 산(사장조, 넓게 뛰는 선율). 메아리 골짜기·요새 */   /* 6장 무너진 다리: 깊은 협곡, 굳센 라단조 행진. 거인과 싸울 땐 긴장(빠르게) */   /* 5장 하늘 등대: 높고 넓은 하늘(라장조, 긴 음). 등대에 불이 켜지기 전(🔆)은 어둡게 */   /* 4장 풍차 공장: 통통 튀는 작업장 느낌(사장조). 공장에 불이 켜지기 전(💡)은 어두운 장면으로 낮고 둥글게 */
   on: false, ch: 0, api: null, step: 0, next: 0, timer: 0, out: null, lp: null, mood: {dark: 0, tense: false},
   want() { return !!DB.sound && DB.music !== false && !document.hidden && !!this.api; },
   start(ch, api) { this.ch = this.T[ch] ? ch : 1; this.api = api; this.sync(); },
@@ -7728,14 +8145,15 @@ document.addEventListener('visibilitychange', () => AdvMusic.sync());
    도전 목표: 장마다 셋. 한 번 이룬 목표(별)는 남는다(u.adv.goals). 공개 순위·점수 경쟁은 없다(기획안 §9) */
 const ADV_BAG_SVG = '<svg viewBox="0 0 40 40" width="100%" height="100%" aria-hidden="true"><path d="M14.5 10 C14.5 3, 25.5 3, 25.5 10" fill="none" stroke="#5f3715" stroke-width="3" stroke-linecap="round"/><rect x="6" y="8.5" width="28" height="28.5" rx="7.5" fill="#ffc21f" stroke="#a8670a" stroke-width="1.6"/><path d="M6 20 V15.5 a7 7 0 0 1 7-7 h14 a7 7 0 0 1 7 7 V20 Q20 25.5 6 20 Z" fill="#dd9a0c" stroke="#a8670a" stroke-width="1.4"/><rect x="17" y="12" width="6" height="6" rx="1.2" fill="#fff" stroke="#c9a24a" stroke-width=".6"/><path d="M18.6 13.6 h2.6 v2.8" fill="none" stroke="#8f5527" stroke-width=".9"/><rect x="8.5" y="26" width="23" height="8.5" rx="2.6" fill="#8f5527" stroke="#5f3715" stroke-width="1"/><path d="M12.2 20.5 V29" stroke="#5f3715" stroke-width="2" stroke-linecap="round"/><path d="M27.8 20.5 V29" stroke="#5f3715" stroke-width="2" stroke-linecap="round"/><rect x="10.8" y="27" width="2.8" height="2.6" rx=".5" fill="#ffe27a" stroke="#a8670a" stroke-width=".6"/><rect x="26.4" y="27" width="2.8" height="2.6" rx=".5" fill="#ffe27a" stroke="#a8670a" stroke-width=".6"/></svg>';   /* 모아 가방 그림(v12.9): 노란 몸통·짙은 금색 덮개·금빛 버클·흰 열쇠 표시·갈색 주머니·멜빵 고리 */
 setTimeout(() => { const b = document.getElementById('btn-bag'); if (b) b.innerHTML = ADV_BAG_SVG; }, 0);
-const ADV_NAMES = {1: '시작 마을', 2: '연못 나루', 3: '동물의 숲', 4: '풍차 공장', 5: '하늘 등대', 6: '무너진 다리'};
+const ADV_NAMES = {1: '시작 마을', 2: '연못 나루', 3: '동물의 숲', 4: '풍차 공장', 5: '하늘 등대', 6: '무너진 다리', 7: '쌍둥이 봉우리'};
 const ADV_BAG = {
   1: [['🧰', '연장', '마을 회로를 먼저 고쳤을 때'], ['📡', '신호 무늬', '등대 회로를 먼저 고쳤을 때'], ['🚦', '등대 신호', '신호 장치에서 등대에 신호를 보냈을 때']],
   2: [['🐚', '소라 나팔', '수문을 먼저 열었을 때'], ['🏮', '등불', '배를 먼저 고쳤을 때'], ['✉️', '병 속 편지', '배를 타고 연못을 건널 때']],
   3: [['🌊', '빠른 물길', '물길로 갔을 때'], ['🐿️', '아기 다람쥐', '숲길에서 구해 줬을 때'], ['🦉', '부엉이', '숲의 수호자와 싸울 때 함께'], ['💠', '글쇠 돌 조각', '빈터의 큰 나무를 지켰을 때'], ['💎', '글쇠 돌', '숲의 수호자에게서 되찾았을 때']],
   4: [['🦿', '튼튼한 다리', '로봇 다리를 먼저 고쳤을 때'], ['🦾', '힘센 팔', '로봇 팔을 먼저 고쳤을 때'], ['🤖', '로봇 동료', '풍차를 다시 돌렸을 때'], ['💡', '공장 불빛', '공장에 불을 켰을 때']],
   5: [['🔆', '등대 불', '하늘 등대에 불을 켰을 때'], ['🧭', '뱃길 나침반', '연못 나루에 먼저 신호를 보냈을 때'], ['🪶', '하늘길 깃털', '동물의 숲에 먼저 신호를 보냈을 때']],
-  6: [['🪨', '튼튼한 돌다리', '협곡에 돌다리를 놓았을 때'], ['🪢', '출렁 밧줄다리', '협곡에 밧줄다리를 놓았을 때']]};
+  6: [['🪨', '튼튼한 돌다리', '협곡에 돌다리를 놓았을 때'], ['🪢', '출렁 밧줄다리', '협곡에 밧줄다리를 놓았을 때']],
+  7: [['🗺️', '옛 지도 조각', '파랑 방패를 먼저 풀었을 때'], ['📖', '낡은 기록장', '빨강 방패를 먼저 풀었을 때']]};
 const ADV_FINDS = [['🍄', '빛 버섯', 3, '어두운 길'], ['🦔', '고슴도치', 3, '어두운 길'], ['🪺', '새 둥지', 3, '어두운 길'], ['📜', '풍차 설계도', 4, '공장 창고']];
 const AdvGoals = {
   L: {1: [['정확도 90% 넘기', r => r.acc >= 90], ['신호 암호를 틀림 없이 보내기', r => !!r.sigClean], ['갈래 선물 둘 다 모으기', r => ['🧰', '📡'].every(x => (r.items || []).includes(x))]],
@@ -7743,7 +8161,8 @@ const AdvGoals = {
       3: [['정확도 90% 넘기', r => r.acc >= 90], ['금빛 열매를 하나도 안 잃기', r => (r.flags || {}).ch3_glade_leaks === 0], ['두 길을 다 가고 숨은 것 셋 찾기', r => !!r.both && ['🍄', '🦔', '🪺'].every(x => (r.found || []).includes(x))]],
       4: [['정확도 90% 넘기', r => r.acc >= 90], ['톱니를 하나도 안 잃기', r => (r.flags || {}).ch4_mill_leaks === 0], ['두 갈래를 다 하고 숨은 것 찾기', r => !!r.both && (r.found || []).includes('📜')]],
       5: [['정확도 90% 넘기', r => r.acc >= 90], ['렌즈 도둑을 한 번도 안 놓치기', r => (r.flags || {}).ch5_bridge_caught === 0], ['섬 소식 둘 다 모으기', r => ['🧭', '🪶'].every(x => (r.items || []).includes(x))]],
-      6: [['정확도 90% 넘기', r => r.acc >= 90], ['다리 판자를 하나도 안 잃기', r => (r.flags || {}).ch6_giant_leaks === 0], ['두 다리를 다 놓아 보기', r => ['🪨', '🪢'].every(x => (r.items || []).includes(x))]]},
+      6: [['정확도 90% 넘기', r => r.acc >= 90], ['다리 판자를 하나도 안 잃기', r => (r.flags || {}).ch6_giant_leaks === 0], ['두 다리를 다 놓아 보기', r => ['🪨', '🪢'].every(x => (r.items || []).includes(x))]],
+      7: [['정확도 90% 넘기', r => r.acc >= 90], ['문틈 빛을 하나도 안 잃기', r => (r.flags || {}).ch7_gate_leaks === 0], ['숨겨진 기록 둘 다 찾기', r => ['🗺️', '📖'].every(x => (r.items || []).includes(x))]]},
   adv() { const u = user(); if (!u) return null; u.adv = u.adv || {}; return u.adv; },
   get(ch) { const a = this.adv() || {}; return ((a.goals || {})['ch' + ch] || [false, false, false]).slice(); },
   count(ch) { return this.get(ch).filter(Boolean).length; },
@@ -7755,7 +8174,7 @@ const AdvGoals = {
     a.used = a.used || {}; (r.used || []).forEach(x => { if (!a.used[x]) a.used[x] = ch; }); save();
     return {count: g.filter(Boolean).length, fresh}; },
   /* 4장 🛡️ 풍차 지키기·6장 ⚔️ 거인과 다시(반복 놀이)에서 톱니(다리 판자)를 하나도 안 잃고 정확도 90%를 넘기면 그 목표도 이룬 것으로 친다 */
-  defend(d) { const a = this.adv(); if (!a || !d || (d.chapter !== 4 && d.chapter !== 6) || d.lost !== 0 || d.acc < 90) return; const k = 'ch' + d.chapter; a.goals = a.goals || {}; const g = a.goals[k] || [false, false, false]; if (!g[1]) { g[1] = true; a.goals[k] = g; save(); toast('⭐ 도전 목표: ' + this.L[d.chapter][1][0] + '!'); } },   /* 4장 🛡️ 풍차 지키기 · 6장 ⚔️ 거인과 다시 */
+  defend(d) { const a = this.adv(); if (!a || !d || ![4, 6, 7].includes(d.chapter) || d.lost !== 0 || d.acc < 90) return; const k = 'ch' + d.chapter; a.goals = a.goals || {}; const g = a.goals[k] || [false, false, false]; if (!g[1]) { g[1] = true; a.goals[k] = g; save(); toast('⭐ 도전 목표: ' + this.L[d.chapter][1][0] + '!'); } },   /* 4장 🛡️ 풍차 지키기 · 6장 ⚔️ 거인과 다시 · 7장 🛡️ 방패 구름 막기 */
   html(ch, fresh) { const g = this.get(ch); return '<div style="text-align:left;background:#f4f8ff;border-radius:14px;padding:8px 12px;margin:8px 0 0;font-size:14px;line-height:1.7"><b>도전 목표</b><br>' +
     (this.L[ch] || []).map((d, i) => (g[i] ? '⭐' : '<span style="filter:grayscale(1);opacity:.35">⭐</span>') + ' ' + esc(d[0]) + ((fresh || []).includes(i) ? ' <b style="color:#e8590c">NEW!</b>' : '')).join('<br>') + '</div>'; }
 };
@@ -7782,7 +8201,7 @@ const AdvBag = {on: false, game: false, el: null,
 /* 가방이 열려 있으면 글쇠는 모험에 가지 않는다(이 듣기는 모험보다 먼저 등록되므로 먼저 받음). Esc·Enter로 닫기 */
 window.addEventListener('keydown', e => { if (!AdvBag.on) return; e.preventDefault(); e.stopImmediatePropagation(); if (e.key === 'Escape' || e.key === 'Enter') AdvBag.close(); }, true);
 /* ================= 🗺️ 모험 지도: 한글 섬 10개 = 장 10개 (v12.7, 선생님 "시작") =================
-   1~6섬은 장 무대 모습(마을·연못·숲·풍차·등대·협곡 다리), 7~10섬은 안개 낀 "준비 중". 아직 되찾지 못한 섬 위엔 먹구름이 떠 있고, 장을 끝내면 먹구름이 걷히고 섬이 반짝인다(기획안 §11).
+   1~7섬은 장 무대 모습(마을·연못·숲·풍차·등대·협곡 다리·쌍둥이 봉우리), 8~10섬은 안개 낀 "준비 중". 아직 되찾지 못한 섬 위엔 먹구름이 떠 있고, 장을 끝내면 먹구름이 걷히고 섬이 반짝인다(기획안 §11).
    영어 지도는 그대로. 섬 = 레벨(연습과 그 장 모험이 함께 있음)은 전과 같다 */
 const ADV_ALL = {1: '시작 마을', 2: '연못 나루', 3: '동물의 숲', 4: '풍차 공장', 5: '하늘 등대', 6: '무너진 다리', 7: '쌍둥이 봉우리', 8: '기억의 섬', 9: '편지 도서관', 10: '먹구름의 성'};
 function advIsland(n, A) { const G = G3, T = G.T, L = [];
@@ -7806,6 +8225,13 @@ function advIsland(n, A) { const G = G3, T = G.T, L = [];
       ...[-.24, -.12, 0, .12, .24].map((x, i) => G.m(G.box(.11, .05, .3), i % 2 ? '#a9713f' : '#c29159', x, .52, .02)), G.m(G.box(.04, .2, .04), '#8b5e34', -.3, .62, .18), G.m(G.box(.04, .2, .04), '#8b5e34', .3, .62, .18),
       G.m(G.box(.36, .4, .26), '#868e96', .62, .78, -.02, {flatShading: true}), G.m(G.box(.24, .2, .2), '#adb5bd', .62, 1.1, 0, {flatShading: true}), G.m(G.cone(.17, .14, 4), '#5c6370', .62, 1.27, 0, {flatShading: true}), ...eye, arm,
       G.m(G.box(.12, .3, .14), '#5c6370', .54, .5, .05), G.m(G.box(.12, .3, .14), '#5c6370', .72, .5, .05), G.roundTree(.38).translateX(-.75).translateZ(-.35)); }
+  else if (n === 7) { const gl = G.m(G.box(.2, .26, .03), '#fff3bf', 0, .87, .26, {emissive: '#ffe066', emissiveIntensity: 1.3}); A.push(t0 => { gl.material.emissiveIntensity = 1.1 + Math.sin(t0 * 2.2) * .35; });   /* 7섬 쌍둥이 봉우리(v16.7): 눈 덮인 두 봉우리 사이 요새, 열린 문틈 빛, 파랑·빨강 방패 탑 */
+    const fl = [[-.38, '#1c7ed6'], [.38, '#e03131']].map(([x, c]) => { const f = G.m(G.box(.16, .1, .01), c, x + .09, 1.36, .02); A.push(t0 => { f.rotation.y = Math.sin(t0 * 3 + x * 4) * .35; }); return f; });
+    L.push(G.m(G.cone(.62, 1.35, 6), '#868e96', -.55, .67, -.35, {flatShading: true}), G.m(G.cone(.26, .4, 6), '#f8f9fa', -.55, 1.15, -.35, {flatShading: true}),
+      G.m(G.cone(.62, 1.35, 6), '#7b8590', .55, .67, -.35, {flatShading: true}), G.m(G.cone(.26, .4, 6), '#f8f9fa', .55, 1.15, -.35, {flatShading: true}),
+      G.m(G.cyl(.5, .7, .55, 8), '#a5a5a5', 0, .28, .05, {flatShading: true}), G.m(G.box(.8, .4, .3), '#ced4da', 0, .75, .1, {flatShading: true}),
+      ...[-.3, -.1, .1, .3].map(x => G.m(G.box(.12, .1, .3), '#ced4da', x, 1.0, .1)), G.m(G.box(.26, .32, .02), '#5c3d1e', 0, .7, .26), gl,
+      ...[[-.38, '#1c7ed6'], [.38, '#e03131']].flatMap(([x, c]) => [G.m(G.cyl(.11, .12, .62, 8), '#adb5bd', x, .95, .12), G.m(G.cone(.14, .18, 8), '#5c6370', x, 1.35, .12), (o => { o.rotation.x = Math.PI / 2; return o; })(G.m(G.cyl(.09, .09, .03, 12), c, x, .98, .25)), G.m(G.box(.015, .22, .015), '#495057', x, 1.5, .12)]), ...fl); fl.forEach((f, i) => { f.position.set([-.38, .38][i] + .09, 1.55, .12); }); }
   else { const fog = [[-.45, .55, -.1, .42], [.3, .7, .15, .48], [0, .95, -.35, .4], [.55, .45, -.4, .32], [-.6, .35, .4, .3]].map(([x, y, z, r]) => G.m(G.sph(r, 10), '#eef2f6', x, y, z, {transparent: true, opacity: .82, depthWrite: false}));
     fog.forEach((f, i) => { f.castShadow = false; A.push(t0 => { f.position.y = [.55, .7, .95, .45, .35][i] + Math.sin(t0 * .9 + i * 1.4) * .06; f.scale.setScalar(1 + Math.sin(t0 * .7 + i) * .05); }); });
     L.push(G.m(G.cone(.5, .8, 6), '#ced4da', .1, .4, -.15, {flatShading: true}), G.m(G.box(.05, .5, .05), '#8b5e34', -.55, .25, .55), G.m(G.box(.46, .26, .04), '#ffe066', -.55, .55, .57), ...fog); }
@@ -7830,7 +8256,7 @@ function advFresh(u, C) { if (!u || !C || C !== COURSES.ko) return null; const a
 
 const Adv3D = {apis: {}, L: null, ch: 0, libs: false,
   raceOpen(ch) { return (ch === 3 || ch === 5) && (LOCAL_CHECK || !!(((user() || {}).adv || {})['ch' + ch] || {}).done); },   /* 🏁 3장 숲길 달리기 · 5장 구름다리 달리기 */
-  defOpen(ch) { return (ch === 4 || ch === 6) && (LOCAL_CHECK || !!(((user() || {}).adv || {})['ch' + ch] || {}).done); },   /* 그 장을 끝낸 학생의 반복 놀이(4장 🛡️ 풍차 지키기 · 6장 ⚔️ 거인과 다시) */
+  defOpen(ch) { return [4, 6, 7].includes(ch) && (LOCAL_CHECK || !!(((user() || {}).adv || {})['ch' + ch] || {}).done); },   /* 그 장을 끝낸 학생의 반복 놀이(4장 🛡️ 풍차 지키기 · 6장 ⚔️ 거인과 다시) */
   host(ch) { return document.getElementById(ch === 1 ? 'adv3d' : 'advx' + ch); },
   boot(ch) { if (!this.libs) { if (!window.THREE) (0, eval)(document.getElementById('a3-lib-three').textContent); (0, eval)(document.getElementById('a3-lib-moa').textContent); this.libs = true; }
     const H = {finish: r => this.finish(r), exit: () => this.close(), ok: j => GStat.ok(j), bad: j => GStat.bad(j), race: () => {}, defend: d => AdvGoals.defend(d)};
@@ -7856,7 +8282,8 @@ const Adv3D = {apis: {}, L: null, ch: 0, libs: false,
       : ch === 3 ? (r.both ? '두 갈래 길을 모두 가 봤어요!' : '🏁 숲길 달리기가 열렸어요 · 다른 갈래 길도 있어요')
       : ch === 4 ? (r.both ? '다리 먼저와 팔 먼저를 모두 해 봤어요!' : '🛡️ 풍차 지키기가 열렸어요 · 다른 쪽을 먼저 고치면 다른 일이 있어요')
       : ch === 5 ? (r.both ? '두 섬 모두 먼저 보내 봤어요!' : '🏁 구름다리 달리기가 열렸어요 · 다른 섬에 먼저 보내면 다른 손님이 와요')
-      : (r.both ? '두 다리를 모두 놓아 봤어요!' : '⚔️ 거인과 다시가 열렸어요 · 다른 다리를 놓으면 거인과 싸울 때가 달라져요');
+      : ch === 6 ? (r.both ? '두 다리를 모두 놓아 봤어요!' : '⚔️ 거인과 다시가 열렸어요 · 다른 다리를 놓으면 거인과 싸울 때가 달라져요')
+      : (r.both ? '두 기록을 모두 찾았어요!' : '🛡️ 방패 구름 막기가 열렸어요 · 다른 방패를 먼저 풀면 다른 기록이 나와요');
     finishGame(this.L, G.count, `얻은 것 <b style="font-size:22px">${(r.got || []).join(' ')}</b><br>정확도 ${r.acc}%</p>${AdvGoals.html(ch, G.fresh)}<p><span class="muted" style="font-size:13px">${tip}</span>`, 0); }
 };
 </script>
