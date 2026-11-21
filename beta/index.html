@@ -1440,7 +1440,7 @@ function validateContent() {
 <script>
 /* ================= 저장 ================= */
 const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
-const APP_VERSION = '14.7', APP_DATE = '2026-11-22';
+const APP_VERSION = '14.8', APP_DATE = '2026-11-22';
 /* ===== 우리 반 공유(선택) : Firebase 설정 =====
    Firebase 콘솔 → 프로젝트 설정 → 내 앱(웹) → SDK 설정의 firebaseConfig 값을 아래에 그대로 붙여 넣으세요.
    Realtime Database를 만들고 databaseURL까지 넣어야 켜집니다. 비워 두면 혼자 쓰는 앱으로 돌아갑니다. */
@@ -4883,7 +4883,7 @@ return {open, stop, mood: () => ({dark: active ? dark : 0, tense: false})};   /*
 window.__advChapters = window.__advChapters || {};
 window.__advBoot2 = function (HOOK, chId, rootSel) {
 const CH = window.__advChapters[chId]; if (!CH) throw new Error('장 자료가 없음: ' + chId);
-const VER = 'v14.7', T = THREE, ROOT = document.querySelector(rootSel || '#advx');
+const VER = 'v14.8', T = THREE, ROOT = document.querySelector(rootSel || '#advx');
 const $ = s => ROOT.querySelector(s);
 let active = false, runId = 0;
 
@@ -5009,6 +5009,7 @@ const useShow = (x, at) => new Promise(res => { if (!document.getElementById('ax
     else if (t < 1.0) { p.set(a1[0], a1[1] + Math.sin((t - .35) * 8) * .08, a1[2]); sc = 1.6; }
     else if (to && t < 1.65) { const k = (t - 1) / .65, e = k * k * (3 - 2 * k); p.set(a1[0] + (to[0] - a1[0]) * e, a1[1] + (to[1] - a1[1]) * e + Math.sin(e * Math.PI) * 1.2, a1[2] + (to[2] - a1[2]) * e); sc = 1.6 * (1 - e * .5); }
     else { if (!done) { done = true; const q = to || a1; burst(q[0], q[1], q[2], 18, '#fff2a8', 3); sfx.done(); } const k = Math.min(1, (t - (to ? 1.65 : 1)) / .3); sc = (to ? .8 : 1.6) * (1 - k); if (k >= 1) { S.remove(sp); S.remove(hal); tx.dispose(); ANIM.splice(ANIM.indexOf(f), 1); res(); } }
+    sc *= cam.position.distanceTo(p) / 25.3;   /* v14.8: 화면에 보이는 크기를 5장(등대 앞, 카메라 거리 약 25)과 같게 — 장면마다 카메라가 멀고 가까운 것을 되돌림 */
     sp.scale.set(sc, sc, 1); hal.position.copy(p); hal.scale.set(sc * 2, sc * 2, 1); hal.material.opacity = .6 + Math.sin(t * 12) * .2; };
   ANIM.push(f); setTimeout(() => bn.remove(), 2400); });
 const where = t => { $('.ax-where').textContent = t; }; const got = []; const inv = () => { $('.ax-inv').textContent = got.join(' '); window.__axGot = got.slice(); };   /* __axGot·__axFound: 모험 가방이 이번 판에 받은 것을 바로 보여 줌(v12.9) */
