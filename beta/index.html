@@ -1440,7 +1440,7 @@ function validateContent() {
 <script>
 /* ================= 저장 ================= */
 const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
-const APP_VERSION = '16.96', APP_DATE = '2026-11-23';
+const APP_VERSION = '16.97', APP_DATE = '2026-11-23';
 /* ===== 우리 반 공유(선택) : Firebase 설정 =====
    Firebase 콘솔 → 프로젝트 설정 → 내 앱(웹) → SDK 설정의 firebaseConfig 값을 아래에 그대로 붙여 넣으세요.
    Realtime Database를 만들고 databaseURL까지 넣어야 켜집니다. 비워 두면 혼자 쓰는 앱으로 돌아갑니다. */
@@ -2833,11 +2833,11 @@ const Auth = {
   mod: null, auth: null, user: null, teacher: false, loading: null,
   init() { if (!this.loading) this.loading = (async () => { if (!(await Cloud.init())) return false; const m = await import(FIREBASE_CDN + 'firebase-auth.js'); this.mod = m; this.auth = m.getAuth(Cloud.app);
       await new Promise(res => { let first = true; m.onAuthStateChanged(this.auth, async u => { this.user = u; await this.check(); if (first) { first = false; res(); } }); }); return true; })().catch(e => { console.warn('로그인 준비 실패', e); this.loading = null; return false; }); return this.loading; },
-  async check() { if (typeof LOCAL_CHECK !== 'undefined' && LOCAL_CHECK && DB.current === TEACHER) { this.teacher = true; return; } this.teacher = false; if (!this.user) return; try { const s = await Cloud.fb.get(Cloud.fb.ref(Cloud.db, 'teachers/' + this.user.uid)); this.teacher = s.val() === true; } catch (e) {} },
+  async check() { if (typeof LOCAL_CHECK !== 'undefined' && LOCAL_CHECK && DB.current === TEACHER) { this.teacher = true; return; } this.teacher = false; if (!this.user) return; for (let k = 0; k < 3; k++) { try { if (k) { await new Promise(r => setTimeout(r, 1000)); try { await this.user.getIdToken(true); } catch (e2) {} } const s = await Cloud.fb.get(Cloud.fb.ref(Cloud.db, 'teachers/' + this.user.uid)); this.teacher = s.val() === true; return; } catch (e) { console.warn('선생님 명단 읽기 실패, 다시 시도', e); } } },   /* v16.97: 명단 읽기가 실패하면 1초 뒤 다시(최대 3번) */
   async signIn() { const m = this.mod; const r = await m.signInWithPopup(this.auth, new m.GoogleAuthProvider()); this.user = r.user; await this.check(); },
   async signOut() { if (this.mod && this.auth) await this.mod.signOut(this.auth); this.user = null; this.teacher = false; },
   me() { const u = this.user || {}; return {email: String(u.email || '').slice(0, 80), name: String(u.displayName || '').slice(0, 40)}; },
-  async claimOrRequest() { const f = Cloud.fb, u = this.user; let any = true; try { any = (await f.get(f.ref(Cloud.db, 'teachers'))).exists(); } catch (e) {}
+  async claimOrRequest() { const f = Cloud.fb, u = this.user; let any = true; await this.check(); if (this.teacher) return 'ok';   /* v16.97: 요청 보내기 전에 명단을 한 번 더 확인 */ try { any = (await f.get(f.ref(Cloud.db, 'teachers'))).exists(); } catch (e) {}
     if (!any) { await f.set(f.ref(Cloud.db, 'teachers/' + u.uid), true); await f.set(f.ref(Cloud.db, 'teacherInfo/' + u.uid), this.me()).catch(() => {}); this.teacher = true; return 'claimed'; }
     await f.set(f.ref(Cloud.db, 'teacherReq/' + u.uid), Object.assign(this.me(), {t: f.serverTimestamp()})); return 'requested'; }
 };
@@ -2845,7 +2845,7 @@ async function teacherGate(ok) {
   toast('선생님 계정을 확인하고 있어요…'); if (!(await Auth.init())) { toast('인터넷 연결을 확인해 주세요'); return; }
   if (Auth.teacher) { ok(); return; }
   const after = async () => { if (Auth.teacher) { toast('👩‍🏫 ' + Auth.me().email + ' 선생님으로 확인됐어요'); ok(); return; }
-    try { const r = await Auth.claimOrRequest(); if (r === 'claimed') { toast('👩‍🏫 첫 선생님으로 등록됐어요'); ok(); } else Modal.show({title: '승인 요청을 보냈어요', html: `<p><b>${esc(Auth.me().email)}</b> 계정으로 요청했어요.</p><p>이미 등록된 선생님이 <b>👩‍🏫 선생님 설정</b>에서 승인하면 쓸 수 있어요.</p>`, primary: {label: '확인', fn: () => {}}}); }
+    try { const r = await Auth.claimOrRequest(); if (r === 'ok') { toast('👩‍🏫 ' + Auth.me().email + ' 선생님으로 확인됐어요'); ok(); } else if (r === 'claimed') { toast('👩‍🏫 첫 선생님으로 등록됐어요'); ok(); } else Modal.show({title: '승인 요청을 보냈어요', html: `<p><b>${esc(Auth.me().email)}</b> 계정으로 요청했어요.</p><p>이미 등록된 선생님이 <b>👩‍🏫 선생님 설정</b>에서 승인하면 쓸 수 있어요.</p>`, primary: {label: '확인', fn: () => {}}}); }
     catch (e) { toast('요청하지 못했어요. Firebase 규칙을 확인해 주세요'); } };
   if (Auth.user) { after(); return; }
   Modal.show({title: '👩‍🏫 선생님 로그인', html: '<p style="margin:0">선생님 기능은 구글 계정으로 로그인해야 쓸 수 있어요. 학생은 로그인하지 않아요.</p>',
