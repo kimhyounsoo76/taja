@@ -1440,7 +1440,7 @@ function validateContent() {
 <script>
 /* ================= 저장 ================= */
 const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
-const APP_VERSION = '16.97', APP_DATE = '2026-11-23';
+const APP_VERSION = '16.98', APP_DATE = '2026-11-23';
 /* ===== 우리 반 공유(선택) : Firebase 설정 =====
    Firebase 콘솔 → 프로젝트 설정 → 내 앱(웹) → SDK 설정의 firebaseConfig 값을 아래에 그대로 붙여 넣으세요.
    Realtime Database를 만들고 databaseURL까지 넣어야 켜집니다. 비워 두면 혼자 쓰는 앱으로 돌아갑니다. */
@@ -10588,12 +10588,12 @@ function advIsland(n, A) { const G = G3, T = G.T, L = [];
     L.push(G.m(G.cone(.85, .6, 7), '#e9e2d0', 0, .3, 0, {flatShading: true}), G.m(G.box(.7, .55, .5), cw, 0, .85, 0, {flatShading: true}),
       ...[-.38, .38].flatMap(x => [G.m(G.cyl(.13, .15, .95, 8), cw, x, .95, 0), G.m(G.cone(.18, .3, 8), rf, x, 1.57, 0)]), G.m(G.cyl(.15, .17, .7, 8), cw, 0, 1.3, -.1), G.m(G.cone(.2, .35, 8), rf, 0, 1.82, -.1),
       G.m(G.box(.1, .12, .02), '#ffe066', 0, 1.05, .3, wo), G.m(G.box(.08, .1, .02), '#ffe066', -.38, 1.1, .16, wo), G.m(G.box(.08, .1, .02), '#ffe066', .38, 1.1, .16, wo), G.m(G.box(.16, .22, .02), '#a9713f', 0, .68, .26), cl0, e1, e2); }
-  else if (n === 10 && (((((typeof user === 'function' && user()) || {}).adv || {}).ch9 || {}).done)) { const fog = [[-.5, .35, .45, .38], [.55, .3, .4, .36], [0, .25, .7, .34], [-.65, .5, -.3, .4], [.6, .55, -.35, .38]].map(([x, y, z, r], i) => { const f = G.m(G.sph(r, 10), '#eef2f6', x, y, z, {transparent: true, opacity: .7, depthWrite: false}); f.castShadow = false; A.push(t0 => { f.position.y = y + Math.sin(t0 * .9 + i * 1.4) * .06; }); return f; });   /* 10섬 먹구름의 성 자리(v16.50): 9장을 마치면 안개 속에 어두운 성 그림자와 노란 창 — 10장을 마치기 전 */
+  else if (n === 10) {   /* v16.98: 10장을 마치기 전 — 어두운 먹구름의 성(다른 섬처럼 처음부터 무대 모습, 안개·공사 중 모양 없앰) */   /* 10섬 먹구름의 성 자리(v16.50): 9장을 마치면 안개 속에 어두운 성 그림자와 노란 창 — 10장을 마치기 전 */
     const eye = G.m(G.box(.1, .12, .02), '#ffe066', 0, 1.05, .3, {emissive: '#ffd43b', emissiveIntensity: 1.2}); A.push(t0 => { eye.material.emissiveIntensity = .9 + Math.sin(t0 * 1.8) * .4; });
     L.push(G.m(G.cone(.85, .6, 7), '#5c6370', 0, .3, 0, {flatShading: true}), G.m(G.box(.7, .55, .5), '#495057', 0, .85, 0, {flatShading: true}),
       ...[-.38, .38].flatMap(x => [G.m(G.cyl(.13, .15, .95, 8), '#5c6370', x, .95, 0), G.m(G.cone(.18, .3, 8), '#343a40', x, 1.57, 0)]), G.m(G.cyl(.15, .17, .7, 8), '#5c6370', 0, 1.3, -.1), G.m(G.cone(.2, .35, 8), '#343a40', 0, 1.82, -.1), eye,
       ...[[-.2, 2.05, -.1, .26], [.15, 2.15, -.15, .3], [.45, 2.0, -.1, .22]].map(([x, y, z, r]) => G.m(G.sph(r, 9), '#5c6370', x, y, z, {flatShading: true})),
-      ...fog); }   /* v16.96: 10장이 생겨 공사 중 표지는 뗌 */
+      ); }
   else { const fog = [[-.45, .55, -.1, .42], [.3, .7, .15, .48], [0, .95, -.35, .4], [.55, .45, -.4, .32], [-.6, .35, .4, .3]].map(([x, y, z, r]) => G.m(G.sph(r, 10), '#eef2f6', x, y, z, {transparent: true, opacity: .82, depthWrite: false}));
     fog.forEach((f, i) => { f.castShadow = false; A.push(t0 => { f.position.y = [.55, .7, .95, .45, .35][i] + Math.sin(t0 * .9 + i * 1.4) * .06; f.scale.setScalar(1 + Math.sin(t0 * .7 + i) * .05); }); });
     L.push(G.m(G.cone(.5, .8, 6), '#ced4da', .1, .4, -.15, {flatShading: true}), G.m(G.box(.05, .5, .05), '#8b5e34', -.55, .25, .55), G.m(G.box(.46, .26, .04), '#ffe066', -.55, .55, .57), ...fog); }
