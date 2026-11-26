@@ -1483,7 +1483,7 @@ function validateContent() {
 <script>
 /* ================= 저장 ================= */
 const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
-const APP_VERSION = '16.173', APP_DATE = '2026-11-26';
+const APP_VERSION = '16.174', APP_DATE = '2026-11-26';
 /* ===== 우리 반 공유(선택) : Firebase 설정 =====
    Firebase 콘솔 → 프로젝트 설정 → 내 앱(웹) → SDK 설정의 firebaseConfig 값을 아래에 그대로 붙여 넣으세요.
    Realtime Database를 만들고 databaseURL까지 넣어야 켜집니다. 비워 두면 혼자 쓰는 앱으로 돌아갑니다. */
@@ -5174,7 +5174,7 @@ const reset = () => { api.cx = -4.5; mk.visible = false; NOTE.visible = false; g
   BOT.visible = true; BOT.position.set(-42, .22, 4.2); BOT.rotation.set(0, 0, 1.35); CORK.position.set(0, .72, 0); CORK.visible = true; PC.forEach(m => { m.visible = false; m.userData.hold = 0; });
   lid.rotation.x = 0; capM.forEach(m => m.emissiveIntensity = 0); BOX.userData.kin.forEach(k => k.visible = true); BOX.userData.floor.emissiveIntensity = 0; CAPS.forEach(c => c.visible = true); boxGlow.visible = false; SHELL.visible = false; CLo.hug = 0; CNOTE.visible = false; HANDS.forEach(h => h.visible = false); EYES.forEach(m => m.visible = true); SMILE.forEach(m => m.visible = false); scroll.style.opacity = 0;
   MG.position.set(-27.5, 0, 3.6); Mo.tx = -27.5; Mo.tz = 3.6; Mo.yaw = -Math.PI / 2; MG.rotation.y = -Math.PI / 2; setSt('idle'); camP.x = -26; camP.z = 2.8;
-  CLo.tgt = null; CLo.shy = 0; CLo.sh = 0; CLo.sx = -1; CLo.ex = CLo.ey = 0; CL.position.set(MG.position.x - 1.2, CLo.y, MG.position.z - .4); CLo.yaw = 0; CL.rotation.y = 0;
+  CLo.tgt = null; CLo.shy = 0; CLo.sh = 0; CLo.sx = CLo.sw = -1; CLo.swT = 0; CLo.ex = CLo.ey = 0; CLo.g = null; CLo.gK = undefined; CLo.gT = 0; CLo.yv = 0; CL.position.set(MG.position.x - 1.2, CLo.y, MG.position.z - .4); CLo.yaw = 0; CL.rotation.y = 0;
   got.length = 0; got.push(...(((Save.get().ch1 || {}).items) || []).filter(x => GIFT.includes(x))); inv();
   if (pol()) { pol().stop(); pol().show(false); }
   const c1 = Save.get().ch1 || {}, f = c1.first || {}, el = $('#a3-start .a3-been'); if (el) el.innerHTML = (f.village || f.stream) ? '가 본 길: ' + (f.village ? '🏠 마을 골목 ✔' : '🏠 마을 골목') + ' · ' + (f.stream ? '🌊 시냇가 길 ✔' : '🌊 시냇가 길') : ''; };
@@ -5187,24 +5187,29 @@ const tick = (dt, t) => { if (!BOT.visible && !CL.visible) return;
     const sideOf = v => (v.x - MG.position.x) * rx + (v.z - MG.position.z) * rz; let want = -1;
     if (P0 && P0.visible !== false && P0.head) { const ph = P0.head(CLh); if (Math.hypot(ph.x - MG.position.x, ph.z - MG.position.z) < 9 && sideOf(ph) < -.3 && (P0.talking || P0.flying)) want = 1; }
     if (plates.length) { const p = plates[plates.length - 1]; if (sideOf({x: p.x, z: p.z}) < -.3) want = 1; }
-    CLo.sx = CLo.sx === undefined ? want : CLo.sx + (want - CLo.sx) * Math.min(1, dt * 1.6); const shy = CLo.shy > 0 ? 1 : 0; CLo.sh = (CLo.sh || 0) + (shy - (CLo.sh || 0)) * Math.min(1, dt * 3);
+    if (want !== CLo.sw) { CLo.swT = (CLo.swT || 0) + dt; if (CLo.swT > 2.5 || CLo.sw === undefined) { CLo.sw = want; CLo.swT = 0; } } else CLo.swT = 0;   /* v16.174: 반대쪽으로 갈 이유가 2.5초 넘게 이어질 때만 옮김 */
+    CLo.sx = CLo.sx === undefined ? CLo.sw : CLo.sx + (CLo.sw - CLo.sx) * Math.min(1, dt * .8); const shy = CLo.shy > 0 ? 1 : 0; CLo.sh = (CLo.sh || 0) + (shy - (CLo.sh || 0)) * Math.min(1, dt * 3);
     const side = CLo.sx * (1.75 - 1.15 * CLo.sh), back = .5 + .35 * CLo.sh, bump = (1 - Math.min(1, Math.abs(CLo.sx))) * .9;
     const hx = MG.position.x + rx * side - cx * back, hz = MG.position.z + rz * side - cz * back, k = Math.min(1, dt * 3);
     CL.position.x += (hx - CL.position.x) * k; CL.position.z += (hz - CL.position.z) * k; CL.position.y = CLo.y + Math.sin(t * 1.4) * .12 + bump - .2 * CLo.sh; CB.rotation.z = Math.sin(t * .9) * .06;
-    /* 시선: 쪽지 안기 > 정해 준 곳 > 말하는 폴리 > 치는 글자판 > 말하는 모아 > 걷는 쪽 > 두리번 */
-    const moaHead = () => CLv.set(MG.position.x, MG.position.y + moaH * .85, MG.position.z), fw = (a, d) => CLv.set(MG.position.x + Math.sin(a) * d, CLo.y * .7, MG.position.z + Math.cos(a) * d); let tg = null;
-    if (CLo.hug > 0) { const e = 4.2 - CLo.hug; tg = e < .7 || e > 3.5 ? moaHead() : CLv.set(CL.position.x + rx * -CLo.sx * 3, CL.position.y - .6, CL.position.z + rz * -CLo.sx * 3); }   /* 쪽지 물으면: 모아를 봤다가 고개를 돌려 꼭 안고, 끝에 다시 모아를 봄 */
-    else if (CLo.tgt) { const v = typeof CLo.tgt === 'function' ? CLo.tgt() : CLo.tgt; if (v) tg = CLv.set(v.x !== undefined ? v.x : v[0], v.y !== undefined ? v.y : v[1], v.z !== undefined ? v.z : v[2]); }
-    if (!tg && P0 && (P0.talking || P0.flying) && P0.head) tg = P0.head(CLv);
-    if (!tg && plates.length) { const p = plates[plates.length - 1]; tg = CLv.set(p.x, Math.max(.4, p.y - 1.6), p.z); }
-    if (!tg && bub.style.opacity === '1') tg = moaHead();
-    if (!tg && Mo.moving) tg = fw(Mo.yaw, 5);
-    if (!tg) tg = Math.sin(t * .23) > .6 ? CLv.copy(cam.position) : fw(Mo.yaw + Math.sin(t * .37) * 1.1, 6);
-    /* 몸은 카메라 쪽으로 열어 둠: 카메라를 보는 방향에서 ±60°까지만 돌고, 나머지는 눈동자로 봄 */
-    CLh.copy(tg).sub(CL.position); const camYaw = Math.atan2(cam.position.x - CL.position.x, cam.position.z - CL.position.z), aim = Math.atan2(CLh.x, CLh.z), d0 = wrap(aim - camYaw), dc = Math.max(-1.05, Math.min(1.05, d0)), rest = d0 - dc;
-    const pitch = Math.max(-.35, Math.min(.3, -Math.atan2(CLh.y, Math.hypot(CLh.x, CLh.z)) * .6));
-    CLo.yaw += wrap(camYaw + dc - CLo.yaw) * Math.min(1, dt * 4); CL.rotation.y = CLo.yaw; if (!(CLo.hug > 0)) CB.rotation.x += (pitch - CB.rotation.x) * Math.min(1, dt * 4);
-    const ex = Math.max(-.14, Math.min(.14, Math.sign(rest) * Math.min(1, Math.abs(rest)) * .14)), ey = -pitch * .25; CLo.ex = (CLo.ex || 0) + (ex - (CLo.ex || 0)) * Math.min(1, dt * 6); CLo.ey = (CLo.ey || 0) + (ey - (CLo.ey || 0)) * Math.min(1, dt * 6);
+    /* v16.174 시선: 차분하게 — 볼 곳은 쪽지 안기 > 정해 준 곳 > 날아오는·말하는 폴리 > 치는 글자판 > 말하는 모아 > 걷는 쪽 > 쉬기(화면 쪽, 11초에 한 번 천천히 앞을 봄)
+       큰 일(쪽지·정해 준 곳·폴리)은 바로 돌아보고, 나머지는 한번 본 곳을 3.5초 동안 그대로 봄. 몸은 25° 넘게 차이 날 때만 천천히(약 1.2초) 돌고, 작은 차이는 눈동자로만 */
+    const moaHead = () => CLv.set(MG.position.x, MG.position.y + moaH * .85, MG.position.z), fw = (a, d) => CLv.set(MG.position.x + Math.sin(a) * d, CLo.y * .7, MG.position.z + Math.cos(a) * d); let tg = null, key = 'rest', big = false;
+    if (CLo.hug > 0) { const e = 4.2 - CLo.hug; big = true; key = e < .7 || e > 3.5 ? 'hugM' : 'hugA'; tg = key === 'hugM' ? moaHead() : CLv.set(CL.position.x + rx * -CLo.sx * 3, CL.position.y - .6, CL.position.z + rz * -CLo.sx * 3); }
+    else if (CLo.tgt) { const v = typeof CLo.tgt === 'function' ? CLo.tgt() : CLo.tgt; if (v) { tg = CLv.set(v.x !== undefined ? v.x : v[0], v.y !== undefined ? v.y : v[1], v.z !== undefined ? v.z : v[2]); key = 'tgt'; big = true; } }
+    if (!tg && P0 && (P0.talking || P0.flying) && P0.head) { tg = P0.head(CLv); key = 'polly'; big = !!P0.flying; }
+    if (!tg && plates.length) { const p = plates[plates.length - 1]; tg = CLv.set(p.x, Math.max(.4, p.y - 1.6), p.z); key = 'plate'; }
+    if (!tg && bub.style.opacity === '1') { tg = moaHead(); key = 'moa'; }
+    if (!tg && Mo.moving) { tg = fw(Mo.yaw, 5); key = 'walk'; }
+    if (!tg) { const g2 = Math.floor(t / 11) % 2; tg = g2 ? fw(Mo.yaw + .5, 6) : CLv.copy(cam.position); key = 'rest' + g2; }
+    CLo.gT = (CLo.gT || 0) + dt; if (!CLo.g) CLo.g = new T.Vector3().copy(tg);
+    if (key !== CLo.gK && (big || CLo.gT > 3.5 || CLo.gK === undefined)) { CLo.gK = key; CLo.gT = 0; CLo.g.copy(tg); }
+    else if (key === CLo.gK) { if (big || key === 'polly' || key.startsWith('hug')) CLo.g.copy(tg); else CLo.g.lerp(tg, Math.min(1, dt * .5)); }   /* 같은 곳이면 천천히만 따라감 */
+    CLh.copy(CLo.g).sub(CL.position); const camYaw = Math.atan2(cam.position.x - CL.position.x, cam.position.z - CL.position.z), aim = Math.atan2(CLh.x, CLh.z), d0 = wrap(aim - camYaw), dc = Math.max(-1.05, Math.min(1.05, d0));
+    const bodyT = camYaw + (Math.abs(dc) < .45 ? 0 : dc - Math.sign(dc) * .2);   /* 25° 안쪽은 몸을 그대로(화면 쪽), 눈으로 봄 */
+    const w0 = 3.2, dy = wrap(bodyT - CLo.yaw); CLo.yv = (CLo.yv || 0) + (w0 * w0 * dy - 2 * w0 * (CLo.yv || 0)) * dt; CLo.yaw += CLo.yv * dt; CL.rotation.y = CLo.yaw;   /* 부드럽게 서서히 멈추는 회전 */
+    const pitch = Math.max(-.3, Math.min(.25, -Math.atan2(CLh.y, Math.hypot(CLh.x, CLh.z)) * .5)); if (!(CLo.hug > 0)) CB.rotation.x += (pitch - CB.rotation.x) * Math.min(1, dt * 1.2);
+    const rest = wrap(aim - CLo.yaw), ex = Math.max(-.14, Math.min(.14, rest * .16)), ey = -pitch * .25; CLo.ex = (CLo.ex || 0) + (ex - (CLo.ex || 0)) * Math.min(1, dt * 3); CLo.ey = (CLo.ey || 0) + (ey - (CLo.ey || 0)) * Math.min(1, dt * 3);
     EYES.forEach((m, i) => { m.position.x = (i ? .5 : -.5) + CLo.ex; m.position.y = .2 + CLo.ey; });
     /* 쪽지 안기(4.2초): 솜털 위로 떠오름 → 구름 손이 나와 가슴에 꼭 → 볼 발그레·^^ → 다시 품속으로 */
     if (CLo.hug > 0) { const T0 = 4.2, e = T0 - (CLo.hug = Math.max(0, CLo.hug - dt)), sm = v => v <= 0 ? 0 : v >= 1 ? 1 : v * v * (3 - 2 * v);
