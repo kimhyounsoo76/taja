@@ -1483,7 +1483,7 @@ function validateContent() {
 <script>
 /* ================= 저장 ================= */
 const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
-const APP_VERSION = '16.172', APP_DATE = '2026-11-26';
+const APP_VERSION = '16.173', APP_DATE = '2026-11-26';
 /* ===== 우리 반 공유(선택) : Firebase 설정 =====
    Firebase 콘솔 → 프로젝트 설정 → 내 앱(웹) → SDK 설정의 firebaseConfig 값을 아래에 그대로 붙여 넣으세요.
    Realtime Database를 만들고 databaseURL까지 넣어야 켜집니다. 비워 두면 혼자 쓰는 앱으로 돌아갑니다. */
@@ -5057,17 +5057,19 @@ const woodTex = (base, dark) => canvasTex(256, 64, (x, w, h) => { x.fillStyle = 
     for (let i = 0; i <= N; i++) { const u = -1 + 2 * i / N, x = u * (L / 2 - ins * .6), w = Math.max(0, hw(u)), t = top(u), b = Math.min(t - .02, bot(u)); row.push([]);
       for (let k = 0; k <= K; k++) { const th = (-1 + 2 * k / K) * Math.PI / 2, sn = Math.sin(th), z = w * Math.sign(sn) * Math.pow(Math.abs(sn), .75), y = b + (t - b) * (1 - Math.cos(th)); row[i].push(pos.length / 3); pos.push(x, y, z); const hh = (y - b) / Math.max(.01, t - b); cl.push(hh, 0, 0); uv.push(i / N * 3, k / K); } }
     for (let i = 0; i < N; i++) for (let k = 0; k < K; k++) { const a = row[i][k], b2 = row[i + 1][k], c = row[i + 1][k + 1], d = row[i][k + 1]; idx.push(a, b2, c, a, c, d); }
-    const cx = pos.length / 3, r0 = row[0]; pos.push(pos[r0[0] * 3], (pos[r0[0] * 3 + 1] + pos[r0[K >> 1] * 3 + 1]) / 2, 0); cl.push(.5, 0, 0); uv.push(0, .5); for (let k = 0; k < K; k++) idx.push(cx, r0[k + 1], r0[k]);   /* 고물 판 */
+    const cx = pos.length / 3, r0 = row[0]; pos.push(pos[r0[0] * 3], (pos[r0[0] * 3 + 1] + pos[r0[K >> 1] * 3 + 1]) / 2, 0); cl.push(.5, 0, 0); uv.push(0, .5); for (let k = 0; k < K; k++) idx.push(cx, r0[k + 1], r0[k], cx, r0[k], r0[k + 1]); idx.push(cx, r0[0], r0[K], cx, r0[K], r0[0]);   /* 위쪽 쐐기까지 막음(고물 위가 뚫려 하늘색이 비치던 것) */   /* 고물 판(양쪽으로 감아 어느 쪽에서도 막혀 보임) */
     const g = new T.BufferGeometry(); g.setAttribute('position', new T.Float32BufferAttribute(pos, 3)); g.setAttribute('hh', new T.Float32BufferAttribute(cl, 3)); g.setAttribute('uv', new T.Float32BufferAttribute(uv, 2)); g.setIndex(idx); g.computeVertexNormals(); g.userData = {hw, top, row, K, N, L}; return g; };
   const hull = (L, W, H, stripe) => { const grp = new T.Group(), g = shell(L, W, H, 0), hh = g.attributes.hh, cl = [], c1 = new T.Color('#f4eee2'), c2 = new T.Color(stripe), c3 = new T.Color('#7a2e27');
     for (let i = 0; i < hh.count; i++) { const v = hh.getX(i), c = v > .6 ? c2 : v < .3 ? c3 : c1; cl.push(c.r, c.g, c.b); } g.setAttribute('color', new T.Float32BufferAttribute(cl, 3));
-    const out = new T.Mesh(g, new T.MeshStandardMaterial({vertexColors: true, roughness: .65, side: T.DoubleSide}));   /* v16.172: 양면(고물 쪽 구멍처럼 보이던 것) */ out.castShadow = true; grp.add(out);
-    const wood = new T.MeshStandardMaterial({map: woodTex('#c39462', '#8a6038'), roughness: .9, side: T.BackSide}); const inn = new T.Mesh(shell(L, W, H, .06), wood); grp.add(inn);
+    const out = new T.Mesh(g, new T.MeshStandardMaterial({vertexColors: true, roughness: .65, side: T.FrontSide}));   /* v16.173: 겉면만 — 안쪽은 나무 껍질이 보이게(흰 칠이 안에서 비치던 것) */ out.castShadow = true; grp.add(out);
+    const wood = new T.MeshStandardMaterial({map: woodTex('#c39462', '#8a6038'), roughness: .9, side: T.DoubleSide}); const inn = new T.Mesh(shell(L, W, H, .06), wood); grp.add(inn);
+    { const P = g.attributes.position, r0 = g.userData.row[0], tp = [], ti = [], K = g.userData.K; let cy = 0; r0.forEach(i => { cy += P.getY(i); }); cy /= r0.length; tp.push(P.getX(r0[0]) + .05, cy, 0); r0.forEach(i => tp.push(P.getX(i) + .05, cy + (P.getY(i) - cy) * .9, P.getZ(i) * .88)); for (let k = 0; k < K; k++) ti.push(0, k + 1, k + 2); ti.push(0, K + 1, 1);   /* v16.173 고물 안쪽 나무 판(안에서 고물 판이 흰 칠로 보이던 것) */
+      const tg2 = new T.BufferGeometry(); tg2.setAttribute('position', new T.Float32BufferAttribute(tp, 3)); tg2.setIndex(ti); tg2.computeVertexNormals(); grp.add(new T.Mesh(tg2, new T.MeshStandardMaterial({color: '#a87a4c', roughness: .9, side: T.DoubleSide}))); }
     const D = g.userData, rim = []; for (let i = 0; i <= D.N; i++) { const u = -1 + 2 * i / D.N; rim.push(new T.Vector3(u * L / 2, D.top(u) + .015, Math.max(0, D.hw(u)))); } for (let i = D.N; i >= 0; i--) { const u = -1 + 2 * i / D.N; rim.push(new T.Vector3(u * L / 2, D.top(u) + .015, -Math.max(0, D.hw(u)))); }
     const rm = new T.Mesh(new T.TubeGeometry(new T.CatmullRomCurve3(rim, true, 'catmullrom', .05), 90, .045, 6, true), new T.MeshStandardMaterial({map: woodTex('#a8743f', '#6b4524'), roughness: .8})); rm.castShadow = true; grp.add(rm);
     const fl = add(new T.BoxGeometry(L * .6, .03, W * .42), new T.MeshStandardMaterial({map: woodTex('#b98a55', '#7a5530'), roughness: .9}), -.05, -H * .5 + .1, 0, grp); fl.castShadow = false;
     grp.userData = {top: D.top, hw: D.hw}; return grp; };
-  const boat = (x, z, ry, L, W, stripe, big) => { const g = new T.Group(); g.position.set(x, .16, z); g.rotation.y = ry; HB.add(g); const H = .62, h = hull(L, W, H, stripe); g.add(h); const U = h.userData;
+  const boat = (x, z, ry, L, W, stripe, big) => { const g = new T.Group(), BY = .235; g.position.set(x, BY, z); g.rotation.y = ry; HB.add(g); const H = .62, h = hull(L, W, H, stripe); g.add(h); const U = h.userData;   /* v16.173: 배 몸통 아래 3분의 1쯤만 물에 잠김 */
     const seatM = new T.MeshStandardMaterial({map: woodTex('#a8743f', '#6b4524'), roughness: .85}), seat = u => { const w = Math.max(.05, U.hw(u)) * 2 - .1; add(new T.BoxGeometry(.2, .045, w), seatM, u * L / 2, U.top(u) - .16, 0, g); };
     if (big) { seat(.42); const cab = new T.Group(); cab.position.set(-.5, -.05, 0); g.add(cab); add(new T.BoxGeometry(.9, .75, W * .5), M('#f3ead6'), 0, .4, 0, cab); add(new T.BoxGeometry(1.05, .1, W * .6), M(stripe), 0, .82, 0, cab); [-1, 1].forEach(s => { const w = add(new T.BoxGeometry(.3, .22, .02), M('#ffe9a8', {emissive: '#ffd257', emissiveIntensity: 1.4}), .05, .5, s * W * .255, cab); w.castShadow = false; });
       add(new T.CylinderGeometry(.04, .05, 2, 6), M('#5a3b20'), .55, 1.05, 0, g); const fl = add(new T.PlaneGeometry(.5, .3), M('#e2372f', {side: T.DoubleSide}), .8, 1.85, 0, g); fl.castShadow = false; ANIM.push(t => { fl.rotation.y = Math.sin(t * 3) * .25; });
@@ -5075,9 +5077,14 @@ const woodTex = (base, dark) => canvasTex(256, 64, (x, w, h) => { x.fillStyle = 
     else { seat(-.45); seat(.25); const oarM = new T.MeshStandardMaterial({map: woodTex('#d2ad74', '#9a7440'), roughness: .8});
       [-1, 1].forEach(s => { const o = new T.Group(); o.position.set(-.05, U.top(0) - .06, s * .14); o.rotation.set(s * .05, s * .06, -.06); g.add(o); const sh = add(new T.CylinderGeometry(.028, .028, L * .82, 6), oarM, 0, 0, 0, o); sh.rotation.z = Math.PI / 2; add(new T.BoxGeometry(.42, .03, .15), oarM, L * .36, 0, 0, o); });
       [-1, 1].forEach(s => add(new T.TorusGeometry(.05, .014, 5, 10), M('#3a3a40'), -.05, U.top(-.05) + .05, s * (U.hw(-.05) + .01), g)); }
-    ANIM.push(t => { g.position.y = .16 + Math.sin(t * 1.3 + x) * .05; g.rotation.z = Math.sin(t * 1.05 + z) * .045; g.rotation.x = Math.sin(t * .8 + x) * .025; }); return g; };
-  boat(-39.2, 9.4, .12, 3.4, 1.5, '#2f7fc0', true); boat(-37.6, 1.6, -.3, 2.4, 1.1, '#e2572f');
-  { const pts = [new T.Vector3(-37.6, .8, 8.9), new T.Vector3(-37.4, .3, 8.0), new T.Vector3(-37.0, .95, 7.6)]; HB.add(new T.Mesh(new T.TubeGeometry(new T.CatmullRomCurve3(pts), 12, .025, 4), ropeM)); }
+    { const cap = [], ci = [], N = 26; for (let i = 0; i <= N; i++) { const u = -1 + 2 * i / N, w = Math.max(0, U.hw(u)), y = U.top(u) - .01; cap.push(u * L / 2, y, w, u * L / 2, y, -w); if (i < N) { const a = i * 2; ci.push(a, a + 2, a + 1, a + 1, a + 2, a + 3); } }
+      const cg = new T.BufferGeometry(); cg.setAttribute('position', new T.Float32BufferAttribute(cap, 3)); cg.setIndex(ci);
+      g.traverse(o => { if (o.isMesh) o.renderOrder = -2; });   /* 배 먼저 그리고 → 뱃전 높이의 보이지 않는 가림 판 → 바다: 배 안쪽으로 바다 면이 비치지 않음 */
+      const mk = new T.Mesh(cg, new T.MeshBasicMaterial({colorWrite: false, side: T.DoubleSide})); mk.renderOrder = -1; mk.castShadow = false; g.add(mk);
+      const ring = new T.Mesh(new T.RingGeometry(.92, 1.08, 40), new T.MeshBasicMaterial({color: '#eaf6ff', transparent: true, opacity: .28, depthWrite: false})); ring.rotation.x = -Math.PI / 2; ring.scale.set(L / 2 * .98, W / 2 * 1.05, 1); ring.position.set(x, .1, z); ring.rotation.z = ry; ring.renderOrder = 1; HB.add(ring);
+      ANIM.push(t => { g.position.y = BY + Math.sin(t * 1.3 + x) * .025; g.rotation.z = Math.sin(t * 1.05 + z) * .03; g.rotation.x = Math.sin(t * .8 + x) * .015; ring.material.opacity = .22 + .08 * Math.sin(t * 2 + x); ring.scale.set(L / 2 * (.98 + .02 * Math.sin(t * 2)), W / 2 * (1.05 + .03 * Math.sin(t * 2)), 1); }); }
+    return g; };
+  boat(-37.6, 1.6, -.3, 2.4, 1.1, '#e2572f');   /* v16.173: 큰 고깃배는 뺌(화면에 안 보이고 폴리 배로 오해될 수 있음) */
 }
 /* 포구 자리(x −27.8 서쪽)에 있던 나무·풀 무더기 등은 치움 */
 { const mine = new Set([HB]), inZone = (x, z) => x < -27.8 && x > -90 && z > -22 && z < 26, v = new T.Vector3(), m4 = new T.Matrix4(), zero = new T.Matrix4().makeScale(0, 0, 0);
@@ -5167,7 +5174,7 @@ const reset = () => { api.cx = -4.5; mk.visible = false; NOTE.visible = false; g
   BOT.visible = true; BOT.position.set(-42, .22, 4.2); BOT.rotation.set(0, 0, 1.35); CORK.position.set(0, .72, 0); CORK.visible = true; PC.forEach(m => { m.visible = false; m.userData.hold = 0; });
   lid.rotation.x = 0; capM.forEach(m => m.emissiveIntensity = 0); BOX.userData.kin.forEach(k => k.visible = true); BOX.userData.floor.emissiveIntensity = 0; CAPS.forEach(c => c.visible = true); boxGlow.visible = false; SHELL.visible = false; CLo.hug = 0; CNOTE.visible = false; HANDS.forEach(h => h.visible = false); EYES.forEach(m => m.visible = true); SMILE.forEach(m => m.visible = false); scroll.style.opacity = 0;
   MG.position.set(-27.5, 0, 3.6); Mo.tx = -27.5; Mo.tz = 3.6; Mo.yaw = -Math.PI / 2; MG.rotation.y = -Math.PI / 2; setSt('idle'); camP.x = -26; camP.z = 2.8;
-  CLo.ang = CLside(); CLo.tgt = null; CLo.shy = 0; CL.position.set(MG.position.x + Math.sin(CLo.ang) * CLo.R, CLo.y, MG.position.z + Math.cos(CLo.ang) * CLo.R); CLo.yaw = Mo.yaw; CL.rotation.y = CLo.yaw;
+  CLo.tgt = null; CLo.shy = 0; CLo.sh = 0; CLo.sx = -1; CLo.ex = CLo.ey = 0; CL.position.set(MG.position.x - 1.2, CLo.y, MG.position.z - .4); CLo.yaw = 0; CL.rotation.y = 0;
   got.length = 0; got.push(...(((Save.get().ch1 || {}).items) || []).filter(x => GIFT.includes(x))); inv();
   if (pol()) { pol().stop(); pol().show(false); }
   const c1 = Save.get().ch1 || {}, f = c1.first || {}, el = $('#a3-start .a3-been'); if (el) el.innerHTML = (f.village || f.stream) ? '가 본 길: ' + (f.village ? '🏠 마을 골목 ✔' : '🏠 마을 골목') + ' · ' + (f.stream ? '🌊 시냇가 길 ✔' : '🌊 시냇가 길') : ''; };
@@ -5175,19 +5182,30 @@ const reset = () => { api.cx = -4.5; mk.visible = false; NOTE.visible = false; g
 const tick = (dt, t) => { if (!BOT.visible && !CL.visible) return;
   if (BOT.userData.float) { BOT.position.y = .22 + Math.sin(t * 2.2) * .06; BOT.rotation.x = Math.sin(t * 1.7) * .15; }
   { const wrap = a => Math.atan2(Math.sin(a), Math.cos(a)); if (CLo.shy > 0) CLo.shy -= dt;
-    CLo.ang += wrap(CLside() - CLo.ang) * Math.min(1, dt * 2.2); const R = CLo.R * (CLo.shy > 0 ? .8 : 1), k = Math.min(1, dt * 3), hx = MG.position.x + Math.sin(CLo.ang) * R, hz = MG.position.z + Math.cos(CLo.ang) * R;   /* 모아 둘레를 돌아 따라붙음(모아를 뚫고 지나가지 않게) */
-    CL.position.x += (hx - CL.position.x) * k; CL.position.z += (hz - CL.position.z) * k; CL.position.y = CLo.y + Math.sin(t * 1.4) * .12 - (CLo.shy > 0 ? .25 : 0); CB.rotation.z = Math.sin(t * .9) * .06;
+    /* v16.173 자리: 화면 기준 — 모아 옆(기본 왼쪽), 카메라에서 모아보다 조금 멀리, 어깨~머리 높이. 폴리·치는 대상이 그쪽에 있으면 반대쪽. 옆을 바꿀 땐 위로 넘어감. 숨을 땐 모아 어깨 너머로 엿봄 */
+    const P0 = pol(), rt = CLv.setFromMatrixColumn(cam.matrixWorld, 0); rt.y = 0; rt.normalize(); const rx = rt.x, rz = rt.z; const tcx = cam.position.x - MG.position.x, tcz = cam.position.z - MG.position.z, tl = Math.hypot(tcx, tcz) || 1, cx = tcx / tl, cz = tcz / tl;
+    const sideOf = v => (v.x - MG.position.x) * rx + (v.z - MG.position.z) * rz; let want = -1;
+    if (P0 && P0.visible !== false && P0.head) { const ph = P0.head(CLh); if (Math.hypot(ph.x - MG.position.x, ph.z - MG.position.z) < 9 && sideOf(ph) < -.3 && (P0.talking || P0.flying)) want = 1; }
+    if (plates.length) { const p = plates[plates.length - 1]; if (sideOf({x: p.x, z: p.z}) < -.3) want = 1; }
+    CLo.sx = CLo.sx === undefined ? want : CLo.sx + (want - CLo.sx) * Math.min(1, dt * 1.6); const shy = CLo.shy > 0 ? 1 : 0; CLo.sh = (CLo.sh || 0) + (shy - (CLo.sh || 0)) * Math.min(1, dt * 3);
+    const side = CLo.sx * (1.75 - 1.15 * CLo.sh), back = .5 + .35 * CLo.sh, bump = (1 - Math.min(1, Math.abs(CLo.sx))) * .9;
+    const hx = MG.position.x + rx * side - cx * back, hz = MG.position.z + rz * side - cz * back, k = Math.min(1, dt * 3);
+    CL.position.x += (hx - CL.position.x) * k; CL.position.z += (hz - CL.position.z) * k; CL.position.y = CLo.y + Math.sin(t * 1.4) * .12 + bump - .2 * CLo.sh; CB.rotation.z = Math.sin(t * .9) * .06;
     /* 시선: 쪽지 안기 > 정해 준 곳 > 말하는 폴리 > 치는 글자판 > 말하는 모아 > 걷는 쪽 > 두리번 */
-    const P0 = pol(), moaHead = () => CLv.set(MG.position.x, MG.position.y + moaH * .85, MG.position.z), fw = (a, d) => CLv.set(MG.position.x + Math.sin(a) * d, CLo.y * .7, MG.position.z + Math.cos(a) * d); let tg = null;
-    if (CLo.hug > 0) { const e = 4.2 - CLo.hug; tg = e < .7 || e > 3.5 ? moaHead() : fw(Mo.yaw + Math.PI + 1.3, 3); }   /* 쪽지 물으면: 모아를 봤다가 고개를 돌려 꼭 안고, 끝에 다시 모아를 봄 */
+    const moaHead = () => CLv.set(MG.position.x, MG.position.y + moaH * .85, MG.position.z), fw = (a, d) => CLv.set(MG.position.x + Math.sin(a) * d, CLo.y * .7, MG.position.z + Math.cos(a) * d); let tg = null;
+    if (CLo.hug > 0) { const e = 4.2 - CLo.hug; tg = e < .7 || e > 3.5 ? moaHead() : CLv.set(CL.position.x + rx * -CLo.sx * 3, CL.position.y - .6, CL.position.z + rz * -CLo.sx * 3); }   /* 쪽지 물으면: 모아를 봤다가 고개를 돌려 꼭 안고, 끝에 다시 모아를 봄 */
     else if (CLo.tgt) { const v = typeof CLo.tgt === 'function' ? CLo.tgt() : CLo.tgt; if (v) tg = CLv.set(v.x !== undefined ? v.x : v[0], v.y !== undefined ? v.y : v[1], v.z !== undefined ? v.z : v[2]); }
-    if (!tg && P0 && P0.talking) tg = P0.head(CLv);
+    if (!tg && P0 && (P0.talking || P0.flying) && P0.head) tg = P0.head(CLv);
     if (!tg && plates.length) { const p = plates[plates.length - 1]; tg = CLv.set(p.x, Math.max(.4, p.y - 1.6), p.z); }
     if (!tg && bub.style.opacity === '1') tg = moaHead();
     if (!tg && Mo.moving) tg = fw(Mo.yaw, 5);
-    if (!tg) tg = Math.sin(t * .23) > .72 ? CLv.copy(cam.position) : fw(Mo.yaw + Math.sin(t * .37) * 1.1, 6);   /* 가만히 있을 때: 앞쪽을 두리번, 가끔 이쪽(화면)을 봄 */
-    CLh.copy(tg).sub(CL.position); const want = Math.atan2(CLh.x, CLh.z), pitch = Math.max(-.35, Math.min(.3, -Math.atan2(CLh.y, Math.hypot(CLh.x, CLh.z)) * .6));
-    CLo.yaw += wrap(want - CLo.yaw) * Math.min(1, dt * 4); CL.rotation.y = CLo.yaw; if (!(CLo.hug > 0)) CB.rotation.x += (pitch - CB.rotation.x) * Math.min(1, dt * 4);
+    if (!tg) tg = Math.sin(t * .23) > .6 ? CLv.copy(cam.position) : fw(Mo.yaw + Math.sin(t * .37) * 1.1, 6);
+    /* 몸은 카메라 쪽으로 열어 둠: 카메라를 보는 방향에서 ±60°까지만 돌고, 나머지는 눈동자로 봄 */
+    CLh.copy(tg).sub(CL.position); const camYaw = Math.atan2(cam.position.x - CL.position.x, cam.position.z - CL.position.z), aim = Math.atan2(CLh.x, CLh.z), d0 = wrap(aim - camYaw), dc = Math.max(-1.05, Math.min(1.05, d0)), rest = d0 - dc;
+    const pitch = Math.max(-.35, Math.min(.3, -Math.atan2(CLh.y, Math.hypot(CLh.x, CLh.z)) * .6));
+    CLo.yaw += wrap(camYaw + dc - CLo.yaw) * Math.min(1, dt * 4); CL.rotation.y = CLo.yaw; if (!(CLo.hug > 0)) CB.rotation.x += (pitch - CB.rotation.x) * Math.min(1, dt * 4);
+    const ex = Math.max(-.14, Math.min(.14, Math.sign(rest) * Math.min(1, Math.abs(rest)) * .14)), ey = -pitch * .25; CLo.ex = (CLo.ex || 0) + (ex - (CLo.ex || 0)) * Math.min(1, dt * 6); CLo.ey = (CLo.ey || 0) + (ey - (CLo.ey || 0)) * Math.min(1, dt * 6);
+    EYES.forEach((m, i) => { m.position.x = (i ? .5 : -.5) + CLo.ex; m.position.y = .2 + CLo.ey; });
     /* 쪽지 안기(4.2초): 솜털 위로 떠오름 → 구름 손이 나와 가슴에 꼭 → 볼 발그레·^^ → 다시 품속으로 */
     if (CLo.hug > 0) { const T0 = 4.2, e = T0 - (CLo.hug = Math.max(0, CLo.hug - dt)), sm = v => v <= 0 ? 0 : v >= 1 ? 1 : v * v * (3 - 2 * v);
       const up = sm(e / .7), down = sm((e - .9) / .6), back = sm((e - 3.2) / .8), hand = sm((e - .8) / .5) * (1 - sm((e - 3.1) / .6)), joy = sm((e - 1.4) / .3) * (1 - sm((e - 3.0) / .3));
@@ -5218,8 +5236,8 @@ const main = async () => { const myRun = ++runId; const sv = Save.get(), c1 = sv
   await backStep(1.1, 1100); setSt('oops', true); bubble('바다는… 아직 조금 무서워.', 2400); await sleep(2400); setSt('idle');
   face(MG.position.x + CLo.x, MG.position.z + CLo.z); bubble('구르미야, 품속에 든 그 쪽지는 뭐야?', 2200); await sleep(1300); CLo.hug = 4.2; await sleep(2600); bubble('…말하기 싫구나. 소중한 건가 보다', 2200); await sleep(2300);
   /* 3. 폴리 등장: "Race you!" — 모아는 대답을 못 함 */
-  const P = pol(); if (P) { where('하늘에서 온 손님'); const lx = MG.position.x + 1.9, lz = MG.position.z - 1.5;   /* 모래밭(부두·상자·밧줄을 피한 자리) */ P.home(lx + 5, lz - 17, 0, groundY(lx, lz));   /* v16.171: 마을 너머 높은 하늘에서 내려옴(바다 바닥에서 솟는 것처럼 보이던 것 고침) */
-    await P.travel(lx + 5, lz - 17, lx, lz, {alt: 1.6, from: 9, V: 6.5, air: true, face: Math.atan2(MG.position.x - lx, MG.position.z - lz)});
+  const P = pol(); if (P) { where('바다에서 온 손님'); const lx = MG.position.x + 1.9, lz = MG.position.z - 1.5;   /* 모래밭(부두·상자·밧줄을 피한 자리) */ P.home(lx - 18, lz - 6, 0, groundY(lx, lz));   /* v16.173: 바다 쪽 먼 하늘에서 바다 위로 미끄러져 내려옴(물 위 늘 2칸 넘게) */
+    await P.travel(lx - 18, lz - 6, lx, lz, {alt: 1.6, from: 9, V: 6.5, air: true, face: Math.atan2(MG.position.x - lx, MG.position.z - lz)});
     face(lx, lz); setSt('surprise'); CLo.shy = 4; P.act('talk'); P.say('I have one too!', 2.4, '나도 조각 하나 있지!'); await sleep(2600);
     P.face('약 올림', 2.6); P.act('talk'); P.say('Race you!', 2.6, '누가 먼저 찾나 겨뤄 보자!'); await sleep(2700);
     bubble('……', 1600); setSt('oops'); await sleep(1700);
