@@ -1483,7 +1483,7 @@ function validateContent() {
 <script>
 /* ================= 저장 ================= */
 const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
-const APP_VERSION = '16.179', APP_DATE = '2026-11-26';
+const APP_VERSION = '16.180', APP_DATE = '2026-11-26';
 /* ===== 우리 반 공유(선택) : Firebase 설정 =====
    Firebase 콘솔 → 프로젝트 설정 → 내 앱(웹) → SDK 설정의 firebaseConfig 값을 아래에 그대로 붙여 넣으세요.
    Realtime Database를 만들고 databaseURL까지 넣어야 켜집니다. 비워 두면 혼자 쓰는 앱으로 돌아갑니다. */
@@ -5145,10 +5145,16 @@ const capM = [], CAPS = []; let lid;
     const inn = add(new T.CylinderGeometry(.53, .53, 1.84, 18, 1, true, 0, Math.PI), M('#3f2513', {side: T.BackSide}), 0, 0, .575, lid); inn.rotation.z = Math.PI / 2; inn.castShadow = false;
     [-1, 1].forEach(s => { const e = add(new T.CircleGeometry(.575, 18, 0, Math.PI), M('#7a4e25', {side: T.DoubleSide}), s * .94, 0, .575, lid); e.rotation.y = Math.PI / 2; }); }
   [-.7, 0, .7].forEach(x => { const b = add(new T.CylinderGeometry(.595, .595, .12, 18, 1, true, 0, Math.PI), M('#d4a72c', {metalness: .5, roughness: .35, flatShading: false, side: T.DoubleSide}), x, 0, .575, lid); b.rotation.z = Math.PI / 2; });
-  { const capT = ch => canvasTex(128, 128, (x, w, h) => { const g = x.createLinearGradient(0, 0, 0, h); g.addColorStop(0, '#ffffff'); g.addColorStop(1, '#efe8d2'); x.fillStyle = g; x.fillRect(0, 0, w, h); x.strokeStyle = '#f0b020'; x.lineWidth = 10; x.strokeRect(5, 5, w - 10, h - 10); x.fillStyle = '#0b2236'; x.font = '900 100px "Segoe UI", Arial, sans-serif'; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText(ch, 64, 66); });
-    const side = new T.MeshStandardMaterial({color: '#e9e1c8', emissive: '#ffc83d', emissiveIntensity: .25, roughness: .55});
-    BOX.userData.kin = ['a', 's', 'd', 'f'].map((ch, i) => { const face = new T.MeshStandardMaterial({color: '#ffffff', emissive: '#ffc83d', emissiveIntensity: .35, roughness: .45, map: capT(ch)});
-      const k = add(new T.BoxGeometry(.36, .2, .36), [side, side, face, side, face.clone(), side], -.6 + i * .4, .19, .02, BOX); k.userData.ch = ch; return k; }); }   /* v16.178 상자 안 영어 글쇠 돌: 진짜 자판 글쇠(키캡)처럼, 윗면·앞면에 큰 글자 */
+  { /* v16.180 글쇠 돌 디자인: 실제 PC 자판 키캡 — 둥근 모서리, 위로 갈수록 살짝 좁아지는 몸, 상아색 몸에 아래쪽은 한 톤 짙게, 윗면 가운데 살짝 오목해 보이는 그늘 + 짙은 남색 소문자 */
+    const W = .3, R = .055, H = .13, shp = new T.Shape(); { const a = W / 2 - R; shp.moveTo(-a, -W / 2); shp.lineTo(a, -W / 2); shp.quadraticCurveTo(W / 2, -W / 2, W / 2, -a); shp.lineTo(W / 2, a); shp.quadraticCurveTo(W / 2, W / 2, a, W / 2); shp.lineTo(-a, W / 2); shp.quadraticCurveTo(-W / 2, W / 2, -W / 2, a); shp.lineTo(-W / 2, -a); shp.quadraticCurveTo(-W / 2, -W / 2, -a, -W / 2); }
+    const cg = new T.ExtrudeGeometry(shp, {depth: H, bevelEnabled: true, bevelThickness: .018, bevelSize: .016, bevelSegments: 3, curveSegments: 6}); cg.rotateX(-Math.PI / 2);
+    { const p = cg.attributes.position, col = [], lo = new T.Color('#d9cdb0'), hi = new T.Color('#fffaf0'), c = new T.Color(); for (let k = 0; k < p.count; k++) { const y = p.getY(k), t = Math.max(0, Math.min(1, (y + .018) / (H + .036))), sc = 1 - .13 * t; p.setX(k, p.getX(k) * sc); p.setZ(k, p.getZ(k) * sc); c.copy(lo).lerp(hi, Math.pow(t, .8)); col.push(c.r, c.g, c.b); } cg.setAttribute('color', new T.Float32BufferAttribute(col, 3)); cg.computeVertexNormals(); }
+    const topY = H + .018, decal = ch => canvasTex(128, 128, (x, w, h) => { x.fillStyle = '#fff9ee'; x.fillRect(0, 0, w, h); const g = x.createRadialGradient(w / 2, h / 2 + 4, 8, w / 2, h / 2, w * .5); g.addColorStop(0, 'rgba(255,255,255,0)'); g.addColorStop(.78, 'rgba(120,96,60,.05)'); g.addColorStop(1, 'rgba(120,96,60,.16)'); x.fillStyle = g; x.fillRect(0, 0, w, h);
+      x.fillStyle = '#22406a'; x.font = '800 92px "Arial Rounded MT Bold", "Nunito", "Segoe UI", Arial, sans-serif'; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText(ch, 64, 58); });
+    BOX.userData.kin = ['a', 's', 'd', 'f'].map((ch, i) => { const k = new T.Group(); k.position.set(-.57 + i * .38, .1, .02); BOX.add(k);
+      const body = new T.MeshStandardMaterial({vertexColors: true, roughness: .42, metalness: 0, emissive: '#ffcf6b', emissiveIntensity: 0}); const m = new T.Mesh(cg, body); m.castShadow = true; k.add(m);
+      const top = new T.Mesh(new T.PlaneGeometry(W * .87, W * .87), new T.MeshStandardMaterial({map: decal(ch), roughness: .5, polygonOffset: true, polygonOffsetFactor: -2})); top.rotation.x = -Math.PI / 2; top.position.y = topY + .002; k.add(top);
+      const halo = glow(.7, '#ffe29a'); halo.position.set(0, -.14, 0); halo.renderOrder = -3; halo.visible = false; k.add(halo); k.userData = {ch, body, halo}; return k; }); }
   add(new T.BoxGeometry(1.3, .42, .08), gold, 0, .62, .6, BOX);
   ['a', 's', 'd', 'f'].forEach((ch, i) => { const m = new T.MeshStandardMaterial({color: '#fffbea', emissive: '#ffc83d', emissiveIntensity: 0, roughness: .5, map: canvasTex(64, 64, (x, w, h) => { x.fillStyle = '#fffbea'; x.fillRect(0, 0, w, h); x.fillStyle = '#14324a'; x.font = '900 44px sans-serif'; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText(ch, 32, 34); })});
     CAPS.push(add(new T.BoxGeometry(.24, .24, .1), m, -.45 + i * .3, .62, .66, BOX)); capM.push(m); }); }
@@ -5175,7 +5181,7 @@ const reset = () => { api.cx = -4.5; mk.visible = false; NOTE.visible = false; g
   dark = darkT = .35; LH.on = 1; LH.blink = 0; segs.forEach(m => { m.userData.o = 0; m.material.opacity = 0; });
   BOT.visible = true; BOT.position.set(-42, .22, 4.2); BOT.rotation.set(0, 0, 1.35); CORK.position.set(0, .72, 0); CORK.visible = true; PC.forEach(m => { m.visible = false; m.userData.hold = 0; });
   occReset();
-  lid.rotation.x = 0; capM.forEach(m => m.emissiveIntensity = 0); BOX.userData.kin.forEach(k => k.visible = true); BOX.userData.floor.emissiveIntensity = 0; CAPS.forEach(c => c.visible = true); boxGlow.visible = false; SHELL.visible = false; CLo.hug = 0; CNOTE.visible = false; HANDS.forEach(h => h.visible = false); EYES.forEach(m => m.visible = true); SMILE.forEach(m => m.visible = false); scroll.style.opacity = 0;
+  lid.rotation.x = 0; capM.forEach(m => m.emissiveIntensity = 0); BOX.userData.kin.forEach(k => { k.visible = true; }); BOX.userData.floor.emissiveIntensity = 0; CAPS.forEach(c => c.visible = true); boxGlow.visible = false; SHELL.visible = false; CLo.hug = 0; CNOTE.visible = false; HANDS.forEach(h => h.visible = false); EYES.forEach(m => m.visible = true); SMILE.forEach(m => m.visible = false); scroll.style.opacity = 0;
   MG.position.set(-27.5, 0, 3.6); Mo.tx = -27.5; Mo.tz = 3.6; Mo.yaw = -Math.PI / 2; MG.rotation.y = -Math.PI / 2; setSt('idle'); camP.x = -26; camP.z = 2.8;
   CLo.tgt = null; CLo.shy = 0; CLo.sh = 0; CLo.sx = CLo.sw = -1; CLo.swT = 0; CLo.ex = CLo.ey = 0; CLo.g = null; CLo.gK = undefined; CLo.gT = 0; CLo.yv = 0; CLo.pin = null; CLo.stageSide = 1;   /* 포구: 모래밭 쪽(화면 오른쪽) — 부두 등불을 피함 */ CL.position.set(MG.position.x - 2.2, CLo.y, MG.position.z - .5); CLo.yaw = 0; CL.rotation.y = 0;
   got.length = 0; got.push(...(((Save.get().ch1 || {}).items) || []).filter(x => GIFT.includes(x))); inv();
@@ -5294,16 +5300,16 @@ const main = async () => { const myRun = ++runId; const sv = Save.get(), c1 = sv
   await typeOn(25, 3.2, 1, E1.lock[1], n => { capM[4 - n].emissiveIntensity = 3; }, '🔒 글쇠 자물쇠 ②', '오른쪽부터 거꾸로'); const sigClean = Stat.bad === sb0;
   CLo.tgt = BOX.localToWorld(new T.Vector3(0, .3, 0)); sfx.win(); flash = .6; await anim(900, u => { lid.rotation.x = -1.9 * ez(u); BOX.userData.floor.emissiveIntensity = 1.6 * u; }); boxGlow.scale.setScalar(6); burst(25, 1.6, 1, 22, '#fff3a0', 3); setSt('cheer');
   /* 자물쇠 글쇠가 빠져나와 모아 가방으로 — 1장의 영어 글쇠 a s d f */
-  bubble('상자 안에 글쇠 돌이 있어!', 1500); { const fl = BOX.userData.kin.map(c => { const w = new T.Vector3(); c.getWorldPosition(w); const m = c.clone(); m.material = [].concat(c.material).map(q => q.clone()); m.position.copy(w); m.quaternion.copy(c.getWorldQuaternion(new T.Quaternion())); S.add(m); c.visible = false; return {m, w, q0: m.quaternion.clone()}; });
+  bubble('상자 안에 글쇠 돌이 있어!', 1500); { const fl = BOX.userData.kin.map(c => { const w = new T.Vector3(); c.getWorldPosition(w); const m = c.clone(); m.children.forEach(o => { if (o.material) o.material = o.material.clone(); }); m.userData = {body: m.children[0].material, halo: m.children[2]}; m.position.copy(w); m.quaternion.copy(c.getWorldQuaternion(new T.Quaternion())); S.add(m); c.visible = false; return {m, w, q0: m.quaternion.clone()}; });
     /* v16.178: 떠올라 화면을 향해 자판 차례(왼쪽부터 a s d f)로 한 줄 → 1초 멈춰 글자를 보여 줌 → 하나씩 반짝이며 모아 가방으로 */
-    const rt = new T.Vector3().setFromMatrixColumn(cam.matrixWorld, 0), up = new T.Vector3().setFromMatrixColumn(cam.matrixWorld, 1), top = BOX.localToWorld(new T.Vector3(0, 1.2, 0)), C = top.clone().lerp(cam.position, .55).addScaledVector(up, .75), SC = 2.4, qc = cam.quaternion.clone();
-    { const mp = MG.position.clone().project(cam), cp = C.clone().project(cam); C.addScaledVector(rt, (cp.x >= mp.x ? 1 : -1) * .55); }   /* 모아에서 먼 쪽으로 비켜 줄 섬(모아 머리를 가리지 않게) */
-    CLo.tgt = () => C; fl.forEach((f, i) => { f.to = C.clone().addScaledVector(rt, (i - 1.5) * .95); });
-    await anim(1000, u => fl.forEach((f, i) => { const e = ez(Math.max(0, Math.min(1, u * 1.25 - i * .08))); f.m.position.lerpVectors(f.w, f.to, e); f.m.position.y += Math.sin(e * Math.PI) * .6; f.m.quaternion.slerpQuaternions(f.q0, qc, e); f.m.scale.setScalar(1 + (SC - 1) * e); [].concat(f.m.material).forEach(q => { if (q.map) q.emissiveIntensity = .12; else q.emissiveIntensity = .25 + .5 * e; });   /* 글자 면은 밝게 바래지 않게, 옆면만 빛남 */ }));
-    burst(C.x, C.y, C.z, 18, '#ffe680', 2); sfx.win();
+    const rt = new T.Vector3().setFromMatrixColumn(cam.matrixWorld, 0), up = new T.Vector3().setFromMatrixColumn(cam.matrixWorld, 1), top = BOX.localToWorld(new T.Vector3(0, 1.2, 0)), C = top.clone().lerp(cam.position, .45).addScaledVector(up, .55), SC = 1.45, qc = cam.quaternion.clone().multiply(new T.Quaternion().setFromAxisAngle(new T.Vector3(1, 0, 0), Math.PI / 2 - .32));   /* 윗면(글자)이 화면 쪽으로, 살짝 비스듬히 — 키캡 옆모습도 보임 */
+    { const mp = MG.position.clone().project(cam), cp = C.clone().project(cam); C.addScaledVector(rt, (cp.x >= mp.x ? 1 : -1) * .35); }   /* 모아에서 먼 쪽으로 비켜 줄 섬(모아 머리를 가리지 않게) */
+    CLo.tgt = () => C; fl.forEach((f, i) => { f.to = C.clone().addScaledVector(rt, (i - 1.5) * .5); });
+    await anim(1000, u => fl.forEach((f, i) => { const e = ez(Math.max(0, Math.min(1, u * 1.25 - i * .08))); f.m.position.lerpVectors(f.w, f.to, e); f.m.position.y += Math.sin(e * Math.PI) * .6; f.m.quaternion.slerpQuaternions(f.q0, qc, e); f.m.scale.setScalar(1 + (SC - 1) * e); f.m.userData.body.emissiveIntensity = .18 * e; f.m.userData.halo.visible = e > .3; f.m.userData.halo.material.opacity = .55 * e;   /* 글자는 그대로 또렷하게, 뒤에 은은한 후광 */ }));
+    { const bk = C.clone().addScaledVector(C.clone().sub(cam.position).normalize(), .9); burst(bk.x, bk.y, bk.z, 18, '#ffe680', 2); } sfx.win();   /* 반짝이는 글쇠 뒤에서 터지게(글자를 가리지 않게) */
     await anim(1100, u => fl.forEach((f, i) => { f.m.position.copy(f.to); f.m.position.addScaledVector(up, Math.sin(u * Math.PI * 2 + i * .8) * .05); f.m.quaternion.copy(qc); }));   /* 한 줄로 서서 글자를 보여 줌 */
     const bag = () => MG.localToWorld(new T.Vector3(0, moaH * .62, -.35));
-    for (let i = 0; i < fl.length; i++) { const f = fl[i], a = f.m.position.clone(); [].concat(f.m.material).forEach(q => { if (!q.map) q.emissiveIntensity = 1.4; }); beep(660 + i * 110, .12, 'triangle', .08);
+    for (let i = 0; i < fl.length; i++) { const f = fl[i], a = f.m.position.clone(); f.m.userData.body.emissiveIntensity = .45; beep(660 + i * 110, .12, 'triangle', .08);
       await anim(380, u => { const e = u * u, b = bag(); f.m.position.lerpVectors(a, b, e); f.m.position.y += Math.sin(u * Math.PI) * .5; f.m.scale.setScalar(SC * (1 - .85 * e)); });
       S.remove(f.m); const b = bag(); burst(b.x, b.y, b.z, 8, '#ffe680', 1.2); await sleep(90); }
     CLo.tgt = null; got.push(KEYS); inv(); sfx.done(); }
