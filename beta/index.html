@@ -1483,7 +1483,7 @@ function validateContent() {
 <script>
 /* ================= 저장 ================= */
 const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
-const APP_VERSION = '16.178', APP_DATE = '2026-11-26';
+const APP_VERSION = '16.179', APP_DATE = '2026-11-26';
 /* ===== 우리 반 공유(선택) : Firebase 설정 =====
    Firebase 콘솔 → 프로젝트 설정 → 내 앱(웹) → SDK 설정의 firebaseConfig 값을 아래에 그대로 붙여 넣으세요.
    Realtime Database를 만들고 databaseURL까지 넣어야 켜집니다. 비워 두면 혼자 쓰는 앱으로 돌아갑니다. */
@@ -5286,7 +5286,7 @@ const main = async () => { const myRun = ++runId; const sv = Save.get(), c1 = sv
   else { where('시냇가 길'); await go(12.2, 3.5); face(12.9, 3.9); SHELL.visible = true; burst(12.9, .5, 3.9, 8, '#ffe2a8', 1.5); setSt('inspect'); await sleep(800);
     if (got.includes('🐚')) bubble('연못이 반짝반짝해!', 1800); else { bubble('소라 나팔을 주웠어!', 1800); got.push('🐚'); inv(); SHELL.visible = false; } setSt('cheer'); await sleep(1800); await go(11.6, .6); }
   /* 6. 다리 건너기 */
-  where('다리 건너기'); await go(12.2, -1.5); for (let i = 0; i < 3; i++) await go(PX[i], -1.5); await go(18, -1.5); await go(20.5, 2);
+  where('다리 건너기'); await go(12.2, -1.5); await go(18, -1.5); await go(20.5, 2);   /* v16.179: 다리를 한 번에 건넘(판자마다 멈췄다 걷느라 발이 덜 움직여 미끄러져 보이던 것) */
   /* 7. 알파벳 상자: 글쇠 자물쇠 두 번 */
   where('알파벳 상자'); await go(22.9, 2.6); face(25, 1); setSt('inspect'); bubble('상자야! 자물쇠에 a s d f가 박혀 있어', 2200); await sleep(1800); setSt('fix');
   const sb0 = Stat.bad;
