@@ -1483,7 +1483,7 @@ function validateContent() {
 <script>
 /* ================= 저장 ================= */
 const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
-const APP_VERSION = '16.177', APP_DATE = '2026-11-26';
+const APP_VERSION = '16.178', APP_DATE = '2026-11-26';
 /* ===== 우리 반 공유(선택) : Firebase 설정 =====
    Firebase 콘솔 → 프로젝트 설정 → 내 앱(웹) → SDK 설정의 firebaseConfig 값을 아래에 그대로 붙여 넣으세요.
    Realtime Database를 만들고 databaseURL까지 넣어야 켜집니다. 비워 두면 혼자 쓰는 앱으로 돌아갑니다. */
@@ -5145,8 +5145,10 @@ const capM = [], CAPS = []; let lid;
     const inn = add(new T.CylinderGeometry(.53, .53, 1.84, 18, 1, true, 0, Math.PI), M('#3f2513', {side: T.BackSide}), 0, 0, .575, lid); inn.rotation.z = Math.PI / 2; inn.castShadow = false;
     [-1, 1].forEach(s => { const e = add(new T.CircleGeometry(.575, 18, 0, Math.PI), M('#7a4e25', {side: T.DoubleSide}), s * .94, 0, .575, lid); e.rotation.y = Math.PI / 2; }); }
   [-.7, 0, .7].forEach(x => { const b = add(new T.CylinderGeometry(.595, .595, .12, 18, 1, true, 0, Math.PI), M('#d4a72c', {metalness: .5, roughness: .35, flatShading: false, side: T.DoubleSide}), x, 0, .575, lid); b.rotation.z = Math.PI / 2; });
-  BOX.userData.kin = ['a', 's', 'd', 'f'].map((ch, i) => { const m = new T.MeshStandardMaterial({color: '#fffbea', emissive: '#ffc83d', emissiveIntensity: .6, roughness: .5, map: canvasTex(64, 64, (x, w, h) => { x.fillStyle = '#fffbea'; x.fillRect(0, 0, w, h); x.strokeStyle = '#f0b020'; x.lineWidth = 6; x.strokeRect(3, 3, w - 6, h - 6); x.fillStyle = '#14324a'; x.font = '900 40px sans-serif'; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText(ch, 32, 34); })});
-    const k = add(new T.BoxGeometry(.26, .12, .26), [M('#fffbea'), M('#fffbea'), m, M('#fffbea'), M('#fffbea'), M('#fffbea')], -.48 + i * .32, .16, .05, BOX); k.rotation.y = (i - 1.5) * .12; return k; });   /* 상자 안에 놓인 영어 글쇠 돌 a s d f */
+  { const capT = ch => canvasTex(128, 128, (x, w, h) => { const g = x.createLinearGradient(0, 0, 0, h); g.addColorStop(0, '#ffffff'); g.addColorStop(1, '#efe8d2'); x.fillStyle = g; x.fillRect(0, 0, w, h); x.strokeStyle = '#f0b020'; x.lineWidth = 10; x.strokeRect(5, 5, w - 10, h - 10); x.fillStyle = '#0b2236'; x.font = '900 100px "Segoe UI", Arial, sans-serif'; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText(ch, 64, 66); });
+    const side = new T.MeshStandardMaterial({color: '#e9e1c8', emissive: '#ffc83d', emissiveIntensity: .25, roughness: .55});
+    BOX.userData.kin = ['a', 's', 'd', 'f'].map((ch, i) => { const face = new T.MeshStandardMaterial({color: '#ffffff', emissive: '#ffc83d', emissiveIntensity: .35, roughness: .45, map: capT(ch)});
+      const k = add(new T.BoxGeometry(.36, .2, .36), [side, side, face, side, face.clone(), side], -.6 + i * .4, .19, .02, BOX); k.userData.ch = ch; return k; }); }   /* v16.178 상자 안 영어 글쇠 돌: 진짜 자판 글쇠(키캡)처럼, 윗면·앞면에 큰 글자 */
   add(new T.BoxGeometry(1.3, .42, .08), gold, 0, .62, .6, BOX);
   ['a', 's', 'd', 'f'].forEach((ch, i) => { const m = new T.MeshStandardMaterial({color: '#fffbea', emissive: '#ffc83d', emissiveIntensity: 0, roughness: .5, map: canvasTex(64, 64, (x, w, h) => { x.fillStyle = '#fffbea'; x.fillRect(0, 0, w, h); x.fillStyle = '#14324a'; x.font = '900 44px sans-serif'; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText(ch, 32, 34); })});
     CAPS.push(add(new T.BoxGeometry(.24, .24, .1), m, -.45 + i * .3, .62, .66, BOX)); capM.push(m); }); }
@@ -5292,11 +5294,19 @@ const main = async () => { const myRun = ++runId; const sv = Save.get(), c1 = sv
   await typeOn(25, 3.2, 1, E1.lock[1], n => { capM[4 - n].emissiveIntensity = 3; }, '🔒 글쇠 자물쇠 ②', '오른쪽부터 거꾸로'); const sigClean = Stat.bad === sb0;
   CLo.tgt = BOX.localToWorld(new T.Vector3(0, .3, 0)); sfx.win(); flash = .6; await anim(900, u => { lid.rotation.x = -1.9 * ez(u); BOX.userData.floor.emissiveIntensity = 1.6 * u; }); boxGlow.scale.setScalar(6); burst(25, 1.6, 1, 22, '#fff3a0', 3); setSt('cheer');
   /* 자물쇠 글쇠가 빠져나와 모아 가방으로 — 1장의 영어 글쇠 a s d f */
-  bubble('상자 안에 글쇠 돌이 있어!', 1500); { const fl = BOX.userData.kin.map(c => { const w = new T.Vector3(); c.getWorldPosition(w); const m = c.clone(); m.material = [].concat(c.material).map(q => { q = q.clone(); if (q.map) q.emissiveIntensity = 2.5; return q; }); if (m.material.length === 1) m.material = m.material[0]; m.position.copy(w); m.rotation.y = BOX.rotation.y; S.add(m); c.visible = false; return {m, w}; }); CLo.tgt = () => fl[1].m.position;
-    await anim(900, u => fl.forEach((f, i) => { const e = ez(u); f.m.position.set(f.w.x + (i - 1.5) * .45 * e, f.w.y + 2.2 * e, f.w.z + .3 * e); f.m.rotation.y = BOX.rotation.y + e * Math.PI * 2; f.m.scale.setScalar(1 + .6 * e); }));
-    burst(25, 2.4, 1.4, 16, '#ffe680', 2); sfx.win(); await sleep(500); const to = MG.position.clone(); to.y = 1.2;
-    await anim(650, u => fl.forEach(f => { f.m.position.lerp(to, u * .35); f.m.scale.setScalar(1.6 - 1.3 * u); }));
-    fl.forEach(f => S.remove(f.m)); CLo.tgt = null; got.push(KEYS); inv(); sfx.done(); }
+  bubble('상자 안에 글쇠 돌이 있어!', 1500); { const fl = BOX.userData.kin.map(c => { const w = new T.Vector3(); c.getWorldPosition(w); const m = c.clone(); m.material = [].concat(c.material).map(q => q.clone()); m.position.copy(w); m.quaternion.copy(c.getWorldQuaternion(new T.Quaternion())); S.add(m); c.visible = false; return {m, w, q0: m.quaternion.clone()}; });
+    /* v16.178: 떠올라 화면을 향해 자판 차례(왼쪽부터 a s d f)로 한 줄 → 1초 멈춰 글자를 보여 줌 → 하나씩 반짝이며 모아 가방으로 */
+    const rt = new T.Vector3().setFromMatrixColumn(cam.matrixWorld, 0), up = new T.Vector3().setFromMatrixColumn(cam.matrixWorld, 1), top = BOX.localToWorld(new T.Vector3(0, 1.2, 0)), C = top.clone().lerp(cam.position, .55).addScaledVector(up, .75), SC = 2.4, qc = cam.quaternion.clone();
+    { const mp = MG.position.clone().project(cam), cp = C.clone().project(cam); C.addScaledVector(rt, (cp.x >= mp.x ? 1 : -1) * .55); }   /* 모아에서 먼 쪽으로 비켜 줄 섬(모아 머리를 가리지 않게) */
+    CLo.tgt = () => C; fl.forEach((f, i) => { f.to = C.clone().addScaledVector(rt, (i - 1.5) * .95); });
+    await anim(1000, u => fl.forEach((f, i) => { const e = ez(Math.max(0, Math.min(1, u * 1.25 - i * .08))); f.m.position.lerpVectors(f.w, f.to, e); f.m.position.y += Math.sin(e * Math.PI) * .6; f.m.quaternion.slerpQuaternions(f.q0, qc, e); f.m.scale.setScalar(1 + (SC - 1) * e); [].concat(f.m.material).forEach(q => { if (q.map) q.emissiveIntensity = .12; else q.emissiveIntensity = .25 + .5 * e; });   /* 글자 면은 밝게 바래지 않게, 옆면만 빛남 */ }));
+    burst(C.x, C.y, C.z, 18, '#ffe680', 2); sfx.win();
+    await anim(1100, u => fl.forEach((f, i) => { f.m.position.copy(f.to); f.m.position.addScaledVector(up, Math.sin(u * Math.PI * 2 + i * .8) * .05); f.m.quaternion.copy(qc); }));   /* 한 줄로 서서 글자를 보여 줌 */
+    const bag = () => MG.localToWorld(new T.Vector3(0, moaH * .62, -.35));
+    for (let i = 0; i < fl.length; i++) { const f = fl[i], a = f.m.position.clone(); [].concat(f.m.material).forEach(q => { if (!q.map) q.emissiveIntensity = 1.4; }); beep(660 + i * 110, .12, 'triangle', .08);
+      await anim(380, u => { const e = u * u, b = bag(); f.m.position.lerpVectors(a, b, e); f.m.position.y += Math.sin(u * Math.PI) * .5; f.m.scale.setScalar(SC * (1 - .85 * e)); });
+      S.remove(f.m); const b = bag(); burst(b.x, b.y, b.z, 8, '#ffe680', 1.2); await sleep(90); }
+    CLo.tgt = null; got.push(KEYS); inv(); sfx.done(); }
   setSt('cheer'); bubble('영어 글쇠 a s d f를 찾았어! 다른 섬에도 글쇠가 있을 거야', 2600); await sleep(2600);
   await revealPiece(1, [25, 1.4, 1]); showScroll('“Ten islands, ten boxes.”', '열 섬에 열 상자', 3000); await sleep(3000); await stowPiece(1); bubble('두 번째 조각도 찾았어!', 1800); await sleep(1400);
   /* 8. 폴리가 늦게 옴: "Next time!" */
