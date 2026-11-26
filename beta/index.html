@@ -1483,7 +1483,7 @@ function validateContent() {
 <script>
 /* ================= 저장 ================= */
 const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
-const APP_VERSION = '16.175', APP_DATE = '2026-11-26';
+const APP_VERSION = '16.176', APP_DATE = '2026-11-26';
 /* ===== 우리 반 공유(선택) : Firebase 설정 =====
    Firebase 콘솔 → 프로젝트 설정 → 내 앱(웹) → SDK 설정의 firebaseConfig 값을 아래에 그대로 붙여 넣으세요.
    Realtime Database를 만들고 databaseURL까지 넣어야 켜집니다. 비워 두면 혼자 쓰는 앱으로 돌아갑니다. */
@@ -5172,14 +5172,33 @@ const reset = () => { api.cx = -4.5; mk.visible = false; NOTE.visible = false; g
   lamps.forEach(l => l.set(false)); setWin(true); planks.forEach(p => { p.visible = true; p.position.y = .32; p.userData.drop = 0; }); ghosts.forEach(g => g.visible = false);
   dark = darkT = .35; LH.on = 1; LH.blink = 0; segs.forEach(m => { m.userData.o = 0; m.material.opacity = 0; });
   BOT.visible = true; BOT.position.set(-42, .22, 4.2); BOT.rotation.set(0, 0, 1.35); CORK.position.set(0, .72, 0); CORK.visible = true; PC.forEach(m => { m.visible = false; m.userData.hold = 0; });
+  occReset();
   lid.rotation.x = 0; capM.forEach(m => m.emissiveIntensity = 0); BOX.userData.kin.forEach(k => k.visible = true); BOX.userData.floor.emissiveIntensity = 0; CAPS.forEach(c => c.visible = true); boxGlow.visible = false; SHELL.visible = false; CLo.hug = 0; CNOTE.visible = false; HANDS.forEach(h => h.visible = false); EYES.forEach(m => m.visible = true); SMILE.forEach(m => m.visible = false); scroll.style.opacity = 0;
   MG.position.set(-27.5, 0, 3.6); Mo.tx = -27.5; Mo.tz = 3.6; Mo.yaw = -Math.PI / 2; MG.rotation.y = -Math.PI / 2; setSt('idle'); camP.x = -26; camP.z = 2.8;
-  CLo.tgt = null; CLo.shy = 0; CLo.sh = 0; CLo.sx = CLo.sw = -1; CLo.swT = 0; CLo.ex = CLo.ey = 0; CLo.g = null; CLo.gK = undefined; CLo.gT = 0; CLo.yv = 0; CL.position.set(MG.position.x - 2.2, CLo.y, MG.position.z - .5); CLo.yaw = 0; CL.rotation.y = 0;
+  CLo.tgt = null; CLo.shy = 0; CLo.sh = 0; CLo.sx = CLo.sw = -1; CLo.swT = 0; CLo.ex = CLo.ey = 0; CLo.g = null; CLo.gK = undefined; CLo.gT = 0; CLo.yv = 0; CLo.stageSide = 1;   /* 포구: 모래밭 쪽(화면 오른쪽) — 부두 등불을 피함 */ CL.position.set(MG.position.x - 2.2, CLo.y, MG.position.z - .5); CLo.yaw = 0; CL.rotation.y = 0;
   got.length = 0; got.push(...(((Save.get().ch1 || {}).items) || []).filter(x => GIFT.includes(x))); inv();
   if (pol()) { pol().stop(); pol().show(false); }
   const c1 = Save.get().ch1 || {}, f = c1.first || {}, el = $('#a3-start .a3-been'); if (el) el.innerHTML = (f.village || f.stream) ? '가 본 길: ' + (f.village ? '🏠 마을 골목 ✔' : '🏠 마을 골목') + ' · ' + (f.stream ? '🌊 시냇가 길 ✔' : '🌊 시냇가 길') : ''; };
 /* ── 매 장면 ── */
-const tick = (dt, t) => { if (!BOT.visible && !CL.visible) return;
+/* v16.176 가리는 소품 비키기: 카메라와 주요 인물(모아·구르미와 쪽지·폴리·지금 보는 곳) 사이에 낀 소품을 잠깐 반투명하게, 벗어나면 되돌림 */
+const OCC = {rc: new T.Raycaster(), faded: new Map(), t: 0, v: new T.Vector3(), d: new T.Vector3()};
+const occTick = dt => { OCC.t -= dt; const F = OCC.faded;
+  if (OCC.t <= 0) { OCC.t = .1; const P0 = pol(), actors = new Set([MG, CL]); if (P0 && P0.group) actors.add(P0.group);
+    const pts = [], cr = new T.Vector3().setFromMatrixColumn(cam.matrixWorld, 0), cu = new T.Vector3().setFromMatrixColumn(cam.matrixWorld, 1), ring = (c, r) => { pts.push(c.clone()); [[1, 0], [-1, 0], [0, 1], [0, -1], [.7, .7], [-.7, .7], [.7, -.7], [-.7, -.7]].forEach(([a, b]) => pts.push(c.clone().addScaledVector(cr, a * r).addScaledVector(cu, b * r))); };   /* 가운데만이 아니라 둘레 여러 곳으로 검사(가장자리·쪽지를 가리는 것까지) */
+    if (CL.visible) { ring(CL.getWorldPosition(new T.Vector3()), (CLo.rad || .8) * .95); ring(CL.getWorldPosition(new T.Vector3()), (CLo.rad || .8) * .5); } const nCL = pts.length; let clHit = 0;
+    ring(new T.Vector3(MG.position.x, MG.position.y + moaH * .55, MG.position.z), moaH * .4);
+    if (P0 && P0.group && P0.group.visible) ring(P0.head(new T.Vector3()).add(new T.Vector3(0, -moaH * .2, 0)), moaH * .32);
+    const want = new Set(); pts.forEach((p, pi) => { OCC.d.copy(p).sub(cam.position); const L = OCC.d.length(); OCC.rc.set(cam.position, OCC.d.normalize()); OCC.rc.camera = cam; OCC.rc.far = L - .3;
+      OCC.rc.intersectObjects(S.children, true).forEach(h => { const o = h.object; if (!o.isMesh || o.isInstancedMesh || !o.visible) return; const m0 = [].concat(o.material)[0]; if (m0 && m0.colorWrite === false) return;
+        for (let q = o; q; q = q.parent) if (actors.has(q)) return; if (h.face && OCC.v.copy(h.face.normal).transformDirection(o.matrixWorld).y > .6) return;   /* 바닥·부두처럼 평평한 면은 투명하게 하지 않음 */ if (!o.geometry.boundingSphere) o.geometry.computeBoundingSphere(); if (o.geometry.boundingSphere.radius * Math.max(o.scale.x, o.scale.y, o.scale.z) > 12) return; want.add(o); if (pi < nCL) clHit++; }); });
+    
+    want.forEach(o => { if (!F.has(o)) { const orig = o.material, cl = [].concat(orig).map(m => { const c = m.clone(); c.transparent = true; c.depthWrite = false; return c; }); F.set(o, {orig, mats: cl, a: 1, on: true}); o.material = Array.isArray(orig) ? cl : cl[0]; o.castShadow0 = o.castShadow; } F.get(o).on = true; });
+    F.forEach((e, o) => { if (!want.has(o)) e.on = false; }); }
+  F.forEach((e, o) => { e.a += ((e.on ? .22 : 1) - e.a) * Math.min(1, dt * 8); e.mats.forEach(m => { m.opacity = e.a * ([].concat(e.orig)[0].opacity ?? 1); });
+    if (!e.on && e.a > .98) { o.material = e.orig; F.delete(o); } }); };
+const occReset = () => { OCC.faded.forEach((e, o) => { o.material = e.orig; }); OCC.faded.clear(); };
+window.__ensOcc = OCC;   /* 점검용 */
+const tick = (dt, t) => { if (!BOT.visible && !CL.visible) return; occTick(dt);
   if (BOT.userData.float) { BOT.position.y = .22 + Math.sin(t * 2.2) * .06; BOT.rotation.x = Math.sin(t * 1.7) * .15; }
   { const wrap = a => Math.atan2(Math.sin(a), Math.cos(a)); if (CLo.shy > 0) CLo.shy -= dt;
     /* v16.173 자리: 화면 기준 — 모아 옆(기본 왼쪽), 카메라에서 모아보다 조금 멀리, 어깨~머리 높이. 폴리·치는 대상이 그쪽에 있으면 반대쪽. 옆을 바꿀 땐 위로 넘어감. 숨을 땐 모아 어깨 너머로 엿봄 */
@@ -5187,10 +5206,10 @@ const tick = (dt, t) => { if (!BOT.visible && !CL.visible) return;
     const sideOf = v => (v.x - MG.position.x) * rx + (v.z - MG.position.z) * rz; let want = -1;
     if (P0 && P0.visible !== false && P0.head) { const ph = P0.head(CLh); if (Math.hypot(ph.x - MG.position.x, ph.z - MG.position.z) < 9 && sideOf(ph) < -.3 && (P0.talking || P0.flying)) want = 1; }
     if (plates.length) { const p = plates[plates.length - 1]; if (sideOf({x: p.x, z: p.z}) < -.3) want = 1; }
-    if (want !== CLo.sw) { CLo.swT = (CLo.swT || 0) + dt; if (CLo.swT > 2.5 || CLo.sw === undefined) { CLo.sw = want; CLo.swT = 0; } } else CLo.swT = 0;   /* v16.174: 반대쪽으로 갈 이유가 2.5초 넘게 이어질 때만 옮김 */
+    if (CLo.stageSide) want = CLo.stageSide; if (want !== CLo.sw) { CLo.swT = (CLo.swT || 0) + dt; if (CLo.swT > (CLo.stageSide ? .1 : 2.5) || CLo.sw === undefined) { CLo.sw = want; CLo.swT = 0; } } else CLo.swT = 0;   /* v16.174: 반대쪽으로 갈 이유가 2.5초 넘게 이어질 때만 옮김 */
     CLo.sx = CLo.sx === undefined ? CLo.sw : CLo.sx + (CLo.sw - CLo.sx) * Math.min(1, dt * .8); const shy = CLo.shy > 0 ? 1 : 0; CLo.sh = (CLo.sh || 0) + (shy - (CLo.sh || 0)) * Math.min(1, dt * 3);
     if (!CLo.rad) { const bb = new T.Box3().setFromObject(CB), sz = bb.getSize(new T.Vector3()); CLo.rad = Math.max(sz.x, sz.z) / 2; }   /* v16.175: 구르미 실제 크기(반지름)를 재서 간격을 정함 */
-    const gap = .55 + CLo.rad + .35, side = CLo.sx * (gap - gap * .4 * CLo.sh), back = .5 + (.55 + CLo.rad) * CLo.sh,   /* 모아 몸 반폭 + 구르미 반지름 + 여유: 화면에서 겹치지 않음. 숨을 땐 모아 뒤(카메라에서 더 멀리)로 가서 모아가 앞에 보임 */ bump = (1 - Math.min(1, Math.abs(CLo.sx))) * 1.7;   /* 옆을 바꿀 땐 모아 머리 위로 넘어감 */
+    const cross = 1 - Math.min(1, Math.abs(CLo.sx)), gap = .55 + CLo.rad + .35, side = CLo.sx * (gap - gap * .4 * CLo.sh), back = .5 + (.55 + CLo.rad) * Math.max(CLo.sh, cross * 1.6),   /* 모아 몸 반폭 + 구르미 반지름 + 여유: 화면에서 겹치지 않음. 숨을 땐 모아 뒤(카메라에서 더 멀리)로 가서 모아가 앞에 보임 */ bump = cross * .3;   /* 옆을 바꿀 땐 모아 머리 위로 넘어감 */
     const hx = MG.position.x + rx * side - cx * back, hz = MG.position.z + rz * side - cz * back, k = Math.min(1, dt * 3);
     CL.position.x += (hx - CL.position.x) * k; CL.position.z += (hz - CL.position.z) * k; CL.position.y = CLo.y + Math.sin(t * 1.4) * .12 + bump - .2 * CLo.sh; CB.rotation.z = Math.sin(t * .9) * .06;
     /* v16.174 시선: 차분하게 — 볼 곳은 쪽지 안기 > 정해 준 곳 > 날아오는·말하는 폴리 > 치는 글자판 > 말하는 모아 > 걷는 쪽 > 쉬기(화면 쪽, 11초에 한 번 천천히 앞을 봄)
@@ -5242,14 +5261,14 @@ const main = async () => { const myRun = ++runId; const sv = Save.get(), c1 = sv
   await backStep(1.1, 1100); setSt('oops', true); bubble('바다는… 아직 조금 무서워.', 2400); await sleep(2400); setSt('idle');
   face(MG.position.x + CLo.x, MG.position.z + CLo.z); bubble('구르미야, 품속에 든 그 쪽지는 뭐야?', 2200); await sleep(1300); CLo.hug = 4.2; await sleep(2600); bubble('…말하기 싫구나. 소중한 건가 보다', 2200); await sleep(2300);
   /* 3. 폴리 등장: "Race you!" — 모아는 대답을 못 함 */
-  const P = pol(); if (P) { where('바다에서 온 손님'); const lx = MG.position.x + 1.9, lz = MG.position.z - 1.5;   /* 모래밭(부두·상자·밧줄을 피한 자리) */ P.home(lx - 18, lz - 6, 0, groundY(lx, lz));   /* v16.173: 바다 쪽 먼 하늘에서 바다 위로 미끄러져 내려옴(물 위 늘 2칸 넘게) */
+  const P = pol(); if (P) { where('바다에서 온 손님'); CLo.stageSide = -1;   /* 폴리가 오른쪽에 내려앉으니 구르미는 왼쪽(모아 뒤)으로 */ const lx = MG.position.x + 1.9, lz = MG.position.z - 1.5;   /* 모래밭(부두·상자·밧줄을 피한 자리) */ P.home(lx - 18, lz - 6, 0, groundY(lx, lz));   /* v16.173: 바다 쪽 먼 하늘에서 바다 위로 미끄러져 내려옴(물 위 늘 2칸 넘게) */
     await P.travel(lx - 18, lz - 6, lx, lz, {alt: 1.6, from: 9, V: 6.5, air: true, face: Math.atan2(MG.position.x - lx, MG.position.z - lz)});
     face(lx, lz); setSt('surprise'); CLo.shy = 4; P.act('talk'); P.say('I have one too!', 2.4, '나도 조각 하나 있지!'); await sleep(2600);
     P.face('약 올림', 2.6); P.act('talk'); P.say('Race you!', 2.6, '누가 먼저 찾나 겨뤄 보자!'); await sleep(2700);
     bubble('……', 1600); setSt('oops'); await sleep(1700);
     P.travel(lx, lz, 30, -6, {alt: 10, V: 9, land: false, climb: 3}); await sleep(900); bubble('앗, 먼저 가 버렸어!', 1800); await sleep(1400); }
   /* 4. 빛의 길: 낱말 하나에 가로등 하나 */
-  where('가로등 빛의 길'); api.cx = 0; bubble('가로등에 알파벳이 새겨져 있어. 켜 보자!', 2200); await go(-15.7, 1.5);
+  CLo.stageSide = 0; where('가로등 빛의 길'); api.cx = 0; bubble('가로등에 알파벳이 새겨져 있어. 켜 보자!', 2200); await go(-15.7, 1.5);
   for (let i = 0; i < 4; i++) { const w = E1.lamp[i], L = lamps[i]; await go(LX[i] - 1.7, 1.5); face(LX[i], LZ); setSt('fix');
     await typeOn(LX[i], 5.9, LZ, w, n => { L.mat.color.set('#fff1b8'); L.mat.emissiveIntensity = 1.6 * n / w.length; }, '💡 ' + (i + 1) + '번 가로등', E1.mean[w]);
     L.set(true); burst(LX[i], 4.6, LZ, 12); lightSeg(PATH[i], 260); setSt('cheer'); await sleep(i < 3 ? 500 : 900); }
