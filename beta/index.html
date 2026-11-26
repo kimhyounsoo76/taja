@@ -1483,7 +1483,7 @@ function validateContent() {
 <script>
 /* ================= 저장 ================= */
 const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
-const APP_VERSION = '16.170', APP_DATE = '2026-11-26';
+const APP_VERSION = '16.171', APP_DATE = '2026-11-26';
 /* ===== 우리 반 공유(선택) : Firebase 설정 =====
    Firebase 콘솔 → 프로젝트 설정 → 내 앱(웹) → SDK 설정의 firebaseConfig 값을 아래에 그대로 붙여 넣으세요.
    Realtime Database를 만들고 databaseURL까지 넣어야 켜집니다. 비워 두면 혼자 쓰는 앱으로 돌아갑니다. */
@@ -4638,7 +4638,7 @@ const api = {group: PG, bones: B, scale: sc,
   /* v1.2 곧게 날아가기: (x1,z1)에서 날아올라 (x2,z2)로. o.alt 가운데 높이 더하기, o.V 빠르기, o.land=false면 내려앉지 않고 사라짐 */
   travel(x1, z1, x2, z2, o) { o = o || {}; if (mode === 'seq') { mode = 'act'; seqRes = null; endTR(); }
     const D = Math.max(6, Math.hypot(x2 - x1, z2 - z1)), dx = (x2 - x1) / D, dz = (z2 - z1) / D, fy = Math.atan2(dx, dz);
-    TR = {x1, z1, x2, z2, dx, dz, D, climb: o.climb, alt: o.alt || 0, land: o.land !== false, fy, face: o.face, air: !!o.air, keep: {V: SEQ.V, tL: SEQ.tL, T: SEQ.T}};
+    TR = {x1, z1, x2, z2, dx, dz, D, climb: o.climb, from: o.from || 0, alt: o.alt || 0, land: o.land !== false, fy, face: o.face, air: !!o.air, keep: {V: SEQ.V, tL: SEQ.tL, T: SEQ.T}};
     SEQ.V = o.V || 6.5; const t0 = TR.air ? 1.45 : 0, d0 = TR.air ? SEQ.V * (SEQ.a1 - SEQ.a0) / 2 + SEQ.V * (t0 - SEQ.a1) : 0; TR.t0 = t0; TR.d0 = d0;
     SEQ.tL = Math.max(t0 + .6, SEQ.a1 + (D + d0) / SEQ.V - (SEQ.a1 - SEQ.a0) / 2 - SEQ.touch / 2); SEQ.T = SEQ.tL + SEQ.land;
     if (TR.air) { H.x = x1; H.z = z1; H.yaw = fy; PG.visible = true; seqBlend = 1; }
@@ -4675,7 +4675,7 @@ const api = {group: PG, bones: B, scale: sc,
     liftC += (liftT - liftC) * k;
     let th = 0, ox = 0, oz = 0, bank = 0;
     let altY = 0;
-    if (mode === 'seq' && TR) { const dd = Math.max(0, Math.min(seqDist(seqT) - TR.d0, TR.D)), f = dd / TR.D; H.x = TR.x1 + TR.dx * dd; H.z = TR.z1 + TR.dz * dd; altY = TR.alt * (TR.land ? Math.sin(Math.PI * f) : (1 - Math.cos(Math.PI * Math.min(1, f * (TR.climb || 1.25)))) / 2);   /* climb: 높을수록 빨리 솟음 */   /* v1.3: 떠날 때 높이는 0에서부터 */
+    if (mode === 'seq' && TR) { const dd = Math.max(0, Math.min(seqDist(seqT) - TR.d0, TR.D)), f = dd / TR.D; H.x = TR.x1 + TR.dx * dd; H.z = TR.z1 + TR.dz * dd; altY = (TR.from ? TR.from * Math.pow(1 - f, 1.6) : 0) + TR.alt * (TR.land ? Math.sin(Math.PI * f) : (1 - Math.cos(Math.PI * Math.min(1, f * (TR.climb || 1.25)))) / 2);   /* climb: 높을수록 빨리 솟음 */   /* v1.3: 떠날 때 높이는 0에서부터 */
       if (TR.face != null && TR.land && !TR.turn) { const w = Math.min(1, Math.max(0, (seqT - (SEQ.tL - .35)) / 1.1)); let dy = TR.face - TR.fy; dy = Math.atan2(Math.sin(dy), Math.cos(dy)); H.yaw = TR.fy + dy * w * w * (3 - 2 * w); } }
     else if (mode === 'seq') { th = seqDist(seqT) / SEQ.R; ox = SEQ.R - SEQ.R * Math.cos(th); oz = SEQ.R * Math.sin(th); bank = -.32 * seqSpeed(seqT); }
     oz += wc.pz; const cy = Math.cos(H.yaw), sy = Math.sin(H.yaw), c2 = Math.cos(th), s2 = Math.sin(th), fx = ox + s2 * 0, fz = oz;   /* 원 위 자리를 제자리 방향(H.yaw)만큼 돌려 놓음 */
@@ -5049,16 +5049,31 @@ const woodTex = (base, dark) => canvasTex(256, 64, (x, w, h) => { x.fillStyle = 
     const net = new T.Mesh(new T.PlaneGeometry(1.6, 1.1, 6, 4), new T.MeshStandardMaterial({map: netT, transparent: true, alphaTest: .3, side: T.DoubleSide, roughness: 1})); const np = net.geometry.attributes.position; for (let i = 0; i < np.count; i++) np.setZ(i, Math.sin(np.getX(i) * 4) * .06 + Math.cos(np.getY(i) * 5) * .05); net.rotation.x = -Math.PI / 2; net.position.set(x0 - 3.2, .72, pz - .4); HB.add(net);
     add(new T.TorusGeometry(.3, .1, 6, 12), ropeM, x0 - 4.6, .74, pz + .7, HB).rotation.x = -Math.PI / 2; }
   [[x0 - 2.4, pz + 1.55, '#e2372f'], [x0 - 5.6, pz + 1.55, '#f5f5f0'], [x0 - 3.9, pz - 1.55, '#ffb21a']].forEach(([x, z, c]) => { add(new T.SphereGeometry(.2, 12, 10), M(c, {flatShading: false}), x, .45, z, HB); add(new T.CylinderGeometry(.012, .012, .3, 4), ropeM, x, .7, z, HB); });
-  /* 배: 둥근 선체(뱃머리 뾰족), 줄무늬, 노·그물 */
-  const hull = (L, W, H, stripe) => { const g = new T.BoxGeometry(L, H, W, 8, 2, 4), p = g.attributes.position, cl = [], c1 = new T.Color('#f1ece0'), c2 = new T.Color(stripe), c3 = new T.Color('#7d2d28');
-    for (let i = 0; i < p.count; i++) { let x = p.getX(i), y = p.getY(i), z = p.getZ(i); const u = x / (L / 2), bot = (H / 2 - y) / H; z *= 1 - .55 * bot; if (u > .35) z *= 1 - Math.pow((u - .35) / .65, 1.4) * .96; if (u < -.75) z *= 1 - (-.75 - u) * .8; y += (u > 0 ? u * u * .18 : u * u * .08) * (1 - bot); p.setXYZ(i, x, y, z); const yy = y / (H / 2); const c = yy > .55 ? c2 : yy < -.45 ? c3 : c1; cl.push(c.r, c.g, c.b); }
-    g.setAttribute('color', new T.Float32BufferAttribute(cl, 3)); g.computeVertexNormals(); return new T.Mesh(g, new T.MeshStandardMaterial({vertexColors: true, roughness: .7, flatShading: true, side: T.DoubleSide})); };
-  const boat = (x, z, ry, L, W, stripe, big) => { const g = new T.Group(); g.position.set(x, .16, z); g.rotation.y = ry; HB.add(g); const h = hull(L, W, .7, stripe); h.castShadow = true; g.add(h);
-    add(new T.BoxGeometry(L * .78, .05, W * .5), new T.MeshStandardMaterial({map: woodTex('#b98a55', '#7a5530'), roughness: .9}), -.1, .2, 0, g);
-    if (big) { const cab = new T.Group(); cab.position.set(-.45, .2, 0); g.add(cab); add(new T.BoxGeometry(.9, .75, W * .5), M('#f3ead6'), 0, .4, 0, cab); add(new T.BoxGeometry(1.05, .1, W * .6), M(stripe), 0, .82, 0, cab); [-1, 1].forEach(s => { const w = add(new T.BoxGeometry(.3, .22, .02), M('#ffe9a8', {emissive: '#ffd257', emissiveIntensity: 1.4}), .05, .5, s * W * .255, cab); w.castShadow = false; });
-      add(new T.CylinderGeometry(.04, .05, 2, 6), M('#5a3b20'), .55, 1.2, 0, g); const fl = add(new T.PlaneGeometry(.5, .3), M('#e2372f', {side: T.DoubleSide}), .8, 2, 0, g); fl.castShadow = false; ANIM.push(t => { fl.rotation.y = Math.sin(t * 3) * .25; });
-      const lm = add(new T.SphereGeometry(.1, 8, 6), M('#fff1b8', {emissive: '#ffcf57', emissiveIntensity: 2}), .55, 2.22, 0, g); lm.castShadow = false; }
-    else { [-.35, .45].forEach(dx => add(new T.BoxGeometry(.12, .06, W * .62), M('#8a5a2b'), dx, .3, 0, g)); [-1, 1].forEach(s => { const o = new T.Group(); o.position.set(-.05, .36, s * .1); o.rotation.set(0, s * .25, 0); g.add(o); const sh = add(new T.CylinderGeometry(.025, .025, 1.5, 5), M('#c9a46a'), 0, 0, 0, o); sh.rotation.z = Math.PI / 2; add(new T.BoxGeometry(.38, .03, .14), M('#c9a46a'), .78, 0, 0, o); }); }
+  /* 배(v16.171): 위가 열린 나무 노 젓는 배 — 바깥 칠(줄무늬·흰 몸·짙은 밑), 안쪽 나무 껍질, 나무 뱃전 테두리, 바닥 판, 앉는 판, 노 */
+  const shell = (L, W, H, ins) => { const N = 26, K = 14, pos = [], cl = [], idx = [], uv = [], c1 = new T.Color('#f1ece0'), c3 = new T.Color('#7d2d28');
+    const hw = u => W / 2 * Math.pow(Math.max(0, u < 0 ? 1 - .38 * u * u : 1 - u * u), .62) - ins, top = u => H * (.5 + (u > 0 ? .42 : .14) * u * u), bot = u => -H * .5 + H * .1 * u * u + ins;
+    let stripe = null; const row = [];
+    for (let i = 0; i <= N; i++) { const u = -1 + 2 * i / N, x = u * (L / 2 - ins * .6), w = Math.max(0, hw(u)), t = top(u), b = Math.min(t - .02, bot(u)); row.push([]);
+      for (let k = 0; k <= K; k++) { const th = (-1 + 2 * k / K) * Math.PI / 2, sn = Math.sin(th), z = w * Math.sign(sn) * Math.pow(Math.abs(sn), .75), y = b + (t - b) * (1 - Math.cos(th)); row[i].push(pos.length / 3); pos.push(x, y, z); const hh = (y - b) / Math.max(.01, t - b); cl.push(hh, 0, 0); uv.push(i / N * 3, k / K); } }
+    for (let i = 0; i < N; i++) for (let k = 0; k < K; k++) { const a = row[i][k], b2 = row[i + 1][k], c = row[i + 1][k + 1], d = row[i][k + 1]; idx.push(a, b2, c, a, c, d); }
+    const cx = pos.length / 3, r0 = row[0]; pos.push(pos[r0[0] * 3], (pos[r0[0] * 3 + 1] + pos[r0[K >> 1] * 3 + 1]) / 2, 0); cl.push(.5, 0, 0); uv.push(0, .5); for (let k = 0; k < K; k++) idx.push(cx, r0[k + 1], r0[k]);   /* 고물 판 */
+    const g = new T.BufferGeometry(); g.setAttribute('position', new T.Float32BufferAttribute(pos, 3)); g.setAttribute('hh', new T.Float32BufferAttribute(cl, 3)); g.setAttribute('uv', new T.Float32BufferAttribute(uv, 2)); g.setIndex(idx); g.computeVertexNormals(); g.userData = {hw, top, row, K, N, L}; return g; };
+  const hull = (L, W, H, stripe) => { const grp = new T.Group(), g = shell(L, W, H, 0), hh = g.attributes.hh, cl = [], c1 = new T.Color('#f4eee2'), c2 = new T.Color(stripe), c3 = new T.Color('#7a2e27');
+    for (let i = 0; i < hh.count; i++) { const v = hh.getX(i), c = v > .6 ? c2 : v < .3 ? c3 : c1; cl.push(c.r, c.g, c.b); } g.setAttribute('color', new T.Float32BufferAttribute(cl, 3));
+    const out = new T.Mesh(g, new T.MeshStandardMaterial({vertexColors: true, roughness: .65, side: T.FrontSide})); out.castShadow = true; grp.add(out);
+    const wood = new T.MeshStandardMaterial({map: woodTex('#c39462', '#8a6038'), roughness: .9, side: T.BackSide}); const inn = new T.Mesh(shell(L, W, H, .06), wood); grp.add(inn);
+    const D = g.userData, rim = []; for (let i = 0; i <= D.N; i++) { const u = -1 + 2 * i / D.N; rim.push(new T.Vector3(u * L / 2, D.top(u) + .015, Math.max(0, D.hw(u)))); } for (let i = D.N; i >= 0; i--) { const u = -1 + 2 * i / D.N; rim.push(new T.Vector3(u * L / 2, D.top(u) + .015, -Math.max(0, D.hw(u)))); }
+    const rm = new T.Mesh(new T.TubeGeometry(new T.CatmullRomCurve3(rim, true, 'catmullrom', .05), 90, .045, 6, true), new T.MeshStandardMaterial({map: woodTex('#a8743f', '#6b4524'), roughness: .8})); rm.castShadow = true; grp.add(rm);
+    const fl = add(new T.BoxGeometry(L * .6, .03, W * .42), new T.MeshStandardMaterial({map: woodTex('#b98a55', '#7a5530'), roughness: .9}), -.05, -H * .5 + .1, 0, grp); fl.castShadow = false;
+    grp.userData = {top: D.top, hw: D.hw}; return grp; };
+  const boat = (x, z, ry, L, W, stripe, big) => { const g = new T.Group(); g.position.set(x, .16, z); g.rotation.y = ry; HB.add(g); const H = .62, h = hull(L, W, H, stripe); g.add(h); const U = h.userData;
+    const seatM = new T.MeshStandardMaterial({map: woodTex('#a8743f', '#6b4524'), roughness: .85}), seat = u => { const w = Math.max(.05, U.hw(u)) * 2 - .1; add(new T.BoxGeometry(.2, .045, w), seatM, u * L / 2, U.top(u) - .16, 0, g); };
+    if (big) { seat(.42); const cab = new T.Group(); cab.position.set(-.5, -.05, 0); g.add(cab); add(new T.BoxGeometry(.9, .75, W * .5), M('#f3ead6'), 0, .4, 0, cab); add(new T.BoxGeometry(1.05, .1, W * .6), M(stripe), 0, .82, 0, cab); [-1, 1].forEach(s => { const w = add(new T.BoxGeometry(.3, .22, .02), M('#ffe9a8', {emissive: '#ffd257', emissiveIntensity: 1.4}), .05, .5, s * W * .255, cab); w.castShadow = false; });
+      add(new T.CylinderGeometry(.04, .05, 2, 6), M('#5a3b20'), .55, 1.05, 0, g); const fl = add(new T.PlaneGeometry(.5, .3), M('#e2372f', {side: T.DoubleSide}), .8, 1.85, 0, g); fl.castShadow = false; ANIM.push(t => { fl.rotation.y = Math.sin(t * 3) * .25; });
+      const lm = add(new T.SphereGeometry(.1, 8, 6), M('#fff1b8', {emissive: '#ffcf57', emissiveIntensity: 2}), .55, 2.07, 0, g); lm.castShadow = false; }
+    else { seat(-.45); seat(.25); const oarM = new T.MeshStandardMaterial({map: woodTex('#d2ad74', '#9a7440'), roughness: .8});
+      [-1, 1].forEach(s => { const o = new T.Group(); o.position.set(-.05, U.top(0) - .06, s * .14); o.rotation.set(s * .05, s * .06, -.06); g.add(o); const sh = add(new T.CylinderGeometry(.028, .028, L * .82, 6), oarM, 0, 0, 0, o); sh.rotation.z = Math.PI / 2; add(new T.BoxGeometry(.42, .03, .15), oarM, L * .36, 0, 0, o); });
+      [-1, 1].forEach(s => add(new T.TorusGeometry(.05, .014, 5, 10), M('#3a3a40'), -.05, U.top(-.05) + .05, s * (U.hw(-.05) + .01), g)); }
     ANIM.push(t => { g.position.y = .16 + Math.sin(t * 1.3 + x) * .05; g.rotation.z = Math.sin(t * 1.05 + z) * .045; g.rotation.x = Math.sin(t * .8 + x) * .025; }); return g; };
   boat(-39.2, 9.4, .12, 3.4, 1.5, '#2f7fc0', true); boat(-37.6, 1.6, -.3, 2.4, 1.1, '#e2572f');
   { const pts = [new T.Vector3(-37.6, .8, 8.9), new T.Vector3(-37.4, .3, 8.0), new T.Vector3(-37.0, .95, 7.6)]; HB.add(new T.Mesh(new T.TubeGeometry(new T.CatmullRomCurve3(pts), 12, .025, 4), ropeM)); }
@@ -5110,10 +5125,19 @@ const PATH = [[seg(-17, 2, -11, 2)], [seg(-11, 2, -5, 2)], [seg(-5, 2, 1, 2)], [
 /* ── 알파벳 상자(옛 신호 장치 자리) ── */
 const BOX = new T.Group(); BOX.position.set(25, 0, 1); BOX.rotation.y = -.75; S.add(BOX);
 const capM = [], CAPS = []; let lid;
-{ const w1 = M('#a8703c'), w2 = M('#8a5a2b'), gold = M('#d4a72c', {metalness: .5, roughness: .35, flatShading: false});
-  add(new T.BoxGeometry(1.9, 1, 1.15), w1, 0, .5, 0, BOX); [-.7, 0, .7].forEach(x => add(new T.BoxGeometry(.12, 1.02, 1.18), gold, x, .5, 0, BOX));
-  lid = new T.Group(); lid.position.set(0, 1, -.575); BOX.add(lid); const w2s = M('#8a5a2b', {side: T.DoubleSide}); const top = add(new T.CylinderGeometry(.575, .575, 1.9, 16, 1, false, 0, Math.PI), w2s, 0, 0, .575, lid); add(new T.BoxGeometry(1.9, .03, 1.15), M('#6b4423'), 0, .015, .575, lid);   /* v16.150 뚜껑: 양 끝·바닥을 막고 안쪽 면도 그림 */ top.rotation.z = Math.PI / 2;
-  [-.7, 0, .7].forEach(x => { const b = add(new T.CylinderGeometry(.595, .595, .12, 16, 1, false, 0, Math.PI), M('#d4a72c', {metalness: .5, roughness: .35, flatShading: false, side: T.DoubleSide}), x, 0, .575, lid); b.rotation.z = Math.PI / 2; });
+{ const w1 = M('#a8703c'), w2 = M('#8a5a2b'), gold = M('#d4a72c', {metalness: .5, roughness: .35, flatShading: false}), inM = M('#4a2c16'), t = .08;   /* v16.171 상자: 바닥·네 벽으로 속을 비움, 안감은 짙은 나무 */
+  add(new T.BoxGeometry(1.9, t, 1.15), w1, 0, t / 2, 0, BOX); [-1, 1].forEach(s => { add(new T.BoxGeometry(1.9, 1, t), w1, 0, .5, s * (1.15 - t) / 2, BOX); add(new T.BoxGeometry(t, 1, 1.15 - 2 * t), w1, s * (1.9 - t) / 2, .5, 0, BOX);
+    add(new T.BoxGeometry(1.9 - 2 * t, .96, .012), inM, 0, .5, s * ((1.15 - t) / 2 - t / 2 - .006), BOX); add(new T.BoxGeometry(.012, .96, 1.15 - 2 * t), inM, s * ((1.9 - t) / 2 - t / 2 - .006), .5, 0, BOX); });
+  BOX.userData.floor = new T.MeshStandardMaterial({color: '#5a3519', emissive: '#ffc83d', emissiveIntensity: 0, roughness: .8}); add(new T.BoxGeometry(1.9 - 2 * t, .015, 1.15 - 2 * t), BOX.userData.floor, 0, t + .008, 0, BOX);
+  [-.7, 0, .7].forEach(x => [-1, 1].forEach(s => add(new T.BoxGeometry(.12, 1.02, .02), gold, x, .5, s * .585, BOX)));
+  add(new T.BoxGeometry(1.94, .07, .07), gold, 0, .99, .58, BOX); add(new T.BoxGeometry(1.94, .07, .07), gold, 0, .99, -.58, BOX);
+  lid = new T.Group(); lid.position.set(0, 1, -.575); BOX.add(lid);
+  { const top = add(new T.CylinderGeometry(.575, .575, 1.9, 18, 1, true, 0, Math.PI), M('#8a5a2b', {side: T.FrontSide}), 0, 0, .575, lid); top.rotation.z = Math.PI / 2;   /* 뚜껑: 둥근 겉판 + 짙은 안감 + 양 끝 판, 속은 빔 */
+    const inn = add(new T.CylinderGeometry(.53, .53, 1.84, 18, 1, true, 0, Math.PI), M('#3f2513', {side: T.BackSide}), 0, 0, .575, lid); inn.rotation.z = Math.PI / 2; inn.castShadow = false;
+    [-1, 1].forEach(s => { const e = add(new T.CircleGeometry(.575, 18, 0, Math.PI), M('#7a4e25', {side: T.DoubleSide}), s * .94, 0, .575, lid); e.rotation.y = Math.PI / 2; }); }
+  [-.7, 0, .7].forEach(x => { const b = add(new T.CylinderGeometry(.595, .595, .12, 18, 1, true, 0, Math.PI), M('#d4a72c', {metalness: .5, roughness: .35, flatShading: false, side: T.DoubleSide}), x, 0, .575, lid); b.rotation.z = Math.PI / 2; });
+  BOX.userData.kin = ['a', 's', 'd', 'f'].map((ch, i) => { const m = new T.MeshStandardMaterial({color: '#fffbea', emissive: '#ffc83d', emissiveIntensity: .6, roughness: .5, map: canvasTex(64, 64, (x, w, h) => { x.fillStyle = '#fffbea'; x.fillRect(0, 0, w, h); x.strokeStyle = '#f0b020'; x.lineWidth = 6; x.strokeRect(3, 3, w - 6, h - 6); x.fillStyle = '#14324a'; x.font = '900 40px sans-serif'; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText(ch, 32, 34); })});
+    const k = add(new T.BoxGeometry(.26, .12, .26), [M('#fffbea'), M('#fffbea'), m, M('#fffbea'), M('#fffbea'), M('#fffbea')], -.48 + i * .32, .16, .05, BOX); k.rotation.y = (i - 1.5) * .12; return k; });   /* 상자 안에 놓인 영어 글쇠 돌 a s d f */
   add(new T.BoxGeometry(1.3, .42, .08), gold, 0, .62, .6, BOX);
   ['a', 's', 'd', 'f'].forEach((ch, i) => { const m = new T.MeshStandardMaterial({color: '#fffbea', emissive: '#ffc83d', emissiveIntensity: 0, roughness: .5, map: canvasTex(64, 64, (x, w, h) => { x.fillStyle = '#fffbea'; x.fillRect(0, 0, w, h); x.fillStyle = '#14324a'; x.font = '900 44px sans-serif'; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText(ch, 32, 34); })});
     CAPS.push(add(new T.BoxGeometry(.24, .24, .1), m, -.45 + i * .3, .62, .66, BOX)); capM.push(m); }); }
@@ -5139,7 +5163,7 @@ const reset = () => { api.cx = -4.5; mk.visible = false; NOTE.visible = false; g
   lamps.forEach(l => l.set(false)); setWin(true); planks.forEach(p => { p.visible = true; p.position.y = .32; p.userData.drop = 0; }); ghosts.forEach(g => g.visible = false);
   dark = darkT = .35; LH.on = 1; LH.blink = 0; segs.forEach(m => { m.userData.o = 0; m.material.opacity = 0; });
   BOT.visible = true; BOT.position.set(-42, .22, 4.2); BOT.rotation.set(0, 0, 1.35); CORK.position.set(0, .72, 0); CORK.visible = true; PC.forEach(m => { m.visible = false; m.userData.hold = 0; });
-  lid.rotation.x = 0; capM.forEach(m => m.emissiveIntensity = 0); CAPS.forEach(c => c.visible = true); boxGlow.visible = false; SHELL.visible = false; CLo.hug = 0; CNOTE.visible = false; HANDS.forEach(h => h.visible = false); EYES.forEach(m => m.visible = true); SMILE.forEach(m => m.visible = false); scroll.style.opacity = 0;
+  lid.rotation.x = 0; capM.forEach(m => m.emissiveIntensity = 0); BOX.userData.kin.forEach(k => k.visible = true); BOX.userData.floor.emissiveIntensity = 0; CAPS.forEach(c => c.visible = true); boxGlow.visible = false; SHELL.visible = false; CLo.hug = 0; CNOTE.visible = false; HANDS.forEach(h => h.visible = false); EYES.forEach(m => m.visible = true); SMILE.forEach(m => m.visible = false); scroll.style.opacity = 0;
   MG.position.set(-27.5, 0, 3.6); Mo.tx = -27.5; Mo.tz = 3.6; Mo.yaw = -Math.PI / 2; MG.rotation.y = -Math.PI / 2; setSt('idle'); camP.x = -26; camP.z = 2.8;
   CL.position.set(MG.position.x + CLo.x, CLo.y, MG.position.z + CLo.z);
   got.length = 0; got.push(...(((Save.get().ch1 || {}).items) || []).filter(x => GIFT.includes(x))); inv();
@@ -5179,8 +5203,8 @@ const main = async () => { const myRun = ++runId; const sv = Save.get(), c1 = sv
   await backStep(1.1, 1100); setSt('oops', true); bubble('바다는… 아직 조금 무서워.', 2400); await sleep(2400); setSt('idle');
   face(MG.position.x + CLo.x, MG.position.z + CLo.z); bubble('구르미야, 품속에 든 그 쪽지는 뭐야?', 2200); await sleep(1300); CLo.hug = 4.2; await sleep(2600); bubble('…말하기 싫구나. 소중한 건가 보다', 2200); await sleep(2300);
   /* 3. 폴리 등장: "Race you!" — 모아는 대답을 못 함 */
-  const P = pol(); if (P) { where('바다에서 온 손님'); const lx = MG.position.x + 1.9, lz = MG.position.z - 1.5;   /* 모래밭(부두·상자·밧줄을 피한 자리) */ P.home(lx - 14, lz - 9, 0, groundY(lx, lz));
-    await P.travel(lx - 14, lz - 9, lx, lz, {alt: 3, V: 7, air: true, face: Math.atan2(MG.position.x - lx, MG.position.z - lz)});
+  const P = pol(); if (P) { where('하늘에서 온 손님'); const lx = MG.position.x + 1.9, lz = MG.position.z - 1.5;   /* 모래밭(부두·상자·밧줄을 피한 자리) */ P.home(lx + 5, lz - 17, 0, groundY(lx, lz));   /* v16.171: 마을 너머 높은 하늘에서 내려옴(바다 바닥에서 솟는 것처럼 보이던 것 고침) */
+    await P.travel(lx + 5, lz - 17, lx, lz, {alt: 1.6, from: 9, V: 6.5, air: true, face: Math.atan2(MG.position.x - lx, MG.position.z - lz)});
     face(lx, lz); setSt('surprise'); P.act('talk'); P.say('I have one too!', 2.4, '나도 조각 하나 있지!'); await sleep(2600);
     P.face('약 올림', 2.6); P.act('talk'); P.say('Race you!', 2.6, '누가 먼저 찾나 겨뤄 보자!'); await sleep(2700);
     bubble('……', 1600); setSt('oops'); await sleep(1700);
@@ -5205,10 +5229,10 @@ const main = async () => { const myRun = ++runId; const sv = Save.get(), c1 = sv
   const sb0 = Stat.bad;
   await typeOn(25, 3.2, 1, E1.lock[0], n => { capM[n - 1].emissiveIntensity = 1.2; }, '🔒 글쇠 자물쇠 ①', '왼쪽부터 차례로'); burst(25, 1.2, 1, 8); bubble('이번엔 거꾸로!', 1600);
   await typeOn(25, 3.2, 1, E1.lock[1], n => { capM[4 - n].emissiveIntensity = 3; }, '🔒 글쇠 자물쇠 ②', '오른쪽부터 거꾸로'); const sigClean = Stat.bad === sb0;
-  sfx.win(); flash = .6; await anim(900, u => { lid.rotation.x = -1.9 * ez(u); }); boxGlow.scale.setScalar(6); burst(25, 1.6, 1, 22, '#fff3a0', 3); setSt('cheer');
+  sfx.win(); flash = .6; await anim(900, u => { lid.rotation.x = -1.9 * ez(u); BOX.userData.floor.emissiveIntensity = 1.6 * u; }); boxGlow.scale.setScalar(6); burst(25, 1.6, 1, 22, '#fff3a0', 3); setSt('cheer');
   /* 자물쇠 글쇠가 빠져나와 모아 가방으로 — 1장의 영어 글쇠 a s d f */
-  bubble('자물쇠 글쇠가 빠져나와!', 1500); { const fl = CAPS.map(c => { const w = new T.Vector3(); c.getWorldPosition(w); const m = c.clone(); m.material = c.material.clone(); m.material.emissiveIntensity = 2.5; m.position.copy(w); m.rotation.y = BOX.rotation.y; S.add(m); c.visible = false; return {m, w}; });
-    await anim(900, u => fl.forEach((f, i) => { const e = ez(u); f.m.position.set(f.w.x + (i - 1.5) * .5 * e, f.w.y + 1.8 * e, f.w.z + .4 * e); f.m.rotation.x = e * Math.PI * 2; f.m.scale.setScalar(1 + .6 * e); }));
+  bubble('상자 안에 글쇠 돌이 있어!', 1500); { const fl = BOX.userData.kin.map(c => { const w = new T.Vector3(); c.getWorldPosition(w); const m = c.clone(); m.material = [].concat(c.material).map(q => { q = q.clone(); if (q.map) q.emissiveIntensity = 2.5; return q; }); if (m.material.length === 1) m.material = m.material[0]; m.position.copy(w); m.rotation.y = BOX.rotation.y; S.add(m); c.visible = false; return {m, w}; });
+    await anim(900, u => fl.forEach((f, i) => { const e = ez(u); f.m.position.set(f.w.x + (i - 1.5) * .45 * e, f.w.y + 2.2 * e, f.w.z + .3 * e); f.m.rotation.y = BOX.rotation.y + e * Math.PI * 2; f.m.scale.setScalar(1 + .6 * e); }));
     burst(25, 2.4, 1.4, 16, '#ffe680', 2); sfx.win(); await sleep(500); const to = MG.position.clone(); to.y = 1.2;
     await anim(650, u => fl.forEach(f => { f.m.position.lerp(to, u * .35); f.m.scale.setScalar(1.6 - 1.3 * u); }));
     fl.forEach(f => S.remove(f.m)); got.push(KEYS); inv(); sfx.done(); }
