@@ -1483,7 +1483,7 @@ function validateContent() {
 <script>
 /* ================= 저장 ================= */
 const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
-const APP_VERSION = '16.182', APP_DATE = '2026-11-27 10:05';
+const APP_VERSION = '16.183', APP_DATE = '2026-11-27 10:25';
 /* ===== 우리 반 공유(선택) : Firebase 설정 =====
    Firebase 콘솔 → 프로젝트 설정 → 내 앱(웹) → SDK 설정의 firebaseConfig 값을 아래에 그대로 붙여 넣으세요.
    Realtime Database를 만들고 databaseURL까지 넣어야 켜집니다. 비워 두면 혼자 쓰는 앱으로 돌아갑니다. */
@@ -11450,6 +11450,8 @@ const AdvIntro = {
 
   /* ════ 재생 ════ */
   async play(o) { o = o || {}; if (this.on) return; this.full(1); this.mus.init(); const d = this.ui(); this.muted = !!o.mute; this.mute(this.muted);
+    /* v16.183 브라우저가 소리를 막아 둔 채(사용자 동작 전) 시작했다면, 첫 누름·글쇠에서 소리를 깨움 */
+    if (!this.muted) { const wake = () => { if (this.on && !this.muted) this.mute(0); }; addEventListener('pointerdown', wake, {once: true, capture: true}); addEventListener('keydown', wake, {once: true, capture: true}); }
     this.on = true; const k = ++this.tok; this.t0 = performance.now(); this.cutN = 0; this.vis = 0; window.__axIntro = true;
     d.classList.add('on', 'loading'); d.classList.toggle('chk', !!(isTeacher() || LOCAL_CHECK)); d.querySelector('.ai-skip').classList.remove('on'); this.layer('.ai-bk', 1, 0); this.layer('.ai-fl', 0, 0);
     if (typeof Music !== 'undefined' && Music.pause) try { Music.pause(); } catch (e) {}
@@ -11483,7 +11485,7 @@ const AdvIntro = {
   auto(name) { if (!name || window.__introOnly) return; this.testBtn(); if (name === TEACHER) { this.preload(); return; }
     try { const u = (typeof user === 'function' && user()) || {}; if (((u.adv || {}).ch1 || {}).done) { this.preload(); return; } } catch (e) {}
     const k = 'taja_sawIntro_' + name; try { if (localStorage.getItem(k)) { this.preload(); return; } localStorage.setItem(k, '1'); } catch (e) { return; }
-    try { this.ui().classList.add('on', 'loading'); } catch (e) {} setTimeout(() => this.play({mute: 1, first: 1}), 30); },
+    try { this.ui().classList.add('on', 'loading'); } catch (e) {} setTimeout(() => this.play({mute: 0, first: 1}), 30); },   /* v16.183 처음 로그인 때 인트로도 소리 켜고 시작(선생님 결정). 🔈 단추로 끌 수 있음 */
   /* 인트로만 든 파일: 첫 화면에 🎬 단추(누르는 순간 소리가 켜짐) */
   gate() { let g = document.getElementById('ai-gate'); if (!g) { g = document.createElement('div'); g.id = 'ai-gate'; g.style.cssText = 'position:fixed;inset:0;z-index:80;overflow:hidden;background:#f1b98e;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:14px;color:#fff;font-family:sans-serif;padding:20px 20px calc(max(40px,env(safe-area-inset-bottom)) + 7vh);text-align:center';
       g.innerHTML = '<div style="position:absolute;inset:-60px;background:url(' + AI_THUMB + ') center/cover no-repeat;filter:blur(32px) brightness(.85)"></div><div style="position:absolute;inset:0;background:url(' + AI_THUMB + ') center/contain no-repeat"></div><button style="position:relative;border:0;border-radius:999px;padding:clamp(14px,3vw,20px) clamp(26px,6vw,44px);font:900 clamp(20px,4.5vw,30px) sans-serif;background:#ffd43b;color:#1f2a44;box-shadow:0 6px 0 #c99a00,0 10px 24px #0008;cursor:pointer">🎬 인트로 보기</button><div style="position:relative;padding:.45em 1.1em;border-radius:999px;background:#0b1226cc;font-size:clamp(13px,2.6vw,15px)">소리를 켜고 보세요</div><div style="position:absolute;bottom:calc(max(8px,env(safe-area-inset-bottom)));opacity:.6;font-size:12px">모아의 타자 모험 인트로 v' + APP_VERSION + ' · 제작 kingkongssam</div>';
