@@ -1483,7 +1483,7 @@ function validateContent() {
 <script>
 /* ================= 저장 ================= */
 const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
-const APP_VERSION = '16.184', APP_DATE = '2026-11-28 01:05';
+const APP_VERSION = '16.185', APP_DATE = '2026-11-28 04:30';
 /* ===== 우리 반 공유(선택) : Firebase 설정 =====
    Firebase 콘솔 → 프로젝트 설정 → 내 앱(웹) → SDK 설정의 firebaseConfig 값을 아래에 그대로 붙여 넣으세요.
    Realtime Database를 만들고 databaseURL까지 넣어야 켜집니다. 비워 두면 혼자 쓰는 앱으로 돌아갑니다. */
@@ -11080,7 +11080,7 @@ build(E) { const {T, S, rnd, M, add, flat, MG, burst, sleep} = E;
 /* ================= 모험 3D (1~10장) — 처음 열 때만 3D 엔진과 그 장을 만든다 ================= */
 const ADV_SOON = {};
 COURSES.ko.levels.forEach(L => { if (L.game.type !== 'adv') L.game.soon = (ADV_SOON[L.n] || '새 모험') + ' 공사 중'; });
-COURSES.en.levels.forEach(L => { if (!EN_ADV_READY[L.n]) L.game.soon = '영어 모험 공사 중'; });
+COURSES.en.levels.forEach(L => { Object.defineProperty(L.game, 'soon', {get: () => EN_ADV_READY[L.n] ? undefined : '영어 모험 공사 중', configurable: true}); });   /* v16.185: 로그인한 사람에 따라 그때그때(선생님 점검이면 영어 2장 열림) */
 /* 모험 기록: 학생 기록의 새 칸 u.adv (기존 칸은 건드리지 않음). 반 기록 backup 과 함께 올라간다 */
 window.__advSave = {get() { const u = user(); if (!u) return {}; const a = JSON.parse(JSON.stringify(advOf(u, curCourse))); if (curCourse !== 'en') delete a.en; return a; },   /* v16.143 지금 코스의 모험 기록만 주고받음 */
   set(v) { const u = user(); if (!u) return; const c = JSON.parse(JSON.stringify(v)); if (curCourse === 'en') { advOf(u, 'en'); u.adv.en = c; } else { const en = u.adv && u.adv.en; delete c.en; u.adv = c; if (en) u.adv.en = en; } save(); }};
