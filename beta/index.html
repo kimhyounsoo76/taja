@@ -1483,7 +1483,7 @@ function validateContent() {
 <script>
 /* ================= 저장 ================= */
 const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
-const APP_VERSION = '16.187', APP_DATE = '2026-11-28 04:55';
+const APP_VERSION = '16.188', APP_DATE = '2026-11-28 05:10';
 /* ===== 우리 반 공유(선택) : Firebase 설정 =====
    Firebase 콘솔 → 프로젝트 설정 → 내 앱(웹) → SDK 설정의 firebaseConfig 값을 아래에 그대로 붙여 넣으세요.
    Realtime Database를 만들고 databaseURL까지 넣어야 켜집니다. 비워 두면 혼자 쓰는 앱으로 돌아갑니다. */
@@ -6313,7 +6313,7 @@ CH.build = E => {
       CLo.tgt = () => [MG.position.x, MG.position.y + moaH * .85, MG.position.z]; },
     async cloudUp() { RF.fear = 0; const f = rw(1.4, 0, 0); CLo.tgt = () => { const q = rw(1.3, 0, 0); return [q.x, .1, q.z]; }; CLo.pin = {x: f.x, z: f.z - .2, y: 3.4}; await sleep(1300); CLo.swell = 1; beep(520, .25, 'triangle', .05); await sleep(700); },   /* v16.187: 비는 아직 — 구르미가 부풀며 기다림, 학생이 친 글자마다 비가 굵어짐 */
     rainDrop(n) { const ch = E.TX('e2_rain')[n - 1], tot = E.TX('e2_rain').length; RAIN.on = n / tot * (n < tot ? .8 : 1); if (n === 1) RAIN.w = Math.max(RAIN.w, .08); letterDrop(ch, n - 1); beep(620 + n * 90, .12, 'triangle', .07); },
-    async waterRise() { await sleep(700); const y0 = RF.y, p0 = RF.pitch; await anim(2600, u => { const e = ez(u); sbY.v = -.085 * e; SHALLOW.material.opacity = .55 * (1 - e); RF.y = y0 + (-.06 - y0) * e; RF.pitch = p0 * (1 - e); }); RF.mode = 'float'; sfx.win(); burst(RF.x, .4, RF.z, 16, '#cfeffc', 2.5); RAIN.on = 0; CLo.swell = 0; await sleep(500); CLo.pin = null; CLo.tgt = null; CLo.side = -1; },
+    async waterRise() { await sleep(700); const y0 = RF.y, p0 = RF.pitch; await anim(2600, u => { const e = ez(u); sbY.v = -.2 * e; SHALLOW.material.opacity = .55 - .37 * e;   /* v16.188: 모래톱이 물에 다 잠기고, 물속 모래 빛만 옅게 남음 */ RF.y = y0 + (-.06 - y0) * e; RF.pitch = p0 * (1 - e); }); RF.mode = 'float'; sfx.win(); burst(RF.x, .4, RF.z, 16, '#cfeffc', 2.5); RAIN.on = 0; CLo.swell = 0; await sleep(500); CLo.pin = null; CLo.tgt = null; CLo.side = -1; },
     async wip() { E.bubble(''); E.talk(''); const w = document.querySelector('.ax-where'); if (w) w.textContent = '시험판 — 여기까지(다음 판: 갈래·지키기)'; setSt('cheer'); await new Promise(() => {}); }
   });
   const face = E.face;
