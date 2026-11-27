@@ -1483,7 +1483,7 @@ function validateContent() {
 <script>
 /* ================= 저장 ================= */
 const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
-const APP_VERSION = '16.185', APP_DATE = '2026-11-28 04:30';
+const APP_VERSION = '16.186', APP_DATE = '2026-11-28 04:40';
 /* ===== 우리 반 공유(선택) : Firebase 설정 =====
    Firebase 콘솔 → 프로젝트 설정 → 내 앱(웹) → SDK 설정의 firebaseConfig 값을 아래에 그대로 붙여 넣으세요.
    Realtime Database를 만들고 databaseURL까지 넣어야 켜집니다. 비워 두면 혼자 쓰는 앱으로 돌아갑니다. */
@@ -6179,9 +6179,9 @@ CH.scenes = [
   {where: '얕은 물', fx: 'board'}, {fx: 'pushOff'},
   {say: '어? 바닥에 걸렸어…', ms: 2000, wait: 2100},
   {fx: 'fear', say: '물이 얕아… 손이 떨려', ms: 2600, wait: 2600},
-  {by: 'gurumi', say: '같이 있어', ms: 2600, wait: 2700},
+  {by: 'gurumi', say: '걱정 마, 내가 비를 내려 줄게!', ms: 2800, wait: 2900},
   {fx: 'cloudUp'},
-  {where: '구르미의 비', type: 'e2_rain', follow: 'rain', as: 'row', each: 'rainDrop', tag: '🌧️ fall · 떨어지다', done: 'waterRise'},
+  {where: '구르미의 비', type: 'e2_rain', follow: 'rain', as: 'row', each: 'rainDrop', tag: '🌧️ fall · (비가) 내리다', done: 'waterRise'},
   {say: '물이 차올랐어! 뗏목이 떴어!', ms: 2200, wait: 2300},
   {say: '고마워, 구르미야. 이제 무섭지 않아', ms: 2400, wait: 2400},
   {fx: 'wip'}
