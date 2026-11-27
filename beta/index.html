@@ -1483,7 +1483,7 @@ function validateContent() {
 <script>
 /* ================= 저장 ================= */
 const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
-const APP_VERSION = '16.181', APP_DATE = '2026-11-27 03:20';
+const APP_VERSION = '16.182', APP_DATE = '2026-11-27 10:05';
 /* ===== 우리 반 공유(선택) : Firebase 설정 =====
    Firebase 콘솔 → 프로젝트 설정 → 내 앱(웹) → SDK 설정의 firebaseConfig 값을 아래에 그대로 붙여 넣으세요.
    Realtime Database를 만들고 databaseURL까지 넣어야 켜집니다. 비워 두면 혼자 쓰는 앱으로 돌아갑니다. */
@@ -4926,7 +4926,7 @@ const mk = new T.Group(); S.add(mk); { const dark = M('#4a4458', {flatShading: f
 { const st = add(new T.OctahedronGeometry(.55, 0), new T.MeshStandardMaterial({color: '#ffe680', emissive: '#ffc21f', emissiveIntensity: 1.2, roughness: .25, flatShading: true}), 0, -1.9, .9, mk); st.castShadow = false; const g = glow(3.4); S.remove(g); g.position.set(0, -1.9, .9); mk.add(g); }
 /* v16.8 먹구름의 흔적: 먹구름이 떨어뜨린 그림 쪽지(글자 없이 그림만) — traces.js */
 const NOTE = window.__axTrace.make(T, S, 'note', {at: [-12, .05, 3.1], w: .8, rot: [-1.5708, 0, .4]}); NOTE.visible = false;
-mk.scale.setScalar(.8); mk.position.set(-34, 8, 1); const mkTo = {x: -34, y: 8, z: 1, s: .8, k: 3};
+mk.scale.setScalar(.8); mk.position.set(-34, 6, 1); const mkTo = {x: -34, y: 6, z: 1, s: .8, k: 3};   /* v16.182 1.5 낮춤(윗부분이 화면 위에서 잘리던 것) */
 /* 반딧불 */
 const fly = glow(1.6, '#fff3a0'); fly.visible = false; const flyHint = glow(1.1, '#fff3a0'); flyHint.visible = false;
 /* ── 모아 ── */
@@ -4963,10 +4963,10 @@ const where = t => { $('#a3-where').textContent = t; }; const got = []; const in
 /* ── 한 판 ── */
 let dark = 0, darkT = 0, flash = 0; const bgDay = new T.Color('#f3b98a'), bgNight = new T.Color('#171e48'), fogDay = new T.Color('#f0b58a'), skyDay = new T.Color('#ffe2bd'), skyNight = new T.Color('#7f98e8');
 const reset = () => { window.__axTrace.restore(NOTE); NOTE.visible = false; dark = darkT = flash = 0; Stat.ok = Stat.bad = 0; got.length = 0; got.push(...(((Save.get().ch1 || {}).items) || []).filter(x => GIFT1.includes(x))); inv(); plates.slice().forEach(p => p.kill()); handler = null; lamps.forEach(l => l.set(true)); setWin(true); planks.forEach(p => p.visible = false); ghosts.forEach(g => g.visible = false); slots.forEach(m => m.emissiveIntensity = 0); piece.visible = false; LH.on = 0; LH.blink = 0; vil.visible = false; sig.visible = false; sig.userData.t = -1;
-  MG.position.set(-22, 0, 2); Mo.tx = -22; Mo.tz = 2; Mo.moving = false; Mo.yaw = Math.PI / 2; setSt('idle'); mk.position.set(-34, 8, 1); Object.assign(mkTo, {x: -34, y: 8, z: 1, s: .8, k: 3}); camP.x = -20; if (ENS) ENS.reset(); };
+  MG.position.set(-22, 0, 2); Mo.tx = -22; Mo.tz = 2; Mo.moving = false; Mo.yaw = Math.PI / 2; setSt('idle'); mk.position.set(-34, 6, 1); Object.assign(mkTo, {x: -34, y: 6, z: 1, s: .8, k: 3}); camP.x = -20; if (ENS) ENS.reset(); };
 const found1 = []; const main = async () => { const myRun = ++runId; const sv = Save.get(), c1 = sv.ch1 || (sv.ch1 = {}); c1.first = c1.first || {}; reset(); found1.length = 0; where('글쇠 도둑'); await sleep(500);
   /* 사건 도입: 먹구름이 글쇠 돌을 들고 달아나고 신호기가 꺼진다 */
-  Object.assign(mkTo, {x: 6, y: 7.5, z: 0, k: .7}); bubble('먹구름이 글쇠 돌을 가져가!', 2600); for (let i = 0; i < 4; i++) { await sleep(650); lamps[i].set(false); burst(LX[i], 4.6, LZ, 6, '#b9c2c8', 2); darkT = .25 * (i + 1); } setWin(false); setSt('surprise'); bubble('신호기가 꺼졌어!'); Object.assign(mkTo, {x: 80, y: 20, z: -12, k: .5});
+  Object.assign(mkTo, {x: 6, y: 6, z: 0, k: .7}); bubble('먹구름이 글쇠 돌을 가져가!', 2600); for (let i = 0; i < 4; i++) { await sleep(650); lamps[i].set(false); burst(LX[i], 4.6, LZ, 6, '#b9c2c8', 2); darkT = .25 * (i + 1); } setWin(false); setSt('surprise'); bubble('신호기가 꺼졌어!'); Object.assign(mkTo, {x: 80, y: 20, z: -12, k: .5});
   NOTE.visible = true; for (let i = 1; i <= 40; i++) { const t = i / 40; NOTE.position.set(-12 + Math.sin(t * 8) * .7, .05 + 7 * (1 - t), 3.1 - (1 - t) * 2); NOTE.rotation.set(-1.5708 + Math.sin(t * 11) * .7 * (1 - t), 0, .4 + Math.sin(t * 7) * .5); await sleep(30); } window.__axTrace.restore(NOTE);
   setSt('surprise'); bubble('뭔가 떨어졌어!', 1600); await sleep(900);
   where('떨어진 쪽지'); await go(-12, 1.9); face(-12, 3.4); setSt('inspect'); bubble('글씨가 없네? 그림만 있어', 2200); await sleep(2100);
