@@ -1483,7 +1483,7 @@ function validateContent() {
 <script>
 /* ================= 저장 ================= */
 const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
-const APP_VERSION = '16.186', APP_DATE = '2026-11-28 04:40';
+const APP_VERSION = '16.187', APP_DATE = '2026-11-28 04:55';
 /* ===== 우리 반 공유(선택) : Firebase 설정 =====
    Firebase 콘솔 → 프로젝트 설정 → 내 앱(웹) → SDK 설정의 firebaseConfig 값을 아래에 그대로 붙여 넣으세요.
    Realtime Database를 만들고 databaseURL까지 넣어야 켜집니다. 비워 두면 혼자 쓰는 앱으로 돌아갑니다. */
@@ -6258,7 +6258,7 @@ CH.build = E => {
     CLo.sx += (CLo.side - CLo.sx) * Math.min(1, dt * .8); const cross = 1 - Math.min(1, Math.abs(CLo.sx)), gap = .55 + CLo.rad + .35, back = .5 + (.55 + CLo.rad) * cross * 1.6;   /* 1장 규칙: 화면에서 모아 옆(겹치지 않는 간격), 카메라에서 모아보다 조금 멀리. 옆을 바꿀 땐 모아 뒤 위로 넘어감 */
     const baseY = MG.position.y + moaH * .78;
     const hx = CLo.pin ? CLo.pin.x : MG.position.x + rx * CLo.sx * gap - cx * back, hz = CLo.pin ? CLo.pin.z : MG.position.z + rz * CLo.sx * gap - cz * back, hy = CLo.pin && CLo.pin.y !== undefined ? CLo.pin.y : baseY + cross * .3, k = Math.min(1, dt * (CLo.pin ? 1.6 : 3));
-    CL.position.x += (hx - CL.position.x) * k; CL.position.z += (hz - CL.position.z) * k; CLo.y = (CLo.y === undefined ? hy : CLo.y + (hy - CLo.y) * Math.min(1, dt * 2)); CL.position.y = CLo.y + Math.sin(t * 1.4) * .12; CB.rotation.z = Math.sin(t * .9) * .06;
+    CL.position.x += (hx - CL.position.x) * k; CL.position.z += (hz - CL.position.z) * k; CLo.y = (CLo.y === undefined ? hy : CLo.y + (hy - CLo.y) * Math.min(1, dt * 2)); CL.position.y = CLo.y + Math.sin(t * 1.4) * .12; CB.rotation.z = Math.sin(t * .9) * .06; CLo.sw = (CLo.sw || 0) + ((CLo.swell ? 1 : 0) - (CLo.sw || 0)) * Math.min(1, dt * 2); CB.scale.setScalar(1 + CLo.sw * (.06 + .03 * Math.sin(t * 5)));
     /* 시선: 정해 준 곳 > 말하는 폴리 > 말하는 모아 > 쉬기(화면 쪽, 가끔 모아) — 큰 일만 바로 돌아보고 나머지는 3.5초 유지 */
     const P0 = POL; let tg = null, key = 'rest', big = false;
     if (CLo.tgt) { const v = typeof CLo.tgt === 'function' ? CLo.tgt() : CLo.tgt; tg = CLh.set(v[0], v[1], v[2]); key = 'tgt'; big = true; }
@@ -6278,8 +6278,8 @@ CH.build = E => {
   const rings = Array.from({length: 10}, () => { const m = new T.Mesh(new T.RingGeometry(.7, 1, 24), new T.MeshBasicMaterial({color: '#ffffff', transparent: true, opacity: 0, depthWrite: false})); m.rotation.x = -Math.PI / 2; m.renderOrder = 3; S.add(m); m.userData.t = 9; return m; });
   const ripple = (x, z, s) => { const m = rings.find(r => r.userData.t > 1) || rings[0]; m.position.set(x, .075, z); m.userData.t = 0; m.userData.s = s || .35; };
   const RAIN = {on: 0, w: 0};
-  const rainTick = (t, dt) => { RAIN.w += (RAIN.on - RAIN.w) * Math.min(1, dt * 1.5); rainM.opacity = .55 * RAIN.w; rainG.visible = RAIN.w > .02;
-    if (rainG.visible) { const c = CL.position, top = c.y - .55 * cs * 3.2; drops.forEach((p, i) => { p.y -= p.v * dt; if (p.y < .06) { if (RAIN.on && Math.random() < .25) ripple(p.x, p.z, .18 + Math.random() * .14); const a = Math.random() * 6.28, r = Math.sqrt(Math.random()) * 1.45; p.x = c.x + Math.cos(a) * r * 1.3; p.z = c.z + Math.sin(a) * r; p.y = top - Math.random() * .6; } dm.position.set(p.x, p.y + .21, p.z); dm.updateMatrix(); rainG.setMatrixAt(i, dm.matrix); }); rainG.instanceMatrix.needsUpdate = true; }
+  const rainTick = (t, dt) => { RAIN.w += (RAIN.on - RAIN.w) * Math.min(1, dt * 1.5); rainM.opacity = .35 + .25 * Math.min(1, RAIN.w * 2); rainG.visible = RAIN.w > .02;
+    if (rainG.visible) { const c = CL.position, top = c.y - .55 * cs * 3.2; const act = Math.round(RN * Math.min(1, RAIN.w * 1.15)); drops.forEach((p, i) => { if (i >= act && p.y < -5) { dm.position.set(0, -9, 0); dm.scale.setScalar(0); dm.updateMatrix(); rainG.setMatrixAt(i, dm.matrix); dm.scale.setScalar(1); return; } p.y -= p.v * dt; if (p.y < .06) { if (i >= act) { p.y = -9; return; } if (RAIN.on && Math.random() < .25) ripple(p.x, p.z, .18 + Math.random() * .14); const a = Math.random() * 6.28, r = Math.sqrt(Math.random()) * 1.45; p.x = c.x + Math.cos(a) * r * 1.3; p.z = c.z + Math.sin(a) * r; p.y = top - Math.random() * .6; } dm.position.set(p.x, p.y + .21, p.z); dm.updateMatrix(); rainG.setMatrixAt(i, dm.matrix); }); rainG.instanceMatrix.needsUpdate = true; }
     rings.forEach(m => { const u = m.userData.t += dt / .9; m.visible = u < 1; if (m.visible) { const s = m.userData.s * (.4 + 1.6 * u); m.scale.set(s, s, 1); m.material.opacity = .6 * (1 - u); } }); };
   const dropTex = ch => canvasTex(128, 160, (x, w, h) => { x.clearRect(0, 0, w, h); x.beginPath(); x.moveTo(64, 8); x.bezierCurveTo(108, 70, 116, 96, 116, 106); x.arc(64, 106, 52, 0, Math.PI); x.bezierCurveTo(12, 96, 20, 70, 64, 8); x.closePath(); const g = x.createLinearGradient(0, 0, 0, h); g.addColorStop(0, '#ffffff'); g.addColorStop(1, '#d9f1fb'); x.fillStyle = g; x.fill(); x.lineWidth = 6; x.strokeStyle = '#7cc3de'; x.stroke();
     x.fillStyle = '#22406a'; x.font = '800 70px "Arial Rounded MT Bold","Nunito","Segoe UI",Arial,sans-serif'; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText(ch, 64, 104); });
@@ -6311,10 +6311,10 @@ CH.build = E => {
       RF.mode = 'stuck'; RF.row = 0; beep(140, .18, 'sine', .12); burst(rw(1.3, 0, 0).x, .2, rw(1.3, 0, 0).z, 10, '#d9c288', 1.5); setSt('idle'); setSt('row'); },
     async fear() { RF.fear = 1; CLo.side = 1; await sleep(400); { const rt = new T.Vector3().setFromMatrixColumn(cam.matrixWorld, 0); rt.y = 0; rt.normalize(); const tc = new T.Vector3(cam.position.x - MG.position.x, 0, cam.position.z - MG.position.z).normalize(), gap = .55 + (CLo.rad || 1) + .6; CLo.pin = {x: MG.position.x + rt.x * gap + tc.x * .7, z: MG.position.z + rt.z * gap + tc.z * .7, y: MG.position.y + moaH * .74}; }   /* 모아 오른쪽 옆, 화면 쪽으로 조금(겹치지 않는 간격) — 둘이 반쯤 마주 봄 */
       CLo.tgt = () => [MG.position.x, MG.position.y + moaH * .85, MG.position.z]; },
-    async cloudUp() { RF.fear = 0; const f = rw(1.4, 0, 0); CLo.tgt = () => { const q = rw(1.3, 0, 0); return [q.x, .1, q.z]; }; CLo.pin = {x: f.x, z: f.z - .2, y: 3.4}; await sleep(1300); RAIN.on = 1; beep(520, .25, 'triangle', .05); await sleep(900); },
-    rainDrop(n) { const ch = E.TX('e2_rain')[n - 1]; letterDrop(ch, n - 1); beep(620 + n * 90, .12, 'triangle', .07); },
-    async waterRise() { await sleep(700); const y0 = RF.y, p0 = RF.pitch; await anim(2600, u => { const e = ez(u); sbY.v = -.085 * e; SHALLOW.material.opacity = .55 * (1 - e); RF.y = y0 + (-.06 - y0) * e; RF.pitch = p0 * (1 - e); }); RF.mode = 'float'; sfx.win(); burst(RF.x, .4, RF.z, 16, '#cfeffc', 2.5); RAIN.on = 0; await sleep(500); CLo.pin = null; CLo.tgt = null; CLo.side = -1; },
-    async wip() { E.bubble(''); E.talk(''); const w = document.querySelector('.ax-where'); if (w) w.textContent = '시험판 v16.184 — 여기까지(다음 판: 갈래·지키기)'; setSt('cheer'); await new Promise(() => {}); }
+    async cloudUp() { RF.fear = 0; const f = rw(1.4, 0, 0); CLo.tgt = () => { const q = rw(1.3, 0, 0); return [q.x, .1, q.z]; }; CLo.pin = {x: f.x, z: f.z - .2, y: 3.4}; await sleep(1300); CLo.swell = 1; beep(520, .25, 'triangle', .05); await sleep(700); },   /* v16.187: 비는 아직 — 구르미가 부풀며 기다림, 학생이 친 글자마다 비가 굵어짐 */
+    rainDrop(n) { const ch = E.TX('e2_rain')[n - 1], tot = E.TX('e2_rain').length; RAIN.on = n / tot * (n < tot ? .8 : 1); if (n === 1) RAIN.w = Math.max(RAIN.w, .08); letterDrop(ch, n - 1); beep(620 + n * 90, .12, 'triangle', .07); },
+    async waterRise() { await sleep(700); const y0 = RF.y, p0 = RF.pitch; await anim(2600, u => { const e = ez(u); sbY.v = -.085 * e; SHALLOW.material.opacity = .55 * (1 - e); RF.y = y0 + (-.06 - y0) * e; RF.pitch = p0 * (1 - e); }); RF.mode = 'float'; sfx.win(); burst(RF.x, .4, RF.z, 16, '#cfeffc', 2.5); RAIN.on = 0; CLo.swell = 0; await sleep(500); CLo.pin = null; CLo.tgt = null; CLo.side = -1; },
+    async wip() { E.bubble(''); E.talk(''); const w = document.querySelector('.ax-where'); if (w) w.textContent = '시험판 — 여기까지(다음 판: 갈래·지키기)'; setSt('cheer'); await new Promise(() => {}); }
   });
   const face = E.face;
 
@@ -6323,7 +6323,7 @@ CH.build = E => {
     RF.x = RAFT0.x; RF.z = RAFT0.z; RF.yaw = RAFT0.yaw; RF.y = .1; RF.pitch = 0; RF.mode = 'sand'; RF.row = 0; RF.fear = 0; riding = false; jump = null; scull.visible = false;
     logs.forEach((g, i) => { const s = SCAT[i]; g.position.set(s[0], LOGR, LOGZ[i] + s[1]); g.rotation.set(0, s[2], 0); }); coils.forEach(c => c.forEach(g => { g.visible = false; })); knots.forEach(k => { k.visible = false; });
     sbY.v = 0; SHALLOW.material.opacity = .55; RAIN.on = RAIN.w = 0; rainG.visible = false; rings.forEach(m => { m.userData.t = 9; m.visible = false; });
-    CLo.pin = null; CLo.tgt = null; CLo.side = 1; CLo.sx = 1; CLo.y = undefined; CL.position.set(CH.start[0] + 1.6, moaH * .78, CH.start[1] - 1);
+    CLo.pin = null; CLo.tgt = null; CLo.swell = 0; CLo.sw = 0; CLo.side = 1; CLo.sx = 1; CLo.y = undefined; CL.position.set(CH.start[0] + 1.6, moaH * .78, CH.start[1] - 1);
     PF.on = false; if (POL) { POL.stop(); POL.show(false); } };
   const tick = (t, dt) => { st.tick(t, dt);
     SAND.position.y = sbY.v;
@@ -6341,7 +6341,7 @@ CH.build = E => {
     knotA: () => { const p = rw(BIND[0], TOP, -.72); return [p.x, p.y + 2.2, p.z]; }, knotB: () => { const p = rw(BIND[1], TOP, -.72); return [p.x, p.y + 2.2, p.z]; },
     rain: () => [CL.position.x, CL.position.y + 1.25, CL.position.z]});
   const actors = Object.assign({}, st.actors, {man: {group: K.man, h: 2.4}, gurumi: {group: CL, h: 1.15}});
-  window.__en2 = {RF, CLo, CL, RAFT, POL, K: () => K, SB, logs};   /* 점검용 */
+  window.__en2 = {RF, CLo, CL, RAFT, POL, K: () => K, SB, logs, RAIN};   /* 점검용 */
   return Object.assign({}, st, {fx, actors, reset, tick, ride, groundY, follow, wet: (x, z) => !inSB(x, z, .2) && st.wet(x, z)});
 };
 };
